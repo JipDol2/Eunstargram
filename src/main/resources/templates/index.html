@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="fragments/header.html :: header-fragment"></th:block>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<div class="container h-100">
+    <div class="row align-items-center h-100">
+        <div class="jumbotron align-self-center">
+            <h1 class="text-center"><b>Eun <span class="highlight">stargram</span>!</b></h1>
+            <p class="text-center">추억을 기록하는 우리들의 기록일지.</p>
+            <div class="contentContainer" id="logoutState">
+                <p class="text-center"><a href="/login" class="btn btn-primary btn-lg">로그인</a></p>
+                <p class="text-center"><a href="/signUp" class="btn btn-primary btn-lg">회원가입</a></p>
+            </div>
+            <div class="contentContainer d-none" id="loginState">
+                <div id="btn-create" class="mb-3 text-center">
+                    <button type="submit" id="create-button" class="btn btn-primary">작전 만들기</button>
+                </div>
+                <div id="btn-logout" class="mb-3 text-center">
+                    <button type="submit" id="logout-button" class="btn btn-primary">로그아웃</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="fragments/footer.html :: footer-fragment"></th:block>
+<script src="/js/index.js"></script>
+</body>
+</html>
