@@ -5,7 +5,7 @@ const addLoginEvent = () => {
 
 const loginOperation = (event) =>{
     event.preventDefault();
-    alert("click button");
+
 };
 
 addLoginEvent();
