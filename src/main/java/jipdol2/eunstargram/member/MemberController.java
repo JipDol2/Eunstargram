@@ -23,6 +23,7 @@ public class MemberController {
 
     @PostMapping("/signUp")
     public ResponseEntity<?> joinMember(@RequestBody MemberDTO memberDTO){
+        log.info("memberDTO = {}",memberDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberDTO));
     }
 }

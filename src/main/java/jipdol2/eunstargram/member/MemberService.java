@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MemberService {
@@ -21,7 +20,7 @@ public class MemberService {
 
     @Transactional
     public EmptyJSON join(MemberDTO memberDTO){
-        validatioinDuplicateMember(memberDTO);
+        validationDuplicateMember(memberDTO);
         memberRepository.save(Member.builder()
                 .userId(memberDTO.getUserId())
                 .password(memberDTO.getPassword())
@@ -34,8 +33,10 @@ public class MemberService {
         return new EmptyJSON();
     }
 
-    public boolean validatioinDuplicateMember(MemberDTO memberDTO){
-        return memberRepository.findByOneId(memberDTO.getUserId()).size() > 0 ? true : false;
+    public void validationDuplicateMember(MemberDTO memberDTO){
+        if(!memberRepository.findByOneId(memberDTO.getUserId()).isEmpty()){
+            throw new IllegalArgumentException("Member already exist!!");
+        }
     }
 
     @Transactional

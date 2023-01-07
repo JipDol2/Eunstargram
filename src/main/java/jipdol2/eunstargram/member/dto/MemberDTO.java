@@ -19,4 +19,17 @@ public class MemberDTO {
     private String intro;
 
     private String imagePath;
+
+    @Override
+    public String toString() {
+        return "MemberDTO{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", birthDay='" + birthDay + '\'' +
+                ", intro='" + intro + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                '}';
+    }
 }
