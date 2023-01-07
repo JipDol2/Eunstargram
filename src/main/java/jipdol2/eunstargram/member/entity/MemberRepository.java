@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +20,12 @@ public class MemberRepository {
 
     public Optional<Member> findByOne(Long seq){
         return Optional.ofNullable(em.find(Member.class,seq));
+    }
+
+    public List<Member> findByOneId(String id){
+        return em.createQuery("SELECT m FROM Member m WHERE m.userId = :id",Member.class)
+                .setParameter("id",id)
+                .getResultList();
     }
 
     public List<Member> findByAll(){

@@ -23,17 +23,6 @@ public class MemberController {
 
     @PostMapping("/signUp")
     public ResponseEntity<?> joinMember(@RequestBody MemberDTO memberDTO){
-
-        Member member = Member.builder()
-                .userId(memberDTO.getUserId())
-                .password(memberDTO.getPassword())
-                .nickname(memberDTO.getNickname())
-                .phoneNumber(memberDTO.getPhoneNumber())
-                .birthDay(memberDTO.getBirthDay())
-                .intro(memberDTO.getIntro())
-                .imagePath(memberDTO.getImagePath())
-                .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberDTO));
     }
 }

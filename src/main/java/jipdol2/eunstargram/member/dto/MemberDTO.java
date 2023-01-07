@@ -10,7 +10,7 @@ public class MemberDTO {
 
     private String password;
 
-    private String nickname;
+    private String nickName;
 
     private String phoneNumber;
 
