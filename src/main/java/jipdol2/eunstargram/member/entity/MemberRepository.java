@@ -23,7 +23,7 @@ public class MemberRepository {
     }
 
     public List<Member> findByOneId(String id){
-        return em.createQuery("SELECT m FROM Member m WHERE m.userId = :id",Member.class)
+        return em.createQuery("SELECT m FROM Member m WHERE m.memberId = :id",Member.class)
                 .setParameter("id",id)
                 .getResultList();
     }

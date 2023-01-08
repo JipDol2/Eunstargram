@@ -5,7 +5,7 @@ const addLoginEvent = () => {
 
 const loginOperation = (event) =>{
     event.preventDefault();
-
+    fetchData("")
 };
 
 addLoginEvent();

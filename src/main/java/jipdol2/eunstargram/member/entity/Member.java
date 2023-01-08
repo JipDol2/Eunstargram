@@ -17,7 +17,7 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    private String userId;
+    private String memberId;
 
     private String password;
 
@@ -36,7 +36,7 @@ public class Member {
 
     @Builder
     public Member(
-            String userId,
+            String memberId,
             String password,
             String nickname,
             String phoneNumber,
@@ -44,7 +44,7 @@ public class Member {
             String intro,
             String imagePath
     ) {
-        this.userId = userId;
+        this.memberId = memberId;
         this.password = password;
         this.nickname = nickname;
         this.phoneNumber = phoneNumber;
