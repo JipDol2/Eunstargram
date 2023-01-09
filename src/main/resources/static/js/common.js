@@ -10,9 +10,14 @@ const fetchData = async (url, option) => {
                 },
                 ...option,
             });
-        return await res.json();
+        const data = await res.json();
+        if (res.status !== 200) {
+            // alert(data.message);
+            throw new Error();
+        }
+        return data;
     } catch (error) {
-        throw Error();
+        throw new Error();
     }
 }
 
