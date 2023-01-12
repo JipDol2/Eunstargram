@@ -20,12 +20,13 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    //TODO: 2022/01/09 회원가입 API 생성
     @PostMapping("/signUp")
     public ResponseEntity<EmptyJSON> joinMember(@RequestBody MemberDTO memberDTO){
         log.info("memberDTO = {}",memberDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberDTO));
     }
-
+    //TODO: 2022/01/09 로그인 API 생성
     @PostMapping("/login")
     public ResponseEntity<?> loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
         log.info("memberLoginRequestDTO={}", memberLoginRequestDTO.toString());

@@ -31,7 +31,7 @@ public class Article {
      * 링크 : https://velog.io/@shining_dr/Builder-%ED%8C%A8%ED%84%B4%EA%B3%BC-NullPointException
      */
     @OneToMany(mappedBy = "article")
-    @Builder.Default
+//    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
     @Builder

@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.article.entity;
 
+import jipdol2.eunstargram.article.dto.ArticleDTO;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -22,8 +23,11 @@ public class ArticleRepository {
         return Optional.ofNullable(em.find(Article.class,seq));
     }
 
-    public List<Article> findByArticle(String userId){
-        return em.createQuery("SELECT a FROM Article a LEFT JOIN Member m WHERE m.userId = :userId")
+    public List<ArticleDTO> findByAll(Long seq){
+        return em.createQuery("SELECT new jipdol2.eunstargram.article.dto.ArticleDTO(a.seq,a.imagePath,a.likeNumber,a.content,m.seq) " +
+                        "FROM Article a INNER JOIN a.member m WHERE m.seq = :seq")
+                .setParameter("seq",seq)
                 .getResultList();
     }
+
 }
