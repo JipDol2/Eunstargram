@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member.entity;
 
-import jipdol2.eunstargram.article.entity.Article;
+import jipdol2.eunstargram.article.entity.Post;
+import jipdol2.eunstargram.comment.entity.Comment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +32,13 @@ public class Member {
 
     private String imagePath;
 
+    private String cancelYN;
+
     @OneToMany(mappedBy = "member")
-    private List<Article> articles = new ArrayList<>();
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "comment")
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Member(
@@ -42,7 +48,8 @@ public class Member {
             String phoneNumber,
             String birthDay,
             String intro,
-            String imagePath
+            String imagePath,
+            String cancelYN
     ) {
         this.memberId = memberId;
         this.password = password;
@@ -51,5 +58,6 @@ public class Member {
         this.birthDay = birthDay;
         this.intro = intro;
         this.imagePath = imagePath;
+        this.cancelYN = cancelYN;
     }
 }

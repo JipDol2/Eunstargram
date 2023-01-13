@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.comment.entity;
 
-import jipdol2.eunstargram.article.entity.Article;
+import jipdol2.eunstargram.article.entity.Post;
+import jipdol2.eunstargram.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,17 +21,36 @@ public class Comment {
     private Long likeNumber;
 
     @ManyToOne
-    @JoinColumn(name = "ARTICEL_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private Article article;
+    @JoinColumn(name = "POST_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "MEMEBER_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private Member member;
 
     @Builder
-    public Comment(String content, Long likeNumber, Article article) {
+    public Comment(String content, Long likeNumber, Post post, Member member) {
         this.content = content;
         this.likeNumber = likeNumber;
-        if(this.article != null){
-            this.article.getComments().remove(this);
-        }
-        this.article = article;
-        article.getComments().add(this);
+        checkPost(post);
+        checkMember(member);
     }
+
+    private void checkPost(Post post) {
+        if(this.post != null){
+            this.post.getComments().remove(this);
+        }
+        this.post = post;
+        post.getComments().add(this);
+    }
+
+    private void checkMember(Member member) {
+        if(this.member != null){
+            this.member.getComments().remove(this);
+        }
+        this.member = member;
+        member.getComments().add(this);
+    }
+
+
 }

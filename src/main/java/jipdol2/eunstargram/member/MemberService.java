@@ -1,7 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.EmptyJSON;
-import jipdol2.eunstargram.member.dto.MemberDTO;
+import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
@@ -20,22 +20,23 @@ public class MemberService {
     private final MemberJpaRepository memberJpaRepository;
 
     @Transactional
-    public EmptyJSON join(MemberDTO memberDTO){
-        validationDuplicateMember(memberDTO);
+    public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
+        validationDuplicateMember(memberSaveRequestDTO);
         memberRepository.save(Member.builder()
-                .memberId(memberDTO.getMemberId())
-                .password(memberDTO.getPassword())
-                .nickname(memberDTO.getNickName())
-                .phoneNumber(memberDTO.getPhoneNumber())
-                .birthDay(memberDTO.getBirthDay())
-                .intro(memberDTO.getIntro())
-                .imagePath(memberDTO.getImagePath())
+                .memberId(memberSaveRequestDTO.getMemberId())
+                .password(memberSaveRequestDTO.getPassword())
+                .nickname(memberSaveRequestDTO.getNickName())
+                .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
+                .birthDay(memberSaveRequestDTO.getBirthDay())
+                .intro(memberSaveRequestDTO.getIntro())
+                .imagePath(memberSaveRequestDTO.getImagePath())
+                .cancelYN(memberSaveRequestDTO.getCancelYN())
                 .build());
         return new EmptyJSON();
     }
 
-    public void validationDuplicateMember(MemberDTO memberDTO){
-        if(!memberRepository.findByOneId(memberDTO.getMemberId()).isEmpty()){
+    public void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
+        if(!memberRepository.findByOneId(memberSaveRequestDTO.getMemberId()).isEmpty()){
             throw new IllegalArgumentException("이미 존재하는 회원입니다.!!");
         }
     }

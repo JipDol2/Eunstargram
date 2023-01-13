@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter @Setter
 @ToString
-public class ArticleSaveRequestDTO {
+public class PostSaveRequestDTO {
 
     private String imagePath;
 
@@ -21,10 +21,10 @@ public class ArticleSaveRequestDTO {
      * 이때, 객체에는 '기본 생성자' 가 반드시 존재해야한다.
      * 이유는 JackSon Library가 기본생성자를 이용하여 객체로 변환시켜주기 때문이다.
      */
-    public ArticleSaveRequestDTO(){
+    public PostSaveRequestDTO(){
     }
 
-    public ArticleSaveRequestDTO(String imagePath, Long likeNumber, String content, Long memberId) {
+    public PostSaveRequestDTO(String imagePath, Long likeNumber, String content, Long memberId) {
         this.imagePath = imagePath;
         this.likeNumber = likeNumber;
         this.content = content;

@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Article {
+public class Post {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -35,7 +35,7 @@ public class Article {
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Article(String imagePath, Long likeNumber, String content,Member member) {
+    public Post(String imagePath, Long likeNumber, String content, Member member) {
         this.imagePath = imagePath;
         this.likeNumber = likeNumber;
         this.content = content;
@@ -43,10 +43,10 @@ public class Article {
          * 양방향 연관관계 편의 메소드 구현
          */
         if(this.member != null){
-            this.member.getArticles().remove(this);
+            this.member.getPosts().remove(this);
         }
         this.member = member;
-        member.getArticles().add(this);
+        member.getPosts().add(this);
     }
 
 }

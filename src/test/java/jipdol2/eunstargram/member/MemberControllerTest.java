@@ -1,6 +1,5 @@
 package jipdol2.eunstargram.member;
 
-import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +11,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
-@WebMvcTest
+@WebMvcTest(MemberController.class)
 class MemberControllerTest {
 
     @Autowired
@@ -37,7 +37,8 @@ class MemberControllerTest {
                                 "\"phoneNumber\" : \"010-1111-2222\"," +
                                 "\"birthDay\" : \"20220107\"," +
                                 "\"intro\" : \"AA\"," +
-                                "\"imagePath\" : \"location/1234\"}")
+                                "\"imagePath\" : \"location/1234\"," +
+                                "\"cancelYN\" : \"N\"}")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());

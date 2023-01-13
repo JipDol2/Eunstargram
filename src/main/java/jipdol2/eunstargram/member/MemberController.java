@@ -1,7 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.EmptyJSON;
-import jipdol2.eunstargram.member.dto.MemberDTO;
+import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +22,9 @@ public class MemberController {
 
     //TODO: 2022/01/09 회원가입 API 생성
     @PostMapping("/signUp")
-    public ResponseEntity<EmptyJSON> joinMember(@RequestBody MemberDTO memberDTO){
-        log.info("memberDTO = {}",memberDTO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberDTO));
+    public ResponseEntity<EmptyJSON> joinMember(@RequestBody MemberSaveRequestDTO memberSaveRequestDTO){
+        log.info("memberSaveRequestDTO = {}", memberSaveRequestDTO.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberSaveRequestDTO));
     }
     //TODO: 2022/01/09 로그인 API 생성
     @PostMapping("/login")

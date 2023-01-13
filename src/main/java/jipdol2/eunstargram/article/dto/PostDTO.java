@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter @Setter
 @ToString
-public class ArticleDTO {
+public class PostDTO {
 
     private Long articleId;
 
@@ -18,7 +18,7 @@ public class ArticleDTO {
 
     private Long memberId;
 
-    public ArticleDTO(Long articleId, String imagePath, Long likeNumber, String content, Long memberId) {
+    public PostDTO(Long articleId, String imagePath, Long likeNumber, String content, Long memberId) {
         this.articleId = articleId;
         this.imagePath = imagePath;
         this.likeNumber = likeNumber;

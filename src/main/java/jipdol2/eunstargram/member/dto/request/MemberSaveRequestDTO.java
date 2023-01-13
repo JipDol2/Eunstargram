@@ -1,4 +1,4 @@
-package jipdol2.eunstargram.member.dto;
+package jipdol2.eunstargram.member.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter @Setter
 @ToString
-public class MemberDTO {
+public class MemberSaveRequestDTO {
 
     private String memberId;
 
@@ -21,4 +21,6 @@ public class MemberDTO {
     private String intro;
 
     private String imagePath;
+
+    private String cancelYN;
 }
