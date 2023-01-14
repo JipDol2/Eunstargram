@@ -45,9 +45,6 @@ public class MemberService {
     public boolean login(MemberLoginRequestDTO memberLoginRequestDTO){
         Member member = memberJpaRepository.findByMemberIdAndPassword(memberLoginRequestDTO.getMemberId(), memberLoginRequestDTO.getPassword())
                 .orElseThrow(()->new IllegalArgumentException("회원아이디 혹은 비밀번호를 잘못 입력하셨습니다."));
-        /**
-         * 추후에 token return 변경 필요
-         */
         return true;
     }
 

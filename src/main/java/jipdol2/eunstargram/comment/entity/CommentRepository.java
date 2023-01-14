@@ -11,5 +11,8 @@ public class CommentRepository {
     @PersistenceContext
     EntityManager em;
 
-
+    public Long save(Comment comment){
+        em.persist(comment);
+        return comment.getSeq();
+    }
 }
