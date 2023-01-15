@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.article.entity;
 
 import jipdol2.eunstargram.comment.entity.Comment;
+import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -30,7 +31,7 @@ public class Post {
      * @Builder.Default 를 붙이는 이유
      * 링크 : https://velog.io/@shining_dr/Builder-%ED%8C%A8%ED%84%B4%EA%B3%BC-NullPointException
      */
-    @OneToMany(mappedBy = "article")
+    @OneToMany(mappedBy = "post")
 //    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 

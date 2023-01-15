@@ -2,7 +2,7 @@ package jipdol2.eunstargram.article;
 
 import jipdol2.eunstargram.article.dto.PostDTO;
 import jipdol2.eunstargram.article.dto.request.PostSaveRequestDTO;
-import jipdol2.eunstargram.common.EmptyJSON;
+import jipdol2.eunstargram.common.dto.EmptyJSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

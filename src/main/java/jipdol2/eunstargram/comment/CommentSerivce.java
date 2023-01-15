@@ -5,12 +5,13 @@ import jipdol2.eunstargram.article.entity.PostRepository;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;
-import jipdol2.eunstargram.common.EmptyJSON;
+import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -23,6 +24,7 @@ public class CommentSerivce {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public EmptyJSON join(CommentSaveRequestDTO commentSaveRequestDTO){
 
         Post post = postRepository.findByOne(commentSaveRequestDTO.getPostId())
@@ -32,7 +34,7 @@ public class CommentSerivce {
                 .orElseThrow(()->new IllegalArgumentException("memberId가 존재하지 않습니다."));
 
         Comment comment = Comment.builder()
-                .content(commentSaveRequestDTO.getComment())
+                .content(commentSaveRequestDTO.getContent())
                 .likeNumber(commentSaveRequestDTO.getLikeNumber())
                 .post(post)
                 .member(member)

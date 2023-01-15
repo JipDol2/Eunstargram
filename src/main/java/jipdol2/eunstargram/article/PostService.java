@@ -4,7 +4,7 @@ import jipdol2.eunstargram.article.dto.PostDTO;
 import jipdol2.eunstargram.article.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.article.entity.Post;
 import jipdol2.eunstargram.article.entity.PostRepository;
-import jipdol2.eunstargram.common.EmptyJSON;
+import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;

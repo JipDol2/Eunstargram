@@ -2,6 +2,7 @@ package jipdol2.eunstargram.member.entity;
 
 import jipdol2.eunstargram.article.entity.Post;
 import jipdol2.eunstargram.comment.entity.Comment;
+import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -32,12 +33,12 @@ public class Member {
 
     private String imagePath;
 
-    private String cancelYN;
+    private String deleteYn;
 
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "comment")
+    @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
@@ -49,7 +50,7 @@ public class Member {
             String birthDay,
             String intro,
             String imagePath,
-            String cancelYN
+            String deleteYn
     ) {
         this.memberId = memberId;
         this.password = password;
@@ -58,6 +59,6 @@ public class Member {
         this.birthDay = birthDay;
         this.intro = intro;
         this.imagePath = imagePath;
-        this.cancelYN = cancelYN;
+        this.deleteYn = deleteYn;
     }
 }

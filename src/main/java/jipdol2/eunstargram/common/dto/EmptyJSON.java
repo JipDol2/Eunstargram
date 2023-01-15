@@ -1,4 +1,4 @@
-package jipdol2.eunstargram.common;
+package jipdol2.eunstargram.common.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 

@@ -6,7 +6,9 @@ import lombok.ToString;
 
 @Getter @Setter
 @ToString
-public class MemberSaveRequestDTO {
+public class MemberUpdateRequestDTO {
+
+    private Long seq;
 
     private String memberId;
 

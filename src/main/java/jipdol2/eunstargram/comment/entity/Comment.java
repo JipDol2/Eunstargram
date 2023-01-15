@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.comment.entity;
 
 import jipdol2.eunstargram.article.entity.Post;
+import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,9 +12,9 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     private String content;
