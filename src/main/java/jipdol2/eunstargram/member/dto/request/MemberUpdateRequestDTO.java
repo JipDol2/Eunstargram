@@ -10,8 +10,6 @@ public class MemberUpdateRequestDTO {
 
     private Long seq;
 
-    private String memberId;
-
     private String password;
 
     private String nickName;

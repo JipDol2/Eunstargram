@@ -1,8 +1,8 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
+import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +54,9 @@ public class MemberService {
         Member member = memberRepository.findByOne(seq)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
 
-        //TODO: 회원정보 수정 로직
+        member.changeMember(memberUpdateRequestDTO);
+
+        memberRepository.save(member);
         return new EmptyJSON();
     }
 

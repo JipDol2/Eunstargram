@@ -35,6 +35,6 @@ public class MemberController {
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateMember(@PathVariable("id") Long seq,@RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO){
         log.info("memberUpdateRequestDTO={}",memberUpdateRequestDTO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(seq,memberUpdateRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.update(seq,memberUpdateRequestDTO));
     }
 }

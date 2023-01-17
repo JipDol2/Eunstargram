@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 /**
  * @EnableJpaAuditing : JPA Auditing 기능을 활성화 시켜주기 위해 적용
  */
-@EnableJpaAuditing
+//@EnableJpaAuditing
 @SpringBootApplication
 public class EunstargramApplication {
 
