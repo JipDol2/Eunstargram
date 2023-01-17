@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -45,12 +47,22 @@ class MemberControllerTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private static final String COMMON_URL="/api/member";
 
 /*    @BeforeEach
     void clean(){
         memberJpaRepository.deleteAll();
     }*/
+
+    @BeforeEach
+    void clean(){
+        this.entityManager
+                .createNativeQuery("ALTER TABLE MEMBER AUTO_INCREMENT = 1")
+                .executeUpdate();
+    }
 
     @Test
     @DisplayName("/signUp 요청시 200 status code 리턴")
