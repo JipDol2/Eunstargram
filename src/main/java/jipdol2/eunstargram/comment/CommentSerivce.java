@@ -1,7 +1,7 @@
 package jipdol2.eunstargram.comment;
 
-import jipdol2.eunstargram.article.entity.Post;
-import jipdol2.eunstargram.article.entity.PostRepository;
+import jipdol2.eunstargram.post.entity.Post;
+import jipdol2.eunstargram.post.entity.PostRepository;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;

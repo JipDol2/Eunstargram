@@ -1,4 +1,4 @@
-package jipdol2.eunstargram.article.entity;
+package jipdol2.eunstargram.post.entity;
 
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;

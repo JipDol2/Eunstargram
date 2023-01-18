@@ -37,4 +37,10 @@ public class MemberController {
         log.info("memberUpdateRequestDTO={}",memberUpdateRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.update(seq,memberUpdateRequestDTO));
     }
+    //TODO: 2023/01/18 회원탈퇴 API 생성
+    @PatchMapping("/delete/{id}")
+    public ResponseEntity<EmptyJSON> deleteMember(@PathVariable("id") Long id){
+        log.info("id={}",id);
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
+    }
 }

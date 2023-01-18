@@ -1,4 +1,4 @@
-package jipdol2.eunstargram.article.dto.request;
+package jipdol2.eunstargram.post.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

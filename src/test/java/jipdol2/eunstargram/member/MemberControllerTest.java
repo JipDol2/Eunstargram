@@ -1,23 +1,16 @@
 package jipdol2.eunstargram.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
-import jipdol2.eunstargram.member.entity.MemberRepository;
-import org.aspectj.lang.annotation.After;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,11 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 //@WebMvcTest(MemberController.class)
 @AutoConfigureMockMvc
@@ -51,11 +41,6 @@ class MemberControllerTest {
     private EntityManager entityManager;
 
     private static final String COMMON_URL="/api/member";
-
-/*    @BeforeEach
-    void clean(){
-        memberJpaRepository.deleteAll();
-    }*/
 
     @BeforeEach
     void clean(){
@@ -110,6 +95,7 @@ class MemberControllerTest {
     @Transactional
     void updateTest() throws Exception{
 
+        //given
         Member member = createMember();
         memberJpaRepository.save(member);
 
@@ -120,15 +106,38 @@ class MemberControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
+        //when
         mockMvc.perform(MockMvcRequestBuilders.patch(COMMON_URL + "/update/"+ id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(memberB)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(memberB))
+                )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
+        //then
         Member findMember = memberJpaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         assertThat(findMember.getPassword()).isEqualTo(memberB.getPassword());
+    }
+
+    @Test
+    @DisplayName("/delete/{id} 요청시 200 status code 리턴")
+    @Transactional
+    void deleteTest() throws Exception {
+        //given
+        Member member = createMember();
+        memberJpaRepository.save(member);
+        //when
+        Long id=1L;
+        mockMvc.perform(MockMvcRequestBuilders.patch(COMMON_URL+"/delete/"+id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+        //then
+        Member findMember = memberJpaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        assertThat(findMember.getDeleteYn()).isEqualTo("N");
     }
 
     private Member createMember() {

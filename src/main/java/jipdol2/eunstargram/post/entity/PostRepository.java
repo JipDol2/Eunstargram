@@ -1,6 +1,6 @@
-package jipdol2.eunstargram.article.entity;
+package jipdol2.eunstargram.post.entity;
 
-import jipdol2.eunstargram.article.dto.PostDTO;
+import jipdol2.eunstargram.post.dto.PostDTO;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -24,7 +24,7 @@ public class PostRepository {
     }
 
     public List<PostDTO> findByAll(Long seq){
-        return em.createQuery("SELECT new jipdol2.eunstargram.article.dto.PostDTO(a.seq,a.imagePath,a.likeNumber,a.content,m.seq) " +
+        return em.createQuery("SELECT new jipdol2.eunstargram.post.dto.PostDTO(a.seq,a.imagePath,a.likeNumber,a.content,m.seq) " +
                         "FROM Post a INNER JOIN a.member m WHERE m.seq = :seq")
                 .setParameter("seq",seq)
                 .getResultList();

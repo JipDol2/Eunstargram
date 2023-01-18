@@ -51,17 +51,28 @@ public class MemberService {
 
     @Transactional
     public EmptyJSON update(Long seq,MemberUpdateRequestDTO memberUpdateRequestDTO){
-        Member member = memberRepository.findByOne(seq)
+        Member findMember = memberRepository.findByOne(seq)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
 
-        member.changeMember(memberUpdateRequestDTO);
+        findMember.changeMember(memberUpdateRequestDTO);
+        memberRepository.save(findMember);
 
-        memberRepository.save(member);
         return new EmptyJSON();
     }
 
     @Transactional
     public List<Member> findByAll(){
         return memberRepository.findByAll();
+    }
+
+    @Transactional
+    public EmptyJSON delete(Long id) {
+        Member findMember = memberRepository.findByOne(id)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+
+        findMember.changeDeleteYn("N");
+        memberRepository.save(findMember);
+
+        return new EmptyJSON();
     }
 }

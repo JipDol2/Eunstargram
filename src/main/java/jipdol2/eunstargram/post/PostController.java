@@ -1,7 +1,7 @@
-package jipdol2.eunstargram.article;
+package jipdol2.eunstargram.post;
 
-import jipdol2.eunstargram.article.dto.PostDTO;
-import jipdol2.eunstargram.article.dto.request.PostSaveRequestDTO;
+import jipdol2.eunstargram.post.dto.PostDTO;
+import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

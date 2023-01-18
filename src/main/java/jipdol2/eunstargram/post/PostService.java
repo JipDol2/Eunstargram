@@ -1,9 +1,9 @@
-package jipdol2.eunstargram.article;
+package jipdol2.eunstargram.post;
 
-import jipdol2.eunstargram.article.dto.PostDTO;
-import jipdol2.eunstargram.article.dto.request.PostSaveRequestDTO;
-import jipdol2.eunstargram.article.entity.Post;
-import jipdol2.eunstargram.article.entity.PostRepository;
+import jipdol2.eunstargram.post.dto.PostDTO;
+import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
+import jipdol2.eunstargram.post.entity.Post;
+import jipdol2.eunstargram.post.entity.PostRepository;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;

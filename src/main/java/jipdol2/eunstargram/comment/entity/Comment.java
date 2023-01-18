@@ -1,6 +1,6 @@
 package jipdol2.eunstargram.comment.entity;
 
-import jipdol2.eunstargram.article.entity.Post;
+import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.Builder;
