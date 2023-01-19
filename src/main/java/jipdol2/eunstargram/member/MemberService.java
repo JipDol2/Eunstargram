@@ -4,6 +4,7 @@ import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
+import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,10 +62,6 @@ public class MemberService {
         return new EmptyJSON();
     }
 
-    @Transactional
-    public List<Member> findByAll(){
-        return memberRepository.findByAll();
-    }
 
     @Transactional
     public EmptyJSON delete(Long id) {
@@ -74,5 +72,23 @@ public class MemberService {
         memberRepository.save(findMember);
 
         return new EmptyJSON();
+    }
+
+    @Transactional
+    public List<MemberFindResponseDTO> findByAll(){
+        List<Member> findMembers = memberRepository.findByAll();
+        List<MemberFindResponseDTO> members = findMembers.stream()
+                .map((m) -> MemberFindResponseDTO.createMemberFindResponseDTO(m))
+                .collect(Collectors.toList());
+        return members;
+    }
+
+    @Transactional
+    public MemberFindResponseDTO findByMember(Long seq) {
+        Member member = memberRepository.findByOne(seq)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+
+        MemberFindResponseDTO memberFindResponseDTO = MemberFindResponseDTO.createMemberFindResponseDTO(member);
+        return memberFindResponseDTO;
     }
 }

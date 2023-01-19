@@ -1,11 +1,13 @@
 package jipdol2.eunstargram.member.dto.request;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter @Setter
+@Getter
 @ToString
+@NoArgsConstructor
 public class MemberUpdateRequestDTO {
 
     private Long seq;
@@ -23,4 +25,16 @@ public class MemberUpdateRequestDTO {
     private String imagePath;
 
     private String deleteYn;
+
+    @Builder
+    public MemberUpdateRequestDTO(Long seq, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+        this.seq = seq;
+        this.password = password;
+        this.nickName = nickName;
+        this.phoneNumber = phoneNumber;
+        this.birthDay = birthDay;
+        this.intro = intro;
+        this.imagePath = imagePath;
+        this.deleteYn = deleteYn;
+    }
 }

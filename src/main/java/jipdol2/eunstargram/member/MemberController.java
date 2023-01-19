@@ -4,12 +4,15 @@ import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
+import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -39,8 +42,20 @@ public class MemberController {
     }
     //TODO: 2023/01/18 회원탈퇴 API 생성
     @PatchMapping("/delete/{id}")
-    public ResponseEntity<EmptyJSON> deleteMember(@PathVariable("id") Long id){
-        log.info("id={}",id);
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
+    public ResponseEntity<EmptyJSON> deleteMember(@PathVariable("id") Long seq){
+        log.info("id={}",seq);
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(seq));
     }
+    //TODO: 2023/01/19 회원 전체조회 API 생성
+    @GetMapping("/")
+    public ResponseEntity<List<MemberFindResponseDTO>> findByAllMembers(){
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByAll());
+    }
+    //TODO: 2023/01/19 회원 조회 API 생성
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("id") Long seq){
+        log.info("id={}",seq);
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
+    }
+
 }
