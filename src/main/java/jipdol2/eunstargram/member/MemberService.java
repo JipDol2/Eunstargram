@@ -5,6 +5,7 @@ import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
+import jipdol2.eunstargram.member.dto.response.MemberLoginResponseDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
@@ -45,10 +46,17 @@ public class MemberService {
     }
 
     @Transactional
-    public boolean login(MemberLoginRequestDTO memberLoginRequestDTO){
+    public MemberLoginResponseDTO login(MemberLoginRequestDTO memberLoginRequestDTO){
         Member member = memberJpaRepository.findByMemberIdAndPassword(memberLoginRequestDTO.getMemberId(), memberLoginRequestDTO.getPassword())
                 .orElseThrow(()->new IllegalArgumentException("회원아이디 혹은 비밀번호를 잘못 입력하셨습니다."));
-        return true;
+
+        //TODO: jwtToken 나중에 랜덤으로 token 생성된 값을 대입 수정필요
+        MemberLoginResponseDTO loginResponseDTO = MemberLoginResponseDTO.builder()
+                .token("fajkldjfisl")
+                .seq(member.getSeq())
+                .build();
+
+        return loginResponseDTO;
     }
 
     @Transactional

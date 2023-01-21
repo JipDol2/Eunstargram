@@ -1,10 +1,11 @@
 package jipdol2.eunstargram.post.dto.request;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter
+@Getter
 @ToString
 public class PostSaveRequestDTO {
 
@@ -24,6 +25,7 @@ public class PostSaveRequestDTO {
     public PostSaveRequestDTO(){
     }
 
+    @Builder
     public PostSaveRequestDTO(String imagePath, Long likeNumber, String content, Long memberId) {
         this.imagePath = imagePath;
         this.likeNumber = likeNumber;

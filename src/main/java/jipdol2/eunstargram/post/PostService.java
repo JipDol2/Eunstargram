@@ -41,7 +41,12 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostDTO> findAll(Long memberId){
+    public List<PostDTO> findByAll(Long memberSeq){
+        return postRepository.findByAll(memberSeq);
+    }
+
+    @Transactional
+    public List<PostDTO> findByAll(String memberId){
         return postRepository.findByAll(memberId);
     }
 }

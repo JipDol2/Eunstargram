@@ -30,4 +30,11 @@ public class PostRepository {
                 .getResultList();
     }
 
+    public List<PostDTO> findByAll(String memberId){
+        return em.createQuery("SELECT new jipdol2.eunstargram.post.dto.PostDTO(p.seq,p.imagePath,p.likeNumber,p.content,m.seq) " +
+                        "FROM Post p INNER JOIN p.member m WHERE m.memberId = :memberId")
+                .setParameter("memberId",memberId)
+                .getResultList();
+    }
+
 }
