@@ -24,6 +24,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@WebMvcTest(MemberController.class)
 @AutoConfigureMockMvc
@@ -77,8 +79,8 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andDo(print());
 
         assertThat(memberJpaRepository.count()).isEqualTo(1);
     }
@@ -104,9 +106,9 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("true"))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.seq").value(1L))
+                .andDo(print());
     }
 
     @Test
@@ -129,8 +131,8 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberB))
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andDo(print());
 
         //then
         Member findMember = memberJpaRepository.findById(id)
@@ -150,8 +152,8 @@ class MemberControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.patch(COMMON_URL+"/delete/"+id)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andDo(print());
         //then
         Member findMember = memberJpaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
@@ -164,8 +166,8 @@ class MemberControllerTest {
     void findByAllMemberTest() throws Exception {
         //expect
         mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
@@ -177,10 +179,10 @@ class MemberControllerTest {
         memberJpaRepository.save(member);
         //when
         mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/1"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.memberId").value("testId"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("1234"))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberId").value("testId"))
+                .andExpect(jsonPath("$.password").value("1234"))
+                .andDo(print());
 
     }
 

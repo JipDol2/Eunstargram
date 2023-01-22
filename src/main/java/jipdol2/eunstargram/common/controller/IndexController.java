@@ -16,7 +16,7 @@ public class IndexController {
 
     private final PostService postService;
 
-    @GetMapping("/")
+    @GetMapping
     public String index(){
         return "index";
     }

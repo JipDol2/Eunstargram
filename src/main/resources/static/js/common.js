@@ -6,7 +6,7 @@ const fetchData = async (url, option) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': sessionStorage.getItem("Authorization"),
+                    'Authorization': localStorage.getItem("Authorization"),
                 },
                 ...option,
             });

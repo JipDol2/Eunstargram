@@ -56,6 +56,8 @@ public class MemberService {
                 .seq(member.getSeq())
                 .build();
 
+        //TODO: session 에는 어떤값을 넣으면 좋을까?
+
         return loginResponseDTO;
     }
 

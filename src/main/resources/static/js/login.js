@@ -17,6 +17,12 @@ const loginOperation = async (event) =>{
 
     try{
         const response = await fetchData("/api/member/login",header);
+        const token = response.token;
+        const seq = response.id;
+        if(token){
+            localStorage.setItem("Authorization",token);
+            localStorage.setItem("Seq",seq);
+        }
         location.href = location.origin+"/";
     }catch(e){
         const errorMessage = document.getElementById("error-message");
