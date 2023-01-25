@@ -2,6 +2,7 @@ package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
+import jipdol2.eunstargram.member.dto.request.MemberProfileImageDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
@@ -10,6 +11,7 @@ import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.pool.TypePool;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,7 +74,6 @@ public class MemberService {
         return new EmptyJSON();
     }
 
-
     @Transactional
     public EmptyJSON delete(Long id) {
         Member findMember = memberRepository.findByOne(id)
@@ -100,5 +101,11 @@ public class MemberService {
 
         MemberFindResponseDTO memberFindResponseDTO = MemberFindResponseDTO.createMemberFindResponseDTO(member);
         return memberFindResponseDTO;
+    }
+
+    @Transactional
+    public EmptyJSON uploadFile(MemberProfileImageDTO imageDTO){
+        //TODO: 이미지 파일 저장 방법?
+        return new EmptyJSON();
     }
 }

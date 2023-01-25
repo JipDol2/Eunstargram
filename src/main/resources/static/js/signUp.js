@@ -15,7 +15,7 @@ const singUpOperation = async (event) => {
     };
 
     const header = {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(singUpDTO)
     };
 

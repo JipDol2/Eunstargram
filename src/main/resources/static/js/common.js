@@ -21,6 +21,26 @@ const fetchData = async (url, option) => {
     }
 }
 
+const fetchFileData = async (url,option) => {
+    try{
+        const res = await fetch(REQUEST_URL + url,
+            {
+                headers: {
+                    'Authorization': localStorage.getItem("Authorization"),
+                },
+                ...option,
+            });
+        const data = await res.json();
+        if (res.status !== 200) {
+            // alert(data.message);
+            throw new Error();
+        }
+        return data;
+    }catch (error){
+        throw new Error();
+    }
+}
+
 const needAuth = () => {
     const auth = sessionStorage.getItem("Authorization");
     if(auth==null){

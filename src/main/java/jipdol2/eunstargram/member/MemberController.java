@@ -1,16 +1,19 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.member.dto.request.MemberProfileImageDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -57,5 +60,10 @@ public class MemberController {
         log.info("id={}",seq);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
     }
-
+    //TODO: 2023/01/25 회원 프로필 이미지 업로드
+    @PostMapping("/updateProfileImage")
+    public ResponseEntity<EmptyJSON> updateProfileImage(@ModelAttribute MemberProfileImageDTO imageDTO){
+        log.info("image={}",imageDTO.getImage());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 }
