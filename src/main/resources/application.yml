@@ -28,6 +28,10 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+com:
+  upload:
+    path: D:/upload/
+
 logging.level:
   org.hibernate.SQL: debug
 # org.hibernate.type: trace

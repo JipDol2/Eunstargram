@@ -12,15 +12,26 @@ import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.pool.TypePool;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+
+    @Value("${com.upload.path}")
+    private String uploadPath;
 
     private final MemberRepository memberRepository;
     private final MemberJpaRepository memberJpaRepository;
@@ -104,8 +115,12 @@ public class MemberService {
     }
 
     @Transactional
-    public EmptyJSON uploadFile(MemberProfileImageDTO imageDTO){
-        //TODO: 이미지 파일 저장 방법?
+    public EmptyJSON uploadFile(MultipartFile imageDTO){
+        /**
+         * TODO: 이미지 파일 저장 방법?
+         * https://workshop-6349.tistory.com/entry/Spring-Boot-%ED%8C%8C%EC%9D%BC%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C%ED%95%98%EA%B8%B0
+         * https://velog.io/@alswl689/SpringBoot-with-JPA-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8MN-4.%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C%EC%8D%B8%EB%84%A4%EC%9D%BC%EC%9D%B4%EB%AF%B8%EC%A7%80%EC%82%AD%EC%A0%9C
+         */
         return new EmptyJSON();
     }
 }

@@ -61,9 +61,12 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
     }
     //TODO: 2023/01/25 회원 프로필 이미지 업로드
-    @PostMapping("/updateProfileImage")
-    public ResponseEntity<EmptyJSON> updateProfileImage(@ModelAttribute MemberProfileImageDTO imageDTO){
-        log.info("image={}",imageDTO.getImage());
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    @PostMapping("/uploadProfileImage")
+    public ResponseEntity<EmptyJSON> uploadProfileImage(
+//            @ModelAttribute MemberProfileImageDTO imageDTO
+            @RequestParam("image") MultipartFile profileImage
+    ){
+        log.info("image={}",profileImage.getOriginalFilename());
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadFile(profileImage));
     }
 }
