@@ -30,7 +30,7 @@ spring:
 
 com:
   upload:
-    path: D:/upload/
+    path: D:/
 
 logging.level:
   org.hibernate.SQL: debug
