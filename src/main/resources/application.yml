@@ -21,6 +21,17 @@ spring:
     thymeleaf:
       cache: true
 
+# fetch API 로 multipart-form 형식으로 요청보낼 시 server 에서 multipartFile 의 사이즈가 1MB가 디폴트
+# 그래서 사이즈 크기를 조절해줘야 됨(10MB 로 조정)
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+com:
+  upload:
+    path: D:/
+
 logging.level:
   org.hibernate.SQL: debug
 # org.hibernate.type: trace
