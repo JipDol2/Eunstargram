@@ -62,10 +62,7 @@ public class MemberController {
     }
     //TODO: 2023/01/25 회원 프로필 이미지 업로드
     @PostMapping("/uploadProfileImage")
-    public ResponseEntity<EmptyJSON> uploadProfileImage(
-//            @ModelAttribute MemberProfileImageDTO imageDTO
-            @RequestParam("image") MultipartFile profileImage
-    ){
+    public ResponseEntity<EmptyJSON> uploadProfileImage(@RequestParam("image") MultipartFile profileImage){
         log.info("image={}",profileImage.getOriginalFilename());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadFile(profileImage));
     }
