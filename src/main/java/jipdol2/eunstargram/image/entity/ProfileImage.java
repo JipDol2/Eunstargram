@@ -20,14 +20,20 @@ public class ProfileImage extends BaseTimeEntity {
 
     private String storedFileName;
 
- /*   @OneToOne
+    @OneToOne
     @JoinColumn(name = "MEMBER_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private Member member;*/
+    private Member member;
 
     @Builder
     public ProfileImage(String originalFileName, String storedFileName, Member member) {
         this.originalFileName = originalFileName;
         this.storedFileName = storedFileName;
-//        this.member = member;
+        /**
+         * 양방향 연관관계 편의 메소드 구현
+         */
+        if(this.member!=null){
+            this.member=member;
+            member.changeProfileImage(this);
+        }
     }
 }

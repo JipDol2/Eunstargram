@@ -43,8 +43,8 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-//    @OneToOne(mappedBy = "member")
-//    private ProfileImage profileImage;
+    @OneToOne(mappedBy = "member")
+    private ProfileImage profileImage;
 
 
     @Builder
@@ -94,6 +94,10 @@ public class Member extends BaseTimeEntity {
 
     public void changeDeleteYn(String deleteYn){
         this.deleteYn = deleteYn;
+    }
+
+    public void changeProfileImage(ProfileImage profileImage){
+        this.profileImage = profileImage;
     }
 
     public void changeMember(MemberUpdateRequestDTO updateRequestDTO){

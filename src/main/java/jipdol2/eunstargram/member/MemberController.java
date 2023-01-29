@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.image.entity.ProfileImage;
 import jipdol2.eunstargram.member.dto.request.MemberProfileImageDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
@@ -60,10 +61,10 @@ public class MemberController {
         log.info("id={}",seq);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
     }
-    //TODO: 2023/01/25 회원 프로필 이미지 업로드
-    @PostMapping("/uploadProfileImage")
-    public ResponseEntity<EmptyJSON> uploadProfileImage(@RequestParam("image") MultipartFile profileImage){
+    //TODO: 2023/01/25 회원 프로필 이미지 업로드 API 생성
+    @PostMapping("/profileImage")
+    public ResponseEntity<ProfileImage> uploadProfileImage(@RequestParam("image") MultipartFile profileImage){
         log.info("image={}",profileImage.getOriginalFilename());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadFile(profileImage));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(profileImage));
     }
 }
