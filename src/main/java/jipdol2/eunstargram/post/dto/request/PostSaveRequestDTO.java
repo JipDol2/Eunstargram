@@ -2,14 +2,11 @@ package jipdol2.eunstargram.post.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @ToString
 public class PostSaveRequestDTO {
-
-    private String imagePath;
 
     private Long likeNumber;
 
@@ -26,8 +23,7 @@ public class PostSaveRequestDTO {
     }
 
     @Builder
-    public PostSaveRequestDTO(String imagePath, Long likeNumber, String content, Long memberId) {
-        this.imagePath = imagePath;
+    public PostSaveRequestDTO(Long likeNumber, String content, Long memberId) {
         this.likeNumber = likeNumber;
         this.content = content;
         this.memberId = memberId;

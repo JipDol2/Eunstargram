@@ -1,6 +1,6 @@
 package jipdol2.eunstargram.post;
 
-import jipdol2.eunstargram.post.dto.PostDTO;
+import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.post.entity.PostRepository;
@@ -32,7 +32,6 @@ public class PostService {
                 .orElseThrow(()->new IllegalArgumentException("memberId가 존재하지 않습니다."));
 
         postRepository.save(Post.builder()
-                .imagePath(postDto.getImagePath())
                 .likeNumber(postDto.getLikeNumber())
                 .content(postDto.getContent())
                 .member(member)
@@ -41,12 +40,12 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostDTO> findByAll(Long memberSeq){
+    public List<PostResponseDTO> findByAll(Long memberSeq){
         return postRepository.findByAll(memberSeq);
     }
 
     @Transactional
-    public List<PostDTO> findByAll(String memberId){
+    public List<PostResponseDTO> findByAll(String memberId){
         return postRepository.findByAll(memberId);
     }
 }

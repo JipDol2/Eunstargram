@@ -68,7 +68,6 @@ class MemberControllerTest {
                         .phoneNumber("010-1111-2222")
                         .birthDay("20220107")
                         .intro("Life is just one")
-                        .imagePath("location/1234")
                         .deleteYn("N")
                         .build();
 
@@ -107,7 +106,7 @@ class MemberControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.seq").value(1L))
+                .andExpect(jsonPath("$.id").value(1L))
                 .andDo(print());
     }
 
@@ -193,7 +192,6 @@ class MemberControllerTest {
                 .nickname("Rabbit96")
                 .birthDay("19940715")
                 .intro("life is one time")
-                .imagePath("D:/save")
                 .deleteYn("N")
                 .build();
         return member;

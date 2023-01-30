@@ -1,6 +1,6 @@
 package jipdol2.eunstargram.post;
 
-import jipdol2.eunstargram.post.dto.PostDTO;
+import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +29,13 @@ public class PostController {
 
     //TODO: 2023/01/12 전체 게시글 조회
     @GetMapping("/{memberId}")
-    public ResponseEntity<List<PostDTO>> findByAllPosts(@PathVariable("memberId") Long memberSeq){
+    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(@PathVariable("memberId") Long memberSeq){
         log.info("memberSeq={}",memberSeq);
         //TODO: 현재 memberSeq 로 조회하지만 memberId 로 수정 필요
         return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberSeq));
     }
 
-    //TODO: 2023/01/19 게시글 힌간 조회(url 을 어떻게 정의해야되는지)
+    //TODO: 2023/01/19 게시글 힌건 조회(url 을 어떻게 정의해야되는지)
 
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+    private Long id;
 
     private String memberId;
 
@@ -32,8 +32,6 @@ public class Member extends BaseTimeEntity {
     private String birthDay;
 
     private String intro;
-
-    private String imagePath;
 
     private String deleteYn;
 
@@ -55,7 +53,6 @@ public class Member extends BaseTimeEntity {
             String phoneNumber,
             String birthDay,
             String intro,
-            String imagePath,
             String deleteYn
     ) {
         this.memberId = memberId;
@@ -64,7 +61,6 @@ public class Member extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;
-        this.imagePath = imagePath;
         this.deleteYn = deleteYn;
     }
 
@@ -88,10 +84,6 @@ public class Member extends BaseTimeEntity {
         this.intro = intro;
     }
 
-    public void changeImagePath(String imagePath){
-        this.imagePath = imagePath;
-    }
-
     public void changeDeleteYn(String deleteYn){
         this.deleteYn = deleteYn;
     }
@@ -106,7 +98,6 @@ public class Member extends BaseTimeEntity {
         this.phoneNumber = updateRequestDTO.getPhoneNumber();
         this.birthDay = updateRequestDTO.getBirthDay();
         this.intro = updateRequestDTO.getIntro();
-        this.imagePath = updateRequestDTO.getImagePath();
         this.deleteYn = updateRequestDTO.getDeleteYn();
     }
 }

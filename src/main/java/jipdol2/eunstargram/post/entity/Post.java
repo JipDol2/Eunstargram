@@ -15,7 +15,7 @@ import java.util.List;
 public class Post extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+    private Long id;
 
     private String imagePath;
 

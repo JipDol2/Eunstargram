@@ -10,11 +10,11 @@ public class MemberLoginResponseDTO {
 
     private String token;
 
-    private Long seq;
+    private Long id;
 
     @Builder
-    public MemberLoginResponseDTO(String token, Long seq) {
+    public MemberLoginResponseDTO(String token, Long id) {
         this.token = token;
-        this.seq = seq;
+        this.id = id;
     }
 }

@@ -51,14 +51,13 @@ public class MemberService {
                 .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
                 .birthDay(memberSaveRequestDTO.getBirthDay())
                 .intro(memberSaveRequestDTO.getIntro())
-                .imagePath(memberSaveRequestDTO.getImagePath())
                 .deleteYn("N")
                 .build());
         return new EmptyJSON();
     }
 
     private void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
-        if(!memberRepository.findByOneId(memberSaveRequestDTO.getMemberId()).isEmpty()){
+        if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberId()).isEmpty()){
             throw new IllegalArgumentException("이미 존재하는 회원입니다.!!");
         }
     }
@@ -71,7 +70,7 @@ public class MemberService {
         //TODO: jwtToken 나중에 랜덤으로 token 생성된 값을 대입 수정필요
         MemberLoginResponseDTO loginResponseDTO = MemberLoginResponseDTO.builder()
                 .token("fajkldjfisl")
-                .seq(member.getSeq())
+                .id(member.getId())
                 .build();
 
         //TODO: session 에는 어떤값을 넣으면 좋을까?
