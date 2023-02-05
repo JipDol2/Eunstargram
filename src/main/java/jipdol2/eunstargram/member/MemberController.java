@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.image.entity.PostImage;
 import jipdol2.eunstargram.image.entity.ProfileImage;
 import jipdol2.eunstargram.member.dto.request.MemberProfileImageDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
@@ -66,5 +67,10 @@ public class MemberController {
     public ResponseEntity<ProfileImage> uploadProfileImage(@RequestParam("image") MultipartFile profileImage){
         log.info("image={}",profileImage.getOriginalFilename());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(profileImage));
+    }
+    //TODO: 2023/02/02 포스팅 글 전체 가져오기
+    @GetMapping("/{memberId}/postImage")
+    public ResponseEntity<List<PostImage>> findByPostImage(@PathVariable("memberId") String memberId){
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByPostImages(1L));
     }
 }

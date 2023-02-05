@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.member.entity;
 
+import jipdol2.eunstargram.image.entity.PostImage;
 import jipdol2.eunstargram.image.entity.ProfileImage;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.comment.entity.Comment;
@@ -43,6 +44,9 @@ public class Member extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "member")
     private ProfileImage profileImage;
+
+    @OneToMany(mappedBy = "member")
+    private List<PostImage> postImages = new ArrayList<>();
 
 
     @Builder

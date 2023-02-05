@@ -1,6 +1,8 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.image.entity.PostImage;
+import jipdol2.eunstargram.image.entity.PostImageJpaRepository;
 import jipdol2.eunstargram.image.entity.ProfileImage;
 import jipdol2.eunstargram.image.entity.ProfileImageJpaRepository;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
@@ -40,6 +42,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberJpaRepository memberJpaRepository;
     private final ProfileImageJpaRepository profileImageJpaRepository;
+    private final PostImageJpaRepository postImageJpaRepository;
 
     @Transactional
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
@@ -120,6 +123,32 @@ public class MemberService {
 
     @Transactional
     public ProfileImage uploadProfileImage(MultipartFile imageDTO){
+
+        String imageName = uploadImage(imageDTO);
+
+        //TODO: ProfileImage Entity 에 save
+        //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
+        Member findByMember = memberJpaRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+
+        ProfileImage profileImage = ProfileImage.builder()
+                .originalFileName(imageDTO.getOriginalFilename())
+                .storedFileName(imageName)
+                .member(findByMember)
+                .build();
+
+        profileImageJpaRepository.save(profileImage);
+
+        return profileImage;
+    }
+
+    @Transactional
+    public List<PostImage> findByPostImages(Long memberId){
+        return postImageJpaRepository.findByMemberId(memberId);
+    }
+
+    private String uploadImage(MultipartFile imageDTO){
+
         /**
          * TODO: 이미지 파일 저장 방법?
          * https://workshop-6349.tistory.com/entry/Spring-Boot-%ED%8C%8C%EC%9D%BC%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C%ED%95%98%EA%B8%B0
@@ -146,19 +175,6 @@ public class MemberService {
             e.printStackTrace();
         }
 
-        //TODO: ProfileImage Entity 에 save
-        //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
-        Member findByMember = memberJpaRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
-
-        ProfileImage profileImage = ProfileImage.builder()
-                .originalFileName(imageDTO.getOriginalFilename())
-                .storedFileName(imageName)
-                .member(findByMember)
-                .build();
-
-        profileImageJpaRepository.save(profileImage);
-
-        return profileImage;
+        return imageName;
     }
 }
