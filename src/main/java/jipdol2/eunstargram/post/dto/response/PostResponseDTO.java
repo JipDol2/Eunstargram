@@ -1,4 +1,4 @@
-package jipdol2.eunstargram.post.dto;
+package jipdol2.eunstargram.post.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,11 +6,9 @@ import lombok.ToString;
 
 @Getter @Setter
 @ToString
-public class PostDTO {
+public class PostResponseDTO {
 
-    private Long articleId;
-
-    private String imagePath;
+    private Long id;
 
     private Long likeNumber;
 
@@ -18,9 +16,10 @@ public class PostDTO {
 
     private Long memberId;
 
-    public PostDTO(Long articleId, String imagePath, Long likeNumber, String content, Long memberId) {
-        this.articleId = articleId;
-        this.imagePath = imagePath;
+    //TODO ImageDTO 생성 후 여기에 dto 필드 추가 필요
+
+    public PostResponseDTO(Long id, Long likeNumber, String content, Long memberId) {
+        this.id = id;
         this.likeNumber = likeNumber;
         this.content = content;
         this.memberId = memberId;

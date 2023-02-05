@@ -1,7 +1,7 @@
 package jipdol2.eunstargram.common.controller;
 
 import jipdol2.eunstargram.post.PostService;
-import jipdol2.eunstargram.post.dto.PostDTO;
+import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +33,7 @@ public class IndexController {
 
     @GetMapping("/{memberId}")
     public String profile(Model model, @PathVariable("memberId") String memberId){
-        List<PostDTO> posts = postService.findByAll(memberId);
+        List<PostResponseDTO> posts = postService.findByAll(memberId);
         model.addAttribute("posts",posts);
         return "posts";
     }

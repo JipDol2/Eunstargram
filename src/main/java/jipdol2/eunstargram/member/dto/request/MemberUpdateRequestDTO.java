@@ -10,7 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class MemberUpdateRequestDTO {
 
-    private Long seq;
+    private Long id;
 
     private String password;
 
@@ -27,8 +27,8 @@ public class MemberUpdateRequestDTO {
     private String deleteYn;
 
     @Builder
-    public MemberUpdateRequestDTO(Long seq, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
-        this.seq = seq;
+    public MemberUpdateRequestDTO(Long id, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+        this.id = id;
         this.password = password;
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;

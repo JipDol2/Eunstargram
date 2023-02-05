@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 public class MemberFindResponseDTO {
 
-    private Long seq;
+    private Long id;
 
     private String memberId;
 
@@ -27,8 +27,8 @@ public class MemberFindResponseDTO {
     private String deleteYn;
 
     @Builder
-    public MemberFindResponseDTO(Long seq, String memberId, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
-        this.seq = seq;
+    public MemberFindResponseDTO(Long id, String memberId, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+        this.id = id;
         this.memberId = memberId;
         this.password = password;
         this.nickName = nickName;
@@ -41,14 +41,13 @@ public class MemberFindResponseDTO {
 
     public static MemberFindResponseDTO createMemberFindResponseDTO(Member member){
         return MemberFindResponseDTO.builder()
-                .seq(member.getSeq())
+                .id(member.getId())
                 .memberId(member.getMemberId())
                 .password(member.getPassword())
                 .nickName(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())
                 .birthDay(member.getBirthDay())
                 .intro(member.getIntro())
-                .imagePath(member.getImagePath())
                 .deleteYn(member.getDeleteYn())
                 .build();
     }

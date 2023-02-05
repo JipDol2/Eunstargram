@@ -27,7 +27,8 @@ const saveFile = async (event) =>{
     };
 
     try{
-        const response = await fetchFileData('/api/member/uploadProfileImage',options);
+        const response = await fetchFileData('/api/member/profileImage',options);
+        document.getElementById("profileImage").src = '/upload/' + response.storedFileName;
         /**
          * TODO: 이미지 업로드 이후 modal 창 닫기 그리고 프로필 사진 변경 적용
          * TODO: fetch 를 사용해서 multipart-form server 로 전송 방법 블로그에 글 쓰기

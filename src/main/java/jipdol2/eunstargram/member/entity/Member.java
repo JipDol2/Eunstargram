@@ -1,6 +1,6 @@
 package jipdol2.eunstargram.member.entity;
 
-import jipdol2.eunstargram.image.entity.ProfileImage;
+import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
@@ -19,7 +19,7 @@ import java.util.List;
 public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+    private Long id;
 
     private String memberId;
 
@@ -33,8 +33,6 @@ public class Member extends BaseTimeEntity {
 
     private String intro;
 
-    private String imagePath;
-
     private String deleteYn;
 
     @OneToMany(mappedBy = "member")
@@ -43,9 +41,8 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-//    @OneToOne(mappedBy = "member")
-//    private ProfileImage profileImage;
-
+    @OneToMany(mappedBy = "member")
+    private List<Image> image = new ArrayList<>();
 
     @Builder
     public Member(
@@ -55,7 +52,6 @@ public class Member extends BaseTimeEntity {
             String phoneNumber,
             String birthDay,
             String intro,
-            String imagePath,
             String deleteYn
     ) {
         this.memberId = memberId;
@@ -64,7 +60,6 @@ public class Member extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;
-        this.imagePath = imagePath;
         this.deleteYn = deleteYn;
     }
 
@@ -88,10 +83,6 @@ public class Member extends BaseTimeEntity {
         this.intro = intro;
     }
 
-    public void changeImagePath(String imagePath){
-        this.imagePath = imagePath;
-    }
-
     public void changeDeleteYn(String deleteYn){
         this.deleteYn = deleteYn;
     }
@@ -102,7 +93,6 @@ public class Member extends BaseTimeEntity {
         this.phoneNumber = updateRequestDTO.getPhoneNumber();
         this.birthDay = updateRequestDTO.getBirthDay();
         this.intro = updateRequestDTO.getIntro();
-        this.imagePath = updateRequestDTO.getImagePath();
         this.deleteYn = updateRequestDTO.getDeleteYn();
     }
 }

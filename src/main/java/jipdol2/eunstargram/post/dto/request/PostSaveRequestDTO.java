@@ -2,20 +2,20 @@ package jipdol2.eunstargram.post.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @ToString
 public class PostSaveRequestDTO {
-
-    private String imagePath;
 
     private Long likeNumber;
 
     private String content;
 
     private Long memberId;
+
+    private MultipartFile image;
 
     /**
      * json 형태의 데이터를 객체형태로 변환하는데 JackSon Library 가 사용된다.
@@ -26,8 +26,7 @@ public class PostSaveRequestDTO {
     }
 
     @Builder
-    public PostSaveRequestDTO(String imagePath, Long likeNumber, String content, Long memberId) {
-        this.imagePath = imagePath;
+    public PostSaveRequestDTO(Long likeNumber, String content, Long memberId) {
         this.likeNumber = likeNumber;
         this.content = content;
         this.memberId = memberId;

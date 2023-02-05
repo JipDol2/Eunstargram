@@ -15,16 +15,16 @@ public class MemberRepository {
 
     public Long save(Member member){
         em.persist(member);
-        return member.getSeq();
+        return member.getId();
     }
 
-    public Optional<Member> findByOne(Long seq){
-        return Optional.ofNullable(em.find(Member.class,seq));
+    public Optional<Member> findByOne(Long id){
+        return Optional.ofNullable(em.find(Member.class,id));
     }
 
-    public List<Member> findByOneId(String id){
-        return em.createQuery("SELECT m FROM Member m WHERE m.memberId = :id",Member.class)
-                .setParameter("id",id)
+    public List<Member> findByMemberId(String memberId){
+        return em.createQuery("SELECT m FROM Member m WHERE m.memberId = :memberId",Member.class)
+                .setParameter("memberId",memberId)
                 .getResultList();
     }
 
