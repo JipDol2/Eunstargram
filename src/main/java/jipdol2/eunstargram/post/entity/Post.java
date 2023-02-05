@@ -2,6 +2,7 @@ package jipdol2.eunstargram.post.entity;
 
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
+import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.*;
 
@@ -17,7 +18,7 @@ public class Post extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String imagePath;
+//    private String imagePath;
 
     private Long likeNumber;
 
@@ -35,9 +36,11 @@ public class Post extends BaseTimeEntity {
 //    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToOne(mappedBy = "post")
+    private Image image;
+
     @Builder
-    public Post(String imagePath, Long likeNumber, String content, Member member) {
-        this.imagePath = imagePath;
+    public Post(Long likeNumber, String content, Member member,Image image) {
         this.likeNumber = likeNumber;
         this.content = content;
         /**
@@ -48,6 +51,12 @@ public class Post extends BaseTimeEntity {
         }
         this.member = member;
         member.getPosts().add(this);
+
+        this.image = image;
+    }
+
+    public void changeImage(Image image){
+        this.image = image;
     }
 
 }

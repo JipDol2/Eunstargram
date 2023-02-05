@@ -1,7 +1,6 @@
 package jipdol2.eunstargram.member.entity;
 
-import jipdol2.eunstargram.image.entity.PostImage;
-import jipdol2.eunstargram.image.entity.ProfileImage;
+import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
@@ -42,12 +41,8 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member")
-    private ProfileImage profileImage;
-
     @OneToMany(mappedBy = "member")
-    private List<PostImage> postImages = new ArrayList<>();
-
+    private List<Image> image = new ArrayList<>();
 
     @Builder
     public Member(
@@ -90,10 +85,6 @@ public class Member extends BaseTimeEntity {
 
     public void changeDeleteYn(String deleteYn){
         this.deleteYn = deleteYn;
-    }
-
-    public void changeProfileImage(ProfileImage profileImage){
-        this.profileImage = profileImage;
     }
 
     public void changeMember(MemberUpdateRequestDTO updateRequestDTO){

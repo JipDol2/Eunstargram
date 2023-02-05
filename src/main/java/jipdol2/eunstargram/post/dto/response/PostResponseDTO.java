@@ -16,6 +16,8 @@ public class PostResponseDTO {
 
     private Long memberId;
 
+    //TODO ImageDTO 생성 후 여기에 dto 필드 추가 필요
+
     public PostResponseDTO(Long id, Long likeNumber, String content, Long memberId) {
         this.id = id;
         this.likeNumber = likeNumber;

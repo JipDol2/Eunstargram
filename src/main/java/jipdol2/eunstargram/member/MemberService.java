@@ -1,12 +1,11 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.image.entity.PostImage;
-import jipdol2.eunstargram.image.entity.PostImageJpaRepository;
-import jipdol2.eunstargram.image.entity.ProfileImage;
-import jipdol2.eunstargram.image.entity.ProfileImageJpaRepository;
+import jipdol2.eunstargram.image.ImageService;
+import jipdol2.eunstargram.image.entity.Image;
+import jipdol2.eunstargram.image.entity.ImageCode;
+import jipdol2.eunstargram.image.entity.ImageJpaRepository;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
-import jipdol2.eunstargram.member.dto.request.MemberProfileImageDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
@@ -15,34 +14,24 @@ import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.pool.TypePool;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
-    //TODO: 후에 AWS(S3) 로 교체해야 함
-    @Value("${com.upload.path}")
-    private String uploadPath;
-
+    //Service
+    private final ImageService imageService;
+    //Respository
     private final MemberRepository memberRepository;
     private final MemberJpaRepository memberJpaRepository;
-    private final ProfileImageJpaRepository profileImageJpaRepository;
-    private final PostImageJpaRepository postImageJpaRepository;
+    private final ImageJpaRepository imageJpaRepository;
+
 
     @Transactional
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
@@ -122,59 +111,26 @@ public class MemberService {
     }
 
     @Transactional
-    public ProfileImage uploadProfileImage(MultipartFile imageDTO){
+    public Image uploadProfileImage(MultipartFile imageDTO){
 
-        String imageName = uploadImage(imageDTO);
+        String imageName = imageService.uploadImage(imageDTO);
 
-        //TODO: ProfileImage Entity 에 save
+        //TODO: Image Entity 에 save
         //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
         Member findByMember = memberJpaRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
 
-        ProfileImage profileImage = ProfileImage.builder()
+        Image image = Image.builder()
                 .originalFileName(imageDTO.getOriginalFilename())
                 .storedFileName(imageName)
                 .member(findByMember)
+                .imageCode(ImageCode.PROFILE)
                 .build();
 
-        profileImageJpaRepository.save(profileImage);
+        imageJpaRepository.save(image);
 
-        return profileImage;
+        return image;
     }
 
-    @Transactional
-    public List<PostImage> findByPostImages(Long memberId){
-        return postImageJpaRepository.findByMemberId(memberId);
-    }
 
-    private String uploadImage(MultipartFile imageDTO){
-
-        /**
-         * TODO: 이미지 파일 저장 방법?
-         * https://workshop-6349.tistory.com/entry/Spring-Boot-%ED%8C%8C%EC%9D%BC%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C%ED%95%98%EA%B8%B0
-         * https://velog.io/@alswl689/SpringBoot-with-JPA-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8MN-4.%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C%EC%8D%B8%EB%84%A4%EC%9D%BC%EC%9D%B4%EB%AF%B8%EC%A7%80%EC%82%AD%EC%A0%9C
-         */
-
-        //디렉토리 생성
-        String toDay = String.valueOf(LocalDate.now().getYear());
-        String folderPath = (uploadPath + "upload/" + toDay).replace("/",File.separator);
-        File folder = new File(folderPath);
-
-        if(!folder.exists()){
-            folder.mkdirs();
-        }
-
-        String uuid = UUID.randomUUID().toString();
-        String imageName = uuid + "_" + imageDTO.getOriginalFilename();
-        String saveName = folderPath + File.separator + imageName;
-        Path path = Paths.get(saveName);
-
-        try{
-            imageDTO.transferTo(path);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return imageName;
-    }
 }

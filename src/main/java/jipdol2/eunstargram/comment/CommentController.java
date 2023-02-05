@@ -19,7 +19,7 @@ public class CommentController {
 
     private final CommentSerivce commentSerivce;
 
-    //TODO: 2023/01/14 댓글 업로드 API 생성
+    /** 2023/01/14 댓글 업로드 API 생성 **/
     @PostMapping("/upload")
     public ResponseEntity<EmptyJSON> uploadComment(@RequestBody CommentSaveRequestDTO commentSaveRequestDTO){
 
