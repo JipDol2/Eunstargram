@@ -1,25 +1,25 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.image.ImageService;
+import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
+import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
-import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
+import jipdol2.eunstargram.member.entity.MemberRepository;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
+import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.post.entity.PostRepository;
-import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.member.entity.Member;
-import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.TransactionScoped;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,7 +35,7 @@ public class PostService {
     private final ImageJpaRepository imageJpaRepository;
 
     @Transactional
-    public EmptyJSON save(PostSaveRequestDTO postDto) {
+    public List<PostResponseDTO> save(PostSaveRequestDTO postDto) {
         /**
          * 2023/01/10
          * TODO Post Entity 에는 member 객체가 존재, insert 해주어야함
@@ -53,23 +53,37 @@ public class PostService {
                 .image(image)
                 .build());
 
-        /**
-         * 2023/02/05
-         * TODO 게시글을 업로드
-         * TODO 업로드한 게시글 목록(전체)들을 조회하여 클라이언트에게 전달
-         */
-        return new EmptyJSON();
+        List<Post> findByPosts = postRepository.findByAll(member.getId());
+
+        return findByPosts.stream()
+                .map(PostService::apply)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<PostResponseDTO> findByAll(Long memberSeq){
-        return postRepository.findByAll(memberSeq);
+    public List<PostResponseDTO> findByAll(Long memberId){
+
+        Member findByMember = memberJpaRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+
+        List<Image> findByImages = imageJpaRepository.findByMember(findByMember);
+
+        List<Post> findByPosts = postRepository.findByAll(memberId);
+        findByPosts.forEach(p-> System.out.println(p.getMember().toString()));
+
+        return findByPosts.stream()
+                .map(PostService::apply)
+                .collect(Collectors.toList());
     }
 
-    @Transactional
+    private static PostResponseDTO apply(Post p) {
+        return new PostResponseDTO(p, new ImageDTO(p.getImage()));
+    }
+
+/*    @Transactional
     public List<PostResponseDTO> findByAll(String memberId){
         return postRepository.findByAll(memberId);
-    }
+    }*/
 
     @Transactional
     public Image uploadPostImage(MultipartFile imageDTO){

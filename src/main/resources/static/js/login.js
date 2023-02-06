@@ -20,8 +20,8 @@ const loginOperation = async (event) =>{
         const token = response.token;
         const seq = response.id;
         if(token){
-            localStorage.setItem("Authorization",token);
-            localStorage.setItem("Seq",seq);
+            sessionStorage.setItem("Authorization",token);
+            sessionStorage.setItem("Seq",seq);
         }
         location.href = location.origin+"/";
     }catch(e){

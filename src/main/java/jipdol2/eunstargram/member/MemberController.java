@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
@@ -62,7 +63,7 @@ public class MemberController {
     //TODO : response 시 Image Entity 말고 DTO 를 리턴(DTO class 생성 필요)
     /** 2023/01/25 회원 프로필 이미지 업로드 API 생성 **/
     @PostMapping("/profileImage")
-    public ResponseEntity<Image> uploadProfileImage(@RequestParam("image") MultipartFile profileImage){
+    public ResponseEntity<ImageDTO> uploadProfileImage(@RequestParam("image") MultipartFile profileImage){
         log.info("image={}",profileImage.getOriginalFilename());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(profileImage));
     }

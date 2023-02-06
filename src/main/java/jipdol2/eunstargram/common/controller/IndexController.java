@@ -33,8 +33,8 @@ public class IndexController {
 
     @GetMapping("/{memberId}")
     public String profile(Model model, @PathVariable("memberId") String memberId){
-        List<PostResponseDTO> posts = postService.findByAll(memberId);
-        model.addAttribute("posts",posts);
+//        List<PostResponseDTO> posts = postService.findByAll(memberId);
+//        model.addAttribute("posts",posts);
         return "posts";
     }
 }

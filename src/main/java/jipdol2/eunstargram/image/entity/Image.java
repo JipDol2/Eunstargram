@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.image.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.post.entity.Post;
@@ -23,6 +24,8 @@ public class Image extends BaseTimeEntity {
 
     private ImageCode imageCode;
 
+//    @JsonIgnore : image entity를 직접 클라이언트에게 응답했었다. 그러나 무한순환참조로 인한 에러 발생
+//    @JsonIgnore 어노테이션으로 해결할 수 있지만 좋지 못한 방법->DTO 를 생성해라
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Member member;

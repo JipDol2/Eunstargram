@@ -6,7 +6,7 @@ const addIndexEvent = () =>{
 }
 
 const validationLogin = () =>{
-    const token = localStorage.getItem("Authorization");
+    const token = sessionStorage.getItem("Authorization");
     if(token){
         const logoutState = document.getElementById("logoutState");
         logoutState.classList.toggle("d-none");

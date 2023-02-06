@@ -26,9 +26,10 @@ public class PostSaveRequestDTO {
     }
 
     @Builder
-    public PostSaveRequestDTO(Long likeNumber, String content, Long memberId) {
+    public PostSaveRequestDTO(Long likeNumber, String content, Long memberId, MultipartFile image) {
         this.likeNumber = likeNumber;
         this.content = content;
         this.memberId = memberId;
+        this.image = image;
     }
 }

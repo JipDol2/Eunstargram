@@ -2,6 +2,7 @@ package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.image.ImageService;
+import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
@@ -111,7 +112,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Image uploadProfileImage(MultipartFile imageDTO){
+    public ImageDTO uploadProfileImage(MultipartFile imageDTO){
 
         String imageName = imageService.uploadImage(imageDTO);
 
@@ -129,7 +130,7 @@ public class MemberService {
 
         imageJpaRepository.save(image);
 
-        return image;
+        return new ImageDTO(image);
     }
 
 
