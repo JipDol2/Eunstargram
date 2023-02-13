@@ -13,19 +13,19 @@
                     <div class="profile_wrap">
                         <div class="profile_img">
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#profileModal">
                                 <img src="/upload/fox.jpg" alt="착한호랑이" id="profileImage">
                             </button>
                             <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header justify-content-center">
-                                            <h5 class="modal-title" id="exampleModalLabel">프로필 사진 바꾸기</h5>
+                                            <h5 class="modal-title" id="profileModalLabel">프로필 사진 바꾸기</h5>
                                             <!--                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
                                         </div>
                                         <div class="modal-body d-flex flex-column">
-                                            <button type="button" class="btn btn-light _a0" id="openImgUpload">사진 업로드</button>
+                                            <button type="button" class="btn btn-light _a0" id="openImgUpload">프로필 사진 업로드</button>
                                             <input type="file" id="myFile" name="myFile" style="display: none">
                                             <button type="button" class="btn btn-light _a0">현재 사진 삭제</button>
                                         </div>
@@ -42,8 +42,28 @@
                 <div class="detail">
                     <div class="top">
                         <div class="user_name">KindTiger</div>
-                        <a href="profile_edit.html" class="profile_edit">프로필편집</a>
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#postsModal">게시글 업로드</button>
+<!--                        <a href="profile_edit.html" class="profile_edit">게시글 업로드</a>-->
                         <a href="#" class="logout">로그아웃</a>
+                        <!-- Modal -->
+                        <div class="modal fade" id="postsModal" tabindex="-1" aria-labelledby="postsModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header justify-content-center">
+                                        <h5 class="modal-title" id="postsModalLabel">게시글 업로드</h5>
+                                    </div>
+                                    <div class="modal-body d-flex flex-column">
+                                        <button type="button" class="btn btn-light _a0" id="openPostUpload">사진 업로드</button>
+                                        <input type="file" id="contentFile" name="myFile" style="display: none">
+                                        <textarea id="content" rows="10"></textarea>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="button" class="btn btn-primary" id="savePosts" data-bs-dismiss="modal">저장</button>
+                                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">취소</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <ul class="middle">
                         <li>

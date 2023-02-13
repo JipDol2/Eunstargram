@@ -80,11 +80,6 @@ public class PostService {
         return new PostResponseDTO(p, new ImageDTO(p.getImage()));
     }
 
-/*    @Transactional
-    public List<PostResponseDTO> findByAll(String memberId){
-        return postRepository.findByAll(memberId);
-    }*/
-
     @Transactional
     public Image uploadPostImage(MultipartFile imageDTO){
 

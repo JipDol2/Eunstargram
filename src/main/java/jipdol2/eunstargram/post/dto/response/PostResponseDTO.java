@@ -31,6 +31,7 @@ public class PostResponseDTO {
         this.memberId = memberId;
         this.imageDTO = imageDTO;
     }
+
     public PostResponseDTO(Post post,ImageDTO imageDTO){
         this.id = post.getId();
         this.likeNumber = post.getLikeNumber();

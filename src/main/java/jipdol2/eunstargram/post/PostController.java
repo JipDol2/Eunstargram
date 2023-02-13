@@ -21,6 +21,7 @@ public class PostController {
 
     private final PostService postService;
 
+    //TODO : @RequestBody -> @ModelAttribute 변경 필요
     /** 2023/01/10 게시글 업로드 API 생성 **/
     @PostMapping("/upload")
     public ResponseEntity<List<PostResponseDTO>> uploadPost(@RequestBody PostSaveRequestDTO postDto){
@@ -30,10 +31,10 @@ public class PostController {
 
     /** 2023/01/12 전체 게시글 조회 **/
     @GetMapping("/{memberId}")
-    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(@PathVariable("memberId") Long memberSeq){
-        log.info("memberSeq={}",memberSeq);
+    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(@PathVariable("memberId") Long memberId){
+        log.info("memberId={}",memberId);
         //TODO: 현재 memberSeq 로 조회하지만 memberId 로 수정 필요
-        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberSeq));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
     }
 
     /** 2023/02/02 포스팅 글 전체 가져오기 **/

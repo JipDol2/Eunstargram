@@ -1,24 +1,41 @@
 const addPostsEvent = () => {
-    const openImgUpload  = document.getElementById("openImgUpload");
-    openImgUpload.addEventListener("click",uploadImage);
+
+    const profileInfo = getProfileInfo();
 
     const saveFileForm = document.getElementById("saveFile");
     saveFileForm.addEventListener("click",saveFile);
+
+    const savePostsForm = document.getElementById("savePosts");
+    savePosts.addEventListener("click",saveFile);
 }
 
-//TODO : 111111순위다 이게 일본다녀와서 제일 먼저 해야할 일
-//TODO : post.html 에 접속했을때 프로필 정보와 게시글 정보들을 가져오는 로직 작성
+const getProfileInfo = async(event) => {
 
-const uploadImage = async (event) => {
-    event.preventDefault();
-    document.getElementById("myFile").click();
+    const memberId = 1;
+
+    const options = {
+        method: 'GET'
+    }
+
+    try{
+        const response = await fetchData('/api/post/'+memberId,options);
+        console.log(response);
+    }catch (e){
+
+    }
+
 }
 
+/**
+ * 이미지 파일 저장
+ * @param event
+ * @returns {Promise<void>}
+ */
 const saveFile = async (event) =>{
     event.preventDefault();
     const image = document.getElementById("myFile");
-    const formData = new FormData();
 
+    const formData = new FormData();
     formData.append('image',image.files[0]);
 
     for(let value of formData.values()){
@@ -43,6 +60,42 @@ const saveFile = async (event) =>{
          * TODO: fetch 를 사용해서 multipart-form server 로 전송 방법 블로그에 글 쓰기
          * TODO: https://stackoverflow.com/questions/35192841/how-do-i-post-with-multipart-form-data-using-fetch
          */
+    }catch(e){
+
+    }
+}
+
+/**
+ * 게시글 업로드
+ * @param event
+ * @returns {Promise<void>}
+ */
+const savePosts = async(event)=>{
+    event.preventDefault();
+    const image = document.getElementById("contentFile");
+
+    const requestPostDTO = {
+        likeNumber : 0,
+        content : document.getElementById("content").value,
+        memberId : 1,
+        image : image
+    };
+
+    const formData = new FormData();
+    formData.append("requestPostDTO",requestPostDTO);
+
+    console.log(`requestPostDTO : ${requestPostDTO}`);
+
+    const options={
+        method:'POST',
+        body:formData
+    };
+
+    try{
+        const response = await fetchFileData('/api/post/upload',options);
+        for(let i=0;i<response.size;i++){
+            console.log(response.likeNumber[i]);
+        }
     }catch(e){
 
     }
