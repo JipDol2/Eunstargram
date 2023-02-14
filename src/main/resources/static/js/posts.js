@@ -2,11 +2,17 @@ const addPostsEvent = () => {
 
     const profileInfo = getProfileInfo();
 
+    const openImgUpload = document.getElementById("openImgUpload");
+    openImgUpload.addEventListener("click",uploadImage);
+
     const saveFileForm = document.getElementById("saveFile");
     saveFileForm.addEventListener("click",saveFile);
 
+    const openPostUpload = document.getElementById("openPostUpload");
+    openPostUpload.addEventListener("click",uploadImage);
+
     const savePostsForm = document.getElementById("savePosts");
-    savePosts.addEventListener("click",saveFile);
+    savePostsForm.addEventListener("click",savePosts);
 }
 
 const getProfileInfo = async(event) => {
@@ -23,7 +29,20 @@ const getProfileInfo = async(event) => {
     }catch (e){
 
     }
-
+}
+/**
+ * 프로필 사진 업로드 버튼 클릭시 myFile input 클릭 이벤트 실행
+ * @param event
+ * @returns {Promise<void>}
+ */
+const uploadImage = async (event) => {
+    event.preventDefault();
+    const buttonId = event.target.id;
+    if(buttonId==="myFile"){
+        document.getElementById("myFile").click();
+    }else{
+        document.getElementById("contentFile").click();
+    }
 }
 
 /**
@@ -74,17 +93,11 @@ const savePosts = async(event)=>{
     event.preventDefault();
     const image = document.getElementById("contentFile");
 
-    const requestPostDTO = {
-        likeNumber : 0,
-        content : document.getElementById("content").value,
-        memberId : 1,
-        image : image
-    };
-
     const formData = new FormData();
-    formData.append("requestPostDTO",requestPostDTO);
-
-    console.log(`requestPostDTO : ${requestPostDTO}`);
+    formData.append("likeNumber",0);
+    formData.append("content",document.getElementById("content").value);
+    formData.append("memberId",1);
+    formData.append("image",image.files[0]);
 
     const options={
         method:'POST',

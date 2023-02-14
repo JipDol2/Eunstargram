@@ -24,7 +24,7 @@ public class PostController {
     //TODO : @RequestBody -> @ModelAttribute 변경 필요
     /** 2023/01/10 게시글 업로드 API 생성 **/
     @PostMapping("/upload")
-    public ResponseEntity<List<PostResponseDTO>> uploadPost(@RequestBody PostSaveRequestDTO postDto){
+    public ResponseEntity<List<PostResponseDTO>> uploadPost(@ModelAttribute PostSaveRequestDTO postDto){
         log.info("articleDTO={}",postDto.toString());
         return ResponseEntity.status(HttpStatus.OK).body(postService.save(postDto));
     }

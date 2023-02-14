@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.PostPersist;
-
 @Getter @Setter
 @ToString
 public class PostResponseDTO {
