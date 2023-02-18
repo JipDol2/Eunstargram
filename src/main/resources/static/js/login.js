@@ -18,10 +18,10 @@ const loginOperation = async (event) =>{
     try{
         const response = await fetchData("/api/member/login",header);
         const token = response.token;
-        const seq = response.id;
+        const id = response.id;
         if(token){
             sessionStorage.setItem("Authorization",token);
-            sessionStorage.setItem("Seq",seq);
+            sessionStorage.setItem("Id",id);
         }
         location.href = location.origin+"/";
     }catch(e){

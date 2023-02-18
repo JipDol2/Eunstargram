@@ -36,7 +36,14 @@ public class Post extends BaseTimeEntity {
 //    @Builder.Default
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToOne(mappedBy = "post")
+    /**
+     * 2023-02-19
+     * OneToOne 관계일때는 범위가 더 큰 객체가 연관관계의 주인으로 설정하자.
+     * Post 를 조회할때 당연히 image 도 같이 조회되어야 하는데 Image 객체를 연관관계의 주인으로 설정했을 경우
+     * Post 를 조회했음에도 불구하고 image 를 조회하지 못하는 문제가 발생했었음.
+     */
+    @OneToOne
+    @JoinColumn(name = "IMAGE_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Image image;
 
     @Builder

@@ -17,7 +17,7 @@ const addPostsEvent = () => {
 
 const getProfileInfo = async(event) => {
 
-    const memberId = 1;
+    const memberId = sessionStorage.getItem("Id");
 
     const options = {
         method: 'GET'
@@ -25,6 +25,7 @@ const getProfileInfo = async(event) => {
 
     try{
         const response = await fetchData('/api/post/'+memberId,options);
+
         console.log(response);
     }catch (e){
 
@@ -82,6 +83,7 @@ const saveFile = async (event) =>{
     }catch(e){
 
     }
+    location.reload();
 }
 
 /**
@@ -94,7 +96,7 @@ const savePosts = async(event)=>{
     const image = document.getElementById("contentFile");
 
     const formData = new FormData();
-    formData.append("likeNumber",0);
+    // formData.append("likeNumber",0);
     formData.append("content",document.getElementById("content").value);
     formData.append("memberId",1);
     formData.append("image",image.files[0]);
@@ -109,9 +111,11 @@ const savePosts = async(event)=>{
         for(let i=0;i<response.size;i++){
             console.log(response.likeNumber[i]);
         }
+
     }catch(e){
 
     }
+    location.reload();
 }
 
 addPostsEvent();

@@ -35,7 +35,7 @@ public class PostService {
     private final ImageJpaRepository imageJpaRepository;
 
     @Transactional
-    public List<PostResponseDTO> save(PostSaveRequestDTO postDto) {
+    public Long save(PostSaveRequestDTO postDto) {
         /**
          * 2023/01/10
          * TODO Post Entity 에는 member 객체가 존재, insert 해주어야함
@@ -46,18 +46,12 @@ public class PostService {
 
         Image image = uploadPostImage(postDto.getImage());
 
-        postRepository.save(Post.builder()
-                .likeNumber(postDto.getLikeNumber())
+        return postRepository.save(Post.builder()
+                .likeNumber(0L)
                 .content(postDto.getContent())
                 .member(member)
                 .image(image)
                 .build());
-
-        List<Post> findByPosts = postRepository.findByAll(member.getId());
-
-        return findByPosts.stream()
-                .map(PostService::apply)
-                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -66,10 +60,7 @@ public class PostService {
         Member findByMember = memberJpaRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
 
-        List<Image> findByImages = imageJpaRepository.findByMember(findByMember);
-
-        List<Post> findByPosts = postRepository.findByAll(memberId);
-        findByPosts.forEach(p-> System.out.println(p.getMember().toString()));
+        List<Post> findByPosts = postRepository.findMemberIdByAll(findByMember.getId());
 
         return findByPosts.stream()
                 .map(PostService::apply)

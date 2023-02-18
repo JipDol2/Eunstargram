@@ -7,6 +7,7 @@ import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
+import jipdol2.eunstargram.member.dto.response.MemberLoginResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class MemberController {
     }
     /** 2022/01/09 로그인 API 생성 **/
     @PostMapping("/login")
-    public ResponseEntity<?> loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
+    public ResponseEntity<MemberLoginResponseDTO> loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
         log.info("memberLoginRequestDTO={}", memberLoginRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.login(memberLoginRequestDTO));
     }

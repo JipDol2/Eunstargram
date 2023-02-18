@@ -24,17 +24,17 @@ public class PostRepository {
     }
 
     public List<Post> findByAll(Long id){
-        return em.createQuery("SELECT a " +
-                        "FROM Post a INNER JOIN a.member m WHERE m.id = :id")
+        return em.createQuery("SELECT p " +
+                        "FROM Post p INNER JOIN p.member m WHERE m.id = :id")
                 .setParameter("id",id)
                 .getResultList();
     }
 
-/*    public List<PostResponseDTO> findByAll(String memberId){
-        return em.createQuery("SELECT new jipdol2.eunstargram.post.dto.response.PostResponseDTO(p.id,p.likeNumber,p.content,m.id) " +
-                        "FROM Post p INNER JOIN p.member m WHERE m.memberId = :memberId")
+    public List<Post> findMemberIdByAll(Long memberId){
+        return em.createQuery("SELECT p " +
+                        "FROM Post p INNER JOIN p.member m WHERE m.id = :memberId")
                 .setParameter("memberId",memberId)
                 .getResultList();
-    }*/
+    }
 
 }

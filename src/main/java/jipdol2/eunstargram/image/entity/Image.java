@@ -30,8 +30,8 @@ public class Image extends BaseTimeEntity {
     @JoinColumn(name = "MEMBER_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
-    @OneToOne
-    @JoinColumn(name = "POST_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    @OneToOne(mappedBy = "image")
+//    @JoinColumn(name = "POST_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Post post;
 
     @Builder
