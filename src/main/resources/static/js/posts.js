@@ -1,7 +1,5 @@
 const addPostsEvent = () => {
 
-    const profileInfo = getProfileInfo();
-
     const openImgUpload = document.getElementById("openImgUpload");
     openImgUpload.addEventListener("click",uploadImage);
 
@@ -14,7 +12,11 @@ const addPostsEvent = () => {
     const savePostsForm = document.getElementById("savePosts");
     savePostsForm.addEventListener("click",savePosts);
 }
-
+/**
+ * 로그인 후 게시글 페이지 로딩
+ * @param event
+ * @returns {Promise<void>}
+ */
 const getProfileInfo = async(event) => {
 
     const memberId = sessionStorage.getItem("Id");
@@ -26,7 +28,26 @@ const getProfileInfo = async(event) => {
     try{
         const response = await fetchData('/api/post/'+memberId,options);
 
-        console.log(response);
+        const root = document.querySelector('.mylist_contents');
+
+        response.forEach(element=>{
+            const divTag = document.createElement("div");
+            divTag.className='pic';
+
+            const aTag = document.createElement("a");
+            aTag.href = '#';
+
+            const img = document.createElement("img");
+            // console.log(element.imageDTO.storedFileName)
+            img.src = `/upload/${element.imageDTO.storedFileName}`;
+
+            aTag.appendChild(img);
+            divTag.appendChild(aTag);
+            root.appendChild(divTag);
+        });
+
+        console.log(root);
+        // console.log(response);
     }catch (e){
 
     }
@@ -58,9 +79,9 @@ const saveFile = async (event) =>{
     const formData = new FormData();
     formData.append('image',image.files[0]);
 
-    for(let value of formData.values()){
-        console.log(value);
-    }
+    // for(let value of formData.values()){
+    //     console.log(value);
+    // }
     const options = {
         method:'POST',
         body: formData
@@ -70,8 +91,8 @@ const saveFile = async (event) =>{
 
     try{
         response = await fetchFileData('/api/member/profileImage',options);
-        console.log(response.storedFileName);
-        console.log(response.originalFileName);
+        // console.log(response.storedFileName);
+        // console.log(response.originalFileName);
 
         document.getElementById("profileImage").src = '/upload/' + response.storedFileName;
 
@@ -108,14 +129,10 @@ const savePosts = async(event)=>{
 
     try{
         const response = await fetchFileData('/api/post/upload',options);
-        for(let i=0;i<response.size;i++){
-            console.log(response.likeNumber[i]);
-        }
-
     }catch(e){
 
     }
     location.reload();
 }
-
+getProfileInfo();
 addPostsEvent();

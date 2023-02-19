@@ -12,12 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.FileInputStream;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,13 +70,13 @@ class PostControllerTest {
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
 
-        String json = objectMapper.writeValueAsString(postSaveRequestDTO);
-
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post(COMMON_URL+ "/upload")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-        )
+        mockMvc.perform(MockMvcRequestBuilders.multipart(COMMON_URL+ "/upload")
+                        .file((MockMultipartFile)postSaveRequestDTO.getImage())
+                        .param("likeNumber",Long.toString(postSaveRequestDTO.getLikeNumber()))
+                        .param("content",postSaveRequestDTO.getContent())
+                        .param("memberId",Long.toString(postSaveRequestDTO.getMemberId()))
+                )
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -121,28 +124,38 @@ class PostControllerTest {
         return member;
     }
 
-    private PostSaveRequestDTO createPostRequestDTO() {
+    private PostSaveRequestDTO createPostRequestDTO() throws Exception{
         PostSaveRequestDTO postSaveRequestDTO = PostSaveRequestDTO.builder()
                 .likeNumber(1L)
                 .content("행복한 하루")
                 .memberId(1L)
+                .image(createMultipartFile())
                 .build();
         return postSaveRequestDTO;
     }
 
-    private List<PostSaveRequestDTO> createPostRequestListDTO(){
+    private List<PostSaveRequestDTO> createPostRequestListDTO() throws Exception{
         return List.of(
                 PostSaveRequestDTO.builder()
                         .likeNumber(1L)
                         .content("행복한 하루")
                         .memberId(1L)
+                        .image(createMultipartFile())
                         .build(),
                 PostSaveRequestDTO.builder()
                         .likeNumber(2L)
                         .content("웃는 하루")
                         .memberId(1L)
+                        .image(createMultipartFile())
                         .build()
         );
+    }
+
+    private MockMultipartFile createMultipartFile() throws Exception {
+        String originalFileName = "testImage.jpg";
+        String path = "src/test/resources/img/" + originalFileName;
+
+        return new MockMultipartFile("image", originalFileName, "image/jpg",new FileInputStream(path));
     }
 
 }

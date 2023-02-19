@@ -38,7 +38,7 @@ public class MemberController {
         log.info("memberLoginRequestDTO={}", memberLoginRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.login(memberLoginRequestDTO));
     }
-    /** 2023/01/15 회원수정 API 생성 **/
+    /** 2023/01/15 회원정보수정 API 생성 **/
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateMember(@PathVariable("id") Long seq,@RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO){
         log.info("memberUpdateRequestDTO={}",memberUpdateRequestDTO.toString());

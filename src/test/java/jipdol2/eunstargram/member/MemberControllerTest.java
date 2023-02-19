@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.io.FileInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -57,7 +60,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/signUp 요청시 200 status code 리턴")
+    @DisplayName("회원가입 : /api/member/signUp 요청시 200 status code 리턴")
     @Transactional
     void signUpTest() throws Exception {
 
@@ -85,7 +88,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/login 요청시 200 status + true 리턴")
+    @DisplayName("로그인 : /api/member/login 요청시 200 status + true 리턴")
     @Transactional
     void loginTest() throws Exception {
 
@@ -111,7 +114,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/update/{id} 요청시 200 status code 리턴")
+    @DisplayName("회원정보수정 : /api/member/update/{id} 요청시 200 status code 리턴")
     @Transactional
     void updateTest() throws Exception{
 
@@ -140,7 +143,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/delete/{id} 요청시 200 status code 리턴")
+    @DisplayName("회원탈퇴 : /api/member/delete/{id} 요청시 200 status code 리턴")
     @Transactional
     void deleteTest() throws Exception {
         //given
@@ -160,7 +163,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/ 요청시 200 status code 와 회원정보들 리턴")
+    @DisplayName("회원 전체조회 : /api/member/ 요청시 200 status code 와 회원정보들 리턴")
     @Transactional
     void findByAllMemberTest() throws Exception {
         //expect
@@ -170,7 +173,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("/api/member/{id} 요청시 200 status code 와 회원정보 리턴")
+    @DisplayName("회원 조회 : /api/member/{id} 요청시 200 status code 와 회원정보 리턴")
     @Transactional
     void findByMemberTest() throws Exception {
         //given
@@ -183,6 +186,26 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.password").value("1234"))
                 .andDo(print());
 
+    }
+
+    @Test
+    @DisplayName("회원 프로필 이미지 업로드 : /api/member/profileImage 200 status code 리턴")
+    @Transactional
+    void uploadProfileImageTest() throws Exception{
+
+        Member member = createMember();
+        memberJpaRepository.save(member);
+
+        String originalFilename = "testImage.jpg";
+        String filePath = "src/test/resources/img/" + originalFilename;
+
+        MockMultipartFile mockImage = new MockMultipartFile("image", originalFilename, "image/jpg", new FileInputStream(filePath));
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart(COMMON_URL+"/profileImage")
+                .file(mockImage)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     private Member createMember() {
