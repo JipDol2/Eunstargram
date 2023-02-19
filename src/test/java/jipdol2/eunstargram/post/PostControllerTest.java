@@ -101,10 +101,10 @@ class PostControllerTest {
 
         //when
         mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/{id}","1"))
-                .andExpect(jsonPath("$[0].likeNumber").value(1L))
+                .andExpect(jsonPath("$[0].likeNumber").value(0L))
                 .andExpect(jsonPath("$[0].content").value("행복한 하루"))
                 .andExpect(jsonPath("$[0].memberId").value(1L))
-                .andExpect(jsonPath("$[1].likeNumber").value(2L))
+                .andExpect(jsonPath("$[1].likeNumber").value(0L))
                 .andExpect(jsonPath("$[1].content").value("웃는 하루"))
                 .andExpect(jsonPath("$[1].memberId").value(1L))
                 .andDo(print());
@@ -126,7 +126,6 @@ class PostControllerTest {
 
     private PostSaveRequestDTO createPostRequestDTO() throws Exception{
         PostSaveRequestDTO postSaveRequestDTO = PostSaveRequestDTO.builder()
-                .likeNumber(1L)
                 .content("행복한 하루")
                 .memberId(1L)
                 .image(createMultipartFile())
@@ -137,13 +136,11 @@ class PostControllerTest {
     private List<PostSaveRequestDTO> createPostRequestListDTO() throws Exception{
         return List.of(
                 PostSaveRequestDTO.builder()
-                        .likeNumber(1L)
                         .content("행복한 하루")
                         .memberId(1L)
                         .image(createMultipartFile())
                         .build(),
                 PostSaveRequestDTO.builder()
-                        .likeNumber(2L)
                         .content("웃는 하루")
                         .memberId(1L)
                         .image(createMultipartFile())

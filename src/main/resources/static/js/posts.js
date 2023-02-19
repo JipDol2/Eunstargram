@@ -94,7 +94,7 @@ const saveFile = async (event) =>{
         // console.log(response.storedFileName);
         // console.log(response.originalFileName);
 
-        document.getElementById("profileImage").src = '/upload/' + response.storedFileName;
+        document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
 
         /**
          * TODO: 이미지 업로드 이후 modal 창 닫기 그리고 프로필 사진 변경 적용
