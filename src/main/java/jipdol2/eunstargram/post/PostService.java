@@ -76,7 +76,7 @@ public class PostService {
 
         String imageName = imageService.uploadImage(imageDTO);
 
-        //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
+        //TODO: 후에 memberId 를 session or token 에서 가져온 값으로 변경 필요
         Member findByMember = memberJpaRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
 
@@ -90,5 +90,10 @@ public class PostService {
         imageJpaRepository.save(image);
 
         return image;
+    }
+
+
+    public void edit(){
+
     }
 }

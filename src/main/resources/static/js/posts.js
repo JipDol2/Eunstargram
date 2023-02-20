@@ -12,6 +12,9 @@ const addPostsEvent = () => {
     const savePostsForm = document.getElementById("savePosts");
     savePostsForm.addEventListener("click",savePosts);
 }
+
+//TODO: 이미지를 동적으로 추가한 뒤 그 이미지를 클릭했을 경우 모달창이 나와야 하는데.... 어떻게 구현?
+
 /**
  * 로그인 후 게시글 페이지 로딩
  * @param event

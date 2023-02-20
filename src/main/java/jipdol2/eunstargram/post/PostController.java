@@ -21,7 +21,6 @@ public class PostController {
 
     private final PostService postService;
 
-    //TODO : @RequestBody -> @ModelAttribute 변경 필요
     /** 2023/01/10 게시글 업로드 API 생성 **/
     @PostMapping("/upload")
     public ResponseEntity<Long> uploadPost(@ModelAttribute PostSaveRequestDTO postDto){
@@ -37,14 +36,16 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
     }
 
-    /** 2023/02/02 포스팅 글 전체 가져오기 **/
-    @GetMapping("/{memberId}/postImage")
-    public ResponseEntity<List<Image>> findByPostImage(@PathVariable("memberId") String memberId){
+    //TODO: 게시글 수정 api
+    //TODO: RequestDto 정의한다음에 edit 함수에 인자 넘겨주기
+    //TODO: 호돌맨 영상 보고 PostEdit class 만들어보기
+    //TODO: test code 작성
+    @PutMapping("/{memberId}/{postId}")
+    public ResponseEntity<?> editPost(@PathVariable("memberId") Long memberId,@PathVariable("postId") Long postId){
+        log.info("memberId={},postId={}",memberId,postId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    //TODO: 2023/01/19 게시글 힌건 조회(url 을 어떻게 정의해야되는지)
-
-    //TODO: 2023/02/05 게시글 이미지 전체 조회
+    //TODO : 게시글 삭제 api
 
 }

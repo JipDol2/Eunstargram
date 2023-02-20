@@ -60,7 +60,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 업로드시 200 status code 리턴")
+    @DisplayName("게시글 업로드 : 게시글 업로드시 200 status code 리턴")
     @Transactional
     void uploadPostTest() throws Exception {
 
@@ -85,7 +85,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("게시글 전체 조회 200 status code 리턴 + 게시글 리턴")
+    @DisplayName("게시글 전체 조회 : 게시글 전체 조회 200 status code 리턴 + 게시글 리턴")
     @Transactional
     void findByAllPosts() throws Exception{
 
@@ -104,9 +104,11 @@ class PostControllerTest {
                 .andExpect(jsonPath("$[0].likeNumber").value(0L))
                 .andExpect(jsonPath("$[0].content").value("행복한 하루"))
                 .andExpect(jsonPath("$[0].memberId").value(1L))
+                .andExpect(jsonPath("$[0].imageDTO.originalFileName").value("testImage.jpg"))
                 .andExpect(jsonPath("$[1].likeNumber").value(0L))
                 .andExpect(jsonPath("$[1].content").value("웃는 하루"))
                 .andExpect(jsonPath("$[1].memberId").value(1L))
+                .andExpect(jsonPath("$[1].imageDTO.originalFileName").value("testImage.jpg"))
                 .andDo(print());
         //then
         assertThat(postRepository.findByAll(1l).size()).isEqualTo(2);
