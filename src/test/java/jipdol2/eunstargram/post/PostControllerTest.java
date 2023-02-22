@@ -1,9 +1,13 @@
 package jipdol2.eunstargram.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jipdol2.eunstargram.image.entity.Image;
+import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
+import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.post.entity.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,10 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,9 +29,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -114,6 +124,43 @@ class PostControllerTest {
         assertThat(postRepository.findByAll(1l).size()).isEqualTo(2);
     }
 
+    @Test
+    @DisplayName("게시글 수정 : 게시글 수정시 200 status code 리턴")
+    @Transactional
+    void editPost() throws Exception{
+
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Post post = Post.builder()
+                .content("나의 삶의 찬란한 시간만 비추길")
+                .member(member)
+                .image(createImage(member))
+                .build();
+        postRepository.save(post);
+
+        PostEditRequestDTO postEditRequestDTO = PostEditRequestDTO.builder()
+                .content("너는 나의 봄이었다")
+                .build();
+
+        String json = objectMapper.writeValueAsString(postEditRequestDTO);
+
+        //then
+        mockMvc.perform(MockMvcRequestBuilders.put(COMMON_URL+"/{memberId}/{postId}",member.getId(),post.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+        )
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        //when
+        Post findByPost = postRepository.findByOne(post.getId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        assertThat(findByPost.getContent()).isEqualTo("너는 나의 봄이었다");
+    }
+
     private Member createMember() {
         Member member = Member.builder()
                 .memberId("testId")
@@ -124,6 +171,22 @@ class PostControllerTest {
                 .deleteYn("N")
                 .build();
         return member;
+    }
+
+    private Image createImage(Member member){
+
+        String originalFileName = "testImage.jpg";
+
+        String uuid = UUID.randomUUID().toString();
+        String imageName = uuid + "_" + originalFileName;
+
+        Image image = Image.builder()
+                .originalFileName(originalFileName)
+                .storedFileName(imageName)
+                .member(member)
+                .imageCode(ImageCode.POST)
+                .build();
+        return image;
     }
 
     private PostSaveRequestDTO createPostRequestDTO() throws Exception{

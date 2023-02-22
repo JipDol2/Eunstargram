@@ -19,8 +19,8 @@ public class PostRepository {
         return post.getId();
     }
 
-    public Optional<Post> findByOne(Long seq){
-        return Optional.ofNullable(em.find(Post.class,seq));
+    public Optional<Post> findByOne(Long id){
+        return Optional.ofNullable(em.find(Post.class,id));
     }
 
     public List<Post> findByAll(Long id){

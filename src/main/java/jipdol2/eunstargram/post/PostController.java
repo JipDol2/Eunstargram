@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.image.entity.Image;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
@@ -41,9 +42,13 @@ public class PostController {
     //TODO: 호돌맨 영상 보고 PostEdit class 만들어보기
     //TODO: test code 작성
     @PutMapping("/{memberId}/{postId}")
-    public ResponseEntity<?> editPost(@PathVariable("memberId") Long memberId,@PathVariable("postId") Long postId){
-        log.info("memberId={},postId={}",memberId,postId);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    public ResponseEntity<EmptyJSON> editPost(
+            @PathVariable("memberId") Long memberId,
+            @PathVariable("postId") Long postId,
+            @RequestBody PostEditRequestDTO postEditDto
+    ){
+        log.info("memberId={},postId={},postEditDto={}",memberId,postId,postEditDto.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(postService.edit(postId,postEditDto));
     }
 
     //TODO : 게시글 삭제 api

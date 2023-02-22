@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.post;
 
+import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
@@ -8,6 +9,7 @@ import jipdol2.eunstargram.image.entity.ImageJpaRepository;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import jipdol2.eunstargram.post.entity.Post;
@@ -92,8 +94,16 @@ public class PostService {
         return image;
     }
 
+    @Transactional
+    public EmptyJSON edit(Long postId,PostEditRequestDTO postEditDto){
 
-    public void edit(){
+        Post findByPost = postRepository.findByOne(postId)
+                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
 
+        findByPost.edit(postEditDto);
+
+        postRepository.save(findByPost);
+
+        return new EmptyJSON();
     }
 }

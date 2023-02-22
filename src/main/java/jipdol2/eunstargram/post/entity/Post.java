@@ -4,6 +4,7 @@ import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.member.entity.Member;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -64,6 +65,10 @@ public class Post extends BaseTimeEntity {
 
     public void changeImage(Image image){
         this.image = image;
+    }
+
+    public void edit(PostEditRequestDTO editPostDto){
+        this.content = editPostDto.getContent() != null ? editPostDto.getContent() : this.content;
     }
 
 }
