@@ -19,11 +19,11 @@ public class Post extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    private String imagePath;
-
     private Long likeNumber;
 
     private String content;
+
+    private String deleteYn;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
@@ -48,9 +48,10 @@ public class Post extends BaseTimeEntity {
     private Image image;
 
     @Builder
-    public Post(Long likeNumber, String content, Member member,Image image) {
+    public Post(Long likeNumber, String content,String deleteYn, Member member,Image image) {
         this.likeNumber = likeNumber;
         this.content = content;
+        this.deleteYn = deleteYn;
         /**
          * 양방향 연관관계 편의 메소드 구현
          */
@@ -67,8 +68,11 @@ public class Post extends BaseTimeEntity {
         this.image = image;
     }
 
+    public void changeDeleteYn(String deleteYn){
+        this.deleteYn = deleteYn;
+    }
+
     public void edit(PostEditRequestDTO editPostDto){
         this.content = editPostDto.getContent() != null ? editPostDto.getContent() : this.content;
     }
-
 }

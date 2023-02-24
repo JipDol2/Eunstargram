@@ -146,7 +146,7 @@ class PostControllerTest {
 
         String json = objectMapper.writeValueAsString(postEditRequestDTO);
 
-        //then
+        //when
         mockMvc.perform(MockMvcRequestBuilders.put(COMMON_URL+"/{memberId}/{postId}",member.getId(),post.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
@@ -154,11 +154,37 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        //when
+        //then
         Post findByPost = postRepository.findByOne(post.getId())
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         assertThat(findByPost.getContent()).isEqualTo("너는 나의 봄이었다");
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 : 게시글 삭제시 200 status code 리턴")
+    @Transactional
+    void deletePost() throws Exception {
+
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Post post = Post.builder()
+                .content("나의 삶의 찬란한 시간만 비추길")
+                .member(member)
+                .image(createImage(member))
+                .build();
+        postRepository.save(post);
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post(COMMON_URL+"/{memberId}/{postId}",member.getId(),post.getId()))
+                .andExpect(status().isOk())
+                .andDo(print());
+        //then
+        Post findByPost = postRepository.findByOne(post.getId())
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        assertThat(findByPost.getDeleteYn()).isEqualTo("Y");
     }
 
     private Member createMember() {

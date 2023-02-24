@@ -51,6 +51,7 @@ public class PostService {
         return postRepository.save(Post.builder()
                 .likeNumber(0L)
                 .content(postDto.getContent())
+                .deleteYn("N")
                 .member(member)
                 .image(image)
                 .build());
@@ -65,6 +66,7 @@ public class PostService {
         List<Post> findByPosts = postRepository.findMemberIdByAll(findByMember.getId());
 
         return findByPosts.stream()
+                .filter(p-> "N".equals(p.getDeleteYn()))
                 .map(PostService::apply)
                 .collect(Collectors.toList());
     }
@@ -98,10 +100,22 @@ public class PostService {
     public EmptyJSON edit(Long postId,PostEditRequestDTO postEditDto){
 
         Post findByPost = postRepository.findByOne(postId)
-                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         findByPost.edit(postEditDto);
 
+        postRepository.save(findByPost);
+
+        return new EmptyJSON();
+    }
+
+    @Transactional
+    public EmptyJSON deletePost(Long postId){
+
+        Post findByPost = postRepository.findByOne(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시들이 존재하지 않습니다"));
+
+        findByPost.changeDeleteYn("Y");
         postRepository.save(findByPost);
 
         return new EmptyJSON();

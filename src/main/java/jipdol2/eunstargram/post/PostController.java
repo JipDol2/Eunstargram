@@ -1,10 +1,9 @@
 package jipdol2.eunstargram.post;
 
-import jipdol2.eunstargram.image.entity.Image;
-import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
-import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
-import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
+import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
+import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -37,10 +36,7 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
     }
 
-    //TODO: 게시글 수정 api
-    //TODO: RequestDto 정의한다음에 edit 함수에 인자 넘겨주기
-    //TODO: 호돌맨 영상 보고 PostEdit class 만들어보기
-    //TODO: test code 작성
+    /** 2023/02/22 게시글 수정 **/
     @PutMapping("/{memberId}/{postId}")
     public ResponseEntity<EmptyJSON> editPost(
             @PathVariable("memberId") Long memberId,
@@ -51,6 +47,14 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postService.edit(postId,postEditDto));
     }
 
-    //TODO : 게시글 삭제 api
+    /** 2023/02/24 게시글 삭제 **/
+    @PostMapping("{memberId}/{postId}")
+    public ResponseEntity<EmptyJSON> deletePost(
+            @PathVariable("memberId") Long memberId,
+            @PathVariable("postId") Long postId
+    ){
+        log.info("memberId={},postId={}",memberId,postId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId));
+    }
 
 }
