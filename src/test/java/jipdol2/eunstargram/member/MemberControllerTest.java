@@ -71,7 +71,6 @@ class MemberControllerTest {
                         .phoneNumber("010-1111-2222")
                         .birthDay("20220107")
                         .intro("Life is just one")
-                        .deleteYn("N")
                         .build();
 
         String json = objectMapper.writeValueAsString(memberSaveRequestDTO);

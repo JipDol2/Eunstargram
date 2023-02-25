@@ -36,6 +36,7 @@ public class CommentSerivce {
         Comment comment = Comment.builder()
                 .content(commentSaveRequestDTO.getContent())
                 .likeNumber(commentSaveRequestDTO.getLikeNumber())
+                .deleteYn("N")
                 .post(post)
                 .member(member)
                 .build();

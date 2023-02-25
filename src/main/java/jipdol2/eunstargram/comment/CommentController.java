@@ -22,7 +22,6 @@ public class CommentController {
     /** 2023/01/14 댓글 업로드 API 생성 **/
     @PostMapping("/upload")
     public ResponseEntity<EmptyJSON> uploadComment(@RequestBody CommentSaveRequestDTO commentSaveRequestDTO){
-
         log.info("comment={}",commentSaveRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(commentSerivce.join(commentSaveRequestDTO));
     }

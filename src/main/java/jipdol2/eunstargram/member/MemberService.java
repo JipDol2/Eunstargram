@@ -33,7 +33,6 @@ public class MemberService {
     private final MemberJpaRepository memberJpaRepository;
     private final ImageJpaRepository imageJpaRepository;
 
-
     @Transactional
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
         validationDuplicateMember(memberSaveRequestDTO);
@@ -51,7 +50,7 @@ public class MemberService {
 
     private void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
         if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberId()).isEmpty()){
-            throw new IllegalArgumentException("이미 존재하는 회원입니다.!!");
+            throw new IllegalArgumentException("이미 존재하는 회원입니다");
         }
     }
 
@@ -66,7 +65,6 @@ public class MemberService {
                 .id(member.getId())
                 .build();
 
-        //TODO: session 에는 어떤값을 넣으면 좋을까?
 
         return loginResponseDTO;
     }
