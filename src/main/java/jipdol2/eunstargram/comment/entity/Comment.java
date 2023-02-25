@@ -15,11 +15,13 @@ import javax.persistence.*;
 public class Comment extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+    private Long id;
 
     private String content;
 
     private Long likeNumber;
+
+    private String deleteYn;
 
     @ManyToOne
     @JoinColumn(name = "POST_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
@@ -30,9 +32,10 @@ public class Comment extends BaseTimeEntity {
     private Member member;
 
     @Builder
-    public Comment(String content, Long likeNumber, Post post, Member member) {
+    public Comment(String content, Long likeNumber,String deleteYn, Post post, Member member) {
         this.content = content;
         this.likeNumber = likeNumber;
+        this.deleteYn = deleteYn;
         checkPost(post);
         checkMember(member);
     }

@@ -13,6 +13,6 @@ public class CommentRepository {
 
     public Long save(Comment comment){
         em.persist(comment);
-        return comment.getSeq();
+        return comment.getId();
     }
 }

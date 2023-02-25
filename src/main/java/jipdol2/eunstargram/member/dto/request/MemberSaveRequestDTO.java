@@ -22,19 +22,13 @@ public class MemberSaveRequestDTO {
 
     private String intro;
 
-    private String imagePath;
-
-    private String deleteYn;
-
     @Builder
-    public MemberSaveRequestDTO(String memberId, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+    public MemberSaveRequestDTO(String memberId, String password, String nickName, String phoneNumber, String birthDay, String intro) {
         this.memberId = memberId;
         this.password = password;
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;
-        this.imagePath = imagePath;
-        this.deleteYn = deleteYn;
     }
 }

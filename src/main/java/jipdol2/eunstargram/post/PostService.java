@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.post;
 
+import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
@@ -8,6 +9,7 @@ import jipdol2.eunstargram.image.entity.ImageJpaRepository;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import jipdol2.eunstargram.post.entity.Post;
@@ -49,6 +51,7 @@ public class PostService {
         return postRepository.save(Post.builder()
                 .likeNumber(0L)
                 .content(postDto.getContent())
+                .deleteYn("N")
                 .member(member)
                 .image(image)
                 .build());
@@ -63,6 +66,7 @@ public class PostService {
         List<Post> findByPosts = postRepository.findMemberIdByAll(findByMember.getId());
 
         return findByPosts.stream()
+                .filter(p-> "N".equals(p.getDeleteYn()))
                 .map(PostService::apply)
                 .collect(Collectors.toList());
     }
@@ -76,7 +80,7 @@ public class PostService {
 
         String imageName = imageService.uploadImage(imageDTO);
 
-        //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
+        //TODO: 후에 memberId 를 session or token 에서 가져온 값으로 변경 필요
         Member findByMember = memberJpaRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
 
@@ -90,5 +94,30 @@ public class PostService {
         imageJpaRepository.save(image);
 
         return image;
+    }
+
+    @Transactional
+    public EmptyJSON edit(Long postId,PostEditRequestDTO postEditDto){
+
+        Post findByPost = postRepository.findByOne(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+
+        findByPost.edit(postEditDto);
+
+        postRepository.save(findByPost);
+
+        return new EmptyJSON();
+    }
+
+    @Transactional
+    public EmptyJSON deletePost(Long postId){
+
+        Post findByPost = postRepository.findByOne(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시들이 존재하지 않습니다"));
+
+        findByPost.changeDeleteYn("Y");
+        postRepository.save(findByPost);
+
+        return new EmptyJSON();
     }
 }
