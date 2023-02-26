@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
@@ -20,6 +21,13 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+
+    @ResponseBody
+    @GetMapping("/foo")
+    public String foo(UserSession userSession){
+        log.info(">>>{}",userSession.getName());
+        return userSession.name;
+    }
 
     /** 2023/01/10 게시글 업로드 API 생성 **/
     @PostMapping("/upload")
