@@ -32,6 +32,7 @@ public class MemberController {
         log.info("memberSaveRequestDTO = {}", memberSaveRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberSaveRequestDTO));
     }
+    //TODO : 추후 삭제 요망
     /** 2022/01/09 로그인 API 생성 **/
     @PostMapping("/login")
     public ResponseEntity<MemberLoginResponseDTO> loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){

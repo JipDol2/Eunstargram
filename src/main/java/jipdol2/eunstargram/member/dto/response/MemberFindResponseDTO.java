@@ -10,7 +10,7 @@ public class MemberFindResponseDTO {
 
     private Long id;
 
-    private String memberId;
+    private String memberEmail;
 
     private String password;
 
@@ -27,9 +27,9 @@ public class MemberFindResponseDTO {
     private String deleteYn;
 
     @Builder
-    public MemberFindResponseDTO(Long id, String memberId, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+    public MemberFindResponseDTO(Long id, String memberEmail, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
         this.id = id;
-        this.memberId = memberId;
+        this.memberEmail = memberEmail;
         this.password = password;
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;
@@ -42,7 +42,7 @@ public class MemberFindResponseDTO {
     public static MemberFindResponseDTO createMemberFindResponseDTO(Member member){
         return MemberFindResponseDTO.builder()
                 .id(member.getId())
-                .memberId(member.getMemberId())
+                .memberEmail(member.getMemberEmail())
                 .password(member.getPassword())
                 .nickName(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())

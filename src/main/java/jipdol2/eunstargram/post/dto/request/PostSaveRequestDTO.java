@@ -11,8 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 public class PostSaveRequestDTO {
 
-    private Long likeNumber;
-
     private String content;
 
     private Long memberId;
@@ -28,8 +26,7 @@ public class PostSaveRequestDTO {
     }
 
     @Builder
-    public PostSaveRequestDTO(Long likeNumber, String content, Long memberId, MultipartFile image) {
-        this.likeNumber = likeNumber;
+    public PostSaveRequestDTO(String content, Long memberId, MultipartFile image) {
         this.content = content;
         this.memberId = memberId;
         this.image = image;

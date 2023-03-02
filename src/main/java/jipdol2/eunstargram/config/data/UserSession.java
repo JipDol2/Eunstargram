@@ -9,4 +9,7 @@ public class UserSession {
 
     public String name;
 
+    public UserSession(Long id){
+        this.id = id;
+    }
 }

@@ -4,6 +4,7 @@ import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -25,7 +26,7 @@ class MemberServiceTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
-    @Test
+    @BeforeEach
     void clean(){
         memberJpaRepository.deleteAll();
     }
@@ -36,7 +37,7 @@ class MemberServiceTest {
 
         //given
         MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
-                .memberId("testId")
+                .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickName("Rabbit")
                 .phoneNumber("010-1111-2222")
@@ -50,7 +51,7 @@ class MemberServiceTest {
         //then
         assertThat(memberJpaRepository.count()).isEqualTo(1);
         Member member = memberJpaRepository.findAll().get(0);
-        assertThat(member.getMemberId()).isEqualTo("testId");
+        assertThat(member.getMemberEmail()).isEqualTo("jipdol2@gmail.com");
         assertThat(member.getPassword()).isEqualTo("1234");
         assertThat(member.getNickname()).isEqualTo("Rabbit");
         assertThat(member.getPhoneNumber()).isEqualTo("010-1111-2222");
@@ -64,7 +65,7 @@ class MemberServiceTest {
 
         //given
         MemberSaveRequestDTO memberSaveRequestDTO1 = MemberSaveRequestDTO.builder()
-                .memberId("testId")
+                .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickName("Rabbit")
                 .phoneNumber("010-1111-2222")
@@ -73,7 +74,7 @@ class MemberServiceTest {
                 .build();
 
         MemberSaveRequestDTO memberSaveRequestDTO2 = MemberSaveRequestDTO.builder()
-                .memberId("testId")
+                .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickName("Turtle")
                 .phoneNumber("010-3333-4444")

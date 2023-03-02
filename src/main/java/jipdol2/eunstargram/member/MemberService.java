@@ -33,30 +33,30 @@ public class MemberService {
     private final MemberJpaRepository memberJpaRepository;
     private final ImageJpaRepository imageJpaRepository;
 
+    //TODO : 추후 삭제 요망
     @Transactional
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
         validationDuplicateMember(memberSaveRequestDTO);
         memberRepository.save(Member.builder()
-                .memberId(memberSaveRequestDTO.getMemberId())
+                .memberEmail(memberSaveRequestDTO.getMemberEmail())
                 .password(memberSaveRequestDTO.getPassword())
                 .nickname(memberSaveRequestDTO.getNickName())
                 .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
                 .birthDay(memberSaveRequestDTO.getBirthDay())
                 .intro(memberSaveRequestDTO.getIntro())
-                .deleteYn("N")
                 .build());
         return new EmptyJSON();
     }
 
     private void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
-        if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberId()).isEmpty()){
+        if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberEmail()).isEmpty()){
             throw new IllegalArgumentException("이미 존재하는 회원입니다");
         }
     }
 
     @Transactional
     public MemberLoginResponseDTO login(MemberLoginRequestDTO memberLoginRequestDTO){
-        Member member = memberJpaRepository.findByMemberIdAndPassword(memberLoginRequestDTO.getMemberId(), memberLoginRequestDTO.getPassword())
+        Member member = memberJpaRepository.findByMemberEmailAndPassword(memberLoginRequestDTO.getMemberEmail(), memberLoginRequestDTO.getPassword())
                 .orElseThrow(()->new IllegalArgumentException("회원아이디 혹은 비밀번호를 잘못 입력하셨습니다."));
 
         //TODO: jwtToken 나중에 랜덤으로 token 생성된 값을 대입 수정필요

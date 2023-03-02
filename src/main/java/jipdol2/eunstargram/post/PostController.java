@@ -24,9 +24,9 @@ public class PostController {
 
     @ResponseBody
     @GetMapping("/foo")
-    public String foo(UserSession userSession){
-        log.info(">>>{}",userSession.getName());
-        return userSession.name;
+    public Long foo(UserSession userSession){
+        log.info(">>>{}",userSession.id);
+        return userSession.id;
     }
 
     /** 2023/01/10 게시글 업로드 API 생성 **/

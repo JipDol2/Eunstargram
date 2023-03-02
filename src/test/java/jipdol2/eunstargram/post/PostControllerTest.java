@@ -83,7 +83,6 @@ class PostControllerTest {
         //when
         mockMvc.perform(MockMvcRequestBuilders.multipart(COMMON_URL+ "/upload")
                         .file((MockMultipartFile)postSaveRequestDTO.getImage())
-                        .param("likeNumber",Long.toString(postSaveRequestDTO.getLikeNumber()))
                         .param("content",postSaveRequestDTO.getContent())
                         .param("memberId",Long.toString(postSaveRequestDTO.getMemberId()))
                 )
@@ -189,12 +188,11 @@ class PostControllerTest {
 
     private Member createMember() {
         Member member = Member.builder()
-                .memberId("testId")
+                .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("Rabbit96")
                 .birthDay("19940715")
                 .intro("life is one time")
-                .deleteYn("N")
                 .build();
         return member;
     }
