@@ -46,7 +46,17 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member")
     private List<Image> image = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
+    /**
+     * cascade option
+     * (https://www.baeldung.com/jpa-cascade-types)
+     * - 문제 :  AuthControllerTest 에서 loginTest3 을 실행할때 AuthResolver 에서
+     *          session 을 찾지 못하는 문제가 발생했었음
+     * - 해결 :  cascade option 을 정의해 주지 않았더라면 session 객체도 persist
+     *          해줘야 하지만 addSession 에서 member 에만 session 을 추가해준 상태로
+     *          session 을 persist 해주지 않았음.
+     *          따라서 cascade option 을 추가해주어서 해결할 수 있음
+     */
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<Session> sessions = new ArrayList<>();
 
     @Builder

@@ -1,6 +1,8 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
@@ -61,7 +63,7 @@ public class PostService {
     public List<PostResponseDTO> findByAll(Long memberId){
 
         Member findByMember = memberJpaRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new MemberNotFound());
 
         List<Post> findByPosts = postRepository.findMemberIdByAll(findByMember.getId());
 
@@ -100,7 +102,7 @@ public class PostService {
     public EmptyJSON edit(Long postId,PostEditRequestDTO postEditDto){
 
         Post findByPost = postRepository.findByOne(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new PostNotFound());
 
         findByPost.edit(postEditDto);
 

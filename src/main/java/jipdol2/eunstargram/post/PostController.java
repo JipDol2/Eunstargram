@@ -56,7 +56,7 @@ public class PostController {
     }
 
     /** 2023/02/24 게시글 삭제 **/
-    @PostMapping("{memberId}/{postId}")
+    @PostMapping("/{memberId}/{postId}")
     public ResponseEntity<EmptyJSON> deletePost(
             @PathVariable("memberId") Long memberId,
             @PathVariable("postId") Long postId

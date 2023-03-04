@@ -160,7 +160,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/post/foo")
                         .header("Authorization",session.getAccessToken())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
