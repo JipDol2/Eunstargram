@@ -65,7 +65,7 @@ class MemberControllerTest {
     void signUpTest() throws Exception {
 
         MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
-                        .memberId("testId")
+                        .memberEmail("jipdol2@gmail.com")
                         .password("1234")
                         .nickName("Rabbit96")
                         .phoneNumber("010-1111-2222")
@@ -96,7 +96,7 @@ class MemberControllerTest {
         memberJpaRepository.save(member);
 
         MemberLoginRequestDTO memberLoginRequestDTO = MemberLoginRequestDTO.builder()
-                .memberId("testId")
+                .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .build();
 
@@ -181,7 +181,7 @@ class MemberControllerTest {
         //when
         mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.memberId").value("testId"))
+                .andExpect(jsonPath("$.memberEmail").value("jipdol2@gmail.com"))
                 .andExpect(jsonPath("$.password").value("1234"))
                 .andDo(print());
 
@@ -209,12 +209,11 @@ class MemberControllerTest {
 
     private Member createMember() {
         Member member = Member.builder()
-                .memberId("testId")
+                .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("Rabbit96")
                 .birthDay("19940715")
                 .intro("life is one time")
-                .deleteYn("N")
                 .build();
         return member;
     }
