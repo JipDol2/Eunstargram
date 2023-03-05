@@ -36,6 +36,10 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
+        /**
+         * API 의 파라미터로 UserSession class 를 받고 있는지 체크
+         * 만약 파라미터로 UserSession class 를 받고 있으면 ArgumentResolver 의 체크 대상이 된다
+         */
         return parameter.getParameterType().equals(UserSession.class);
     }
 

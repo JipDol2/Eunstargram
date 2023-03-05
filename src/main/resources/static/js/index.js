@@ -1,12 +1,12 @@
 const addIndexEvent = () =>{
     validationLogin();
 
-    const postsOperation = document.getElementById("posts-button");
-    postsOperation.addEventListener("click",clickPostsOperation);
+    // const postsOperation = document.getElementById("posts-button");
+    // postsOperation.addEventListener("click",clickPostsOperation);
 }
 
 const validationLogin = () =>{
-    const token = sessionStorage.getItem("Authorization");
+    const token = sessionStorage.getItem("Id");
     if(token){
         const logoutState = document.getElementById("logoutState");
         logoutState.classList.toggle("d-none");

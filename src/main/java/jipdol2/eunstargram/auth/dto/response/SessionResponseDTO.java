@@ -9,9 +9,5 @@ import lombok.ToString;
 @NoArgsConstructor
 public class SessionResponseDTO {
 
-    private String accessToken;
 
-    public SessionResponseDTO(String accessToken) {
-        this.accessToken = accessToken;
-    }
 }

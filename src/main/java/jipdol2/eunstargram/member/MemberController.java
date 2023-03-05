@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
@@ -32,36 +33,41 @@ public class MemberController {
         log.info("memberSaveRequestDTO = {}", memberSaveRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberSaveRequestDTO));
     }
-    //TODO : 추후 삭제 요망
-    /** 2022/01/09 로그인 API 생성 **/
-    @PostMapping("/login")
-    public ResponseEntity<MemberLoginResponseDTO> loginMember(@RequestBody MemberLoginRequestDTO memberLoginRequestDTO){
-        log.info("memberLoginRequestDTO={}", memberLoginRequestDTO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.login(memberLoginRequestDTO));
+
+    /** 2023/03/05 회원정보 조회 **/
+    @GetMapping("/findByMember")
+    public ResponseEntity<Object> findByMember(UserSession userSession){
+        log.info("id={}",userSession.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(userSession.getId()));
     }
+
     /** 2023/01/15 회원정보수정 API 생성 **/
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateMember(@PathVariable("id") Long seq,@RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO){
         log.info("memberUpdateRequestDTO={}",memberUpdateRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.update(seq,memberUpdateRequestDTO));
     }
+
     /** 2023/01/18 회원탈퇴 API 생성 **/
     @PatchMapping("/delete/{id}")
     public ResponseEntity<EmptyJSON> deleteMember(@PathVariable("id") Long seq){
         log.info("id={}",seq);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(seq));
     }
+
     /** 2023/01/19 회원 전체조회 API 생성 **/
     @GetMapping("/")
     public ResponseEntity<List<MemberFindResponseDTO>> findByAllMembers(){
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByAll());
     }
+
     /** 2023/01/19 회원 조회 API 생성 **/
     @GetMapping("/{id}")
     public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("id") Long seq){
         log.info("id={}",seq);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
     }
+
     //TODO : response 시 Image Entity 말고 DTO 를 리턴(DTO class 생성 필요)
     /** 2023/01/25 회원 프로필 이미지 업로드 API 생성 **/
     @PostMapping("/profileImage")

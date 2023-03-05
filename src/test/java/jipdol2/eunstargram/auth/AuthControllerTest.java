@@ -16,8 +16,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -135,7 +137,8 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+//                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(MockMvcResultMatchers.cookie().exists("SESSION"))
                 .andDo(print());
     }
 
@@ -158,7 +161,8 @@ class AuthControllerTest {
 
         //expected
         mockMvc.perform(get("/api/post/foo")
-                        .header("Authorization",session.getAccessToken())
+//                        .header("Authorization",session.getAccessToken())
+                        .cookie(new Cookie("SESSION", session.getAccessToken()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());

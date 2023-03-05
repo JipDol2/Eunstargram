@@ -37,24 +37,30 @@ const getProfileInfo = async(event) => {
             const divTag = document.createElement("div");
             divTag.className='pic';
 
-            const aTag = document.createElement("a");
-            aTag.href = '#';
+            // const aTag = document.createElement("a");
+            // aTag.href = '#';
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.class = "btn";
+            button.setAttribute("data-bs-toggle","modal");
+            button.setAttribute("data-bs-target","#imageModal");
 
             const img = document.createElement("img");
             // console.log(element.imageDTO.storedFileName)
             img.src = `/upload/${element.imageDTO.storedFileName}`;
+            img.id = element.imageDTO.id;
 
-            aTag.appendChild(img);
-            divTag.appendChild(aTag);
+            button.appendChild(img);
+            divTag.appendChild(button);
             root.appendChild(divTag);
         });
-
         console.log(root);
-        // console.log(response);
     }catch (e){
 
     }
 }
+
 /**
  * 프로필 사진 업로드 버튼 클릭시 myFile input 클릭 이벤트 실행
  * @param event

@@ -105,9 +105,6 @@ class PostControllerTest {
         List<PostSaveRequestDTO> postRequestListDTO = createPostRequestListDTO();
         postRequestListDTO.stream().forEach(postService::save);
 
-//        String json = objectMapper.writeValueAsString(postSaveRequestDTO);
-
-
         //when
         mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/{id}","1"))
                 .andExpect(jsonPath("$[0].likeNumber").value(0L))
@@ -119,6 +116,7 @@ class PostControllerTest {
                 .andExpect(jsonPath("$[1].memberId").value(1L))
                 .andExpect(jsonPath("$[1].imageDTO.originalFileName").value("testImage.jpg"))
                 .andDo(print());
+
         //then
         assertThat(postRepository.findByAll(1l).size()).isEqualTo(2);
     }

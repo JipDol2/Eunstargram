@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.ImageDTO;
 import jipdol2.eunstargram.image.entity.Image;
@@ -40,7 +41,7 @@ public class MemberService {
         memberRepository.save(Member.builder()
                 .memberEmail(memberSaveRequestDTO.getMemberEmail())
                 .password(memberSaveRequestDTO.getPassword())
-                .nickname(memberSaveRequestDTO.getNickName())
+                .nickname(memberSaveRequestDTO.getNickname())
                 .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
                 .birthDay(memberSaveRequestDTO.getBirthDay())
                 .intro(memberSaveRequestDTO.getIntro())
@@ -55,24 +56,18 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberLoginResponseDTO login(MemberLoginRequestDTO memberLoginRequestDTO){
-        Member member = memberJpaRepository.findByMemberEmailAndPassword(memberLoginRequestDTO.getMemberEmail(), memberLoginRequestDTO.getPassword())
-                .orElseThrow(()->new IllegalArgumentException("회원아이디 혹은 비밀번호를 잘못 입력하셨습니다."));
+    public MemberFindResponseDTO findByMember(Long id) {
+        Member member = memberRepository.findByOne(id)
+                .orElseThrow(() -> new MemberNotFound());
 
-        //TODO: jwtToken 나중에 랜덤으로 token 생성된 값을 대입 수정필요
-        MemberLoginResponseDTO loginResponseDTO = MemberLoginResponseDTO.builder()
-                .token("fajkldjfisl")
-                .id(member.getId())
-                .build();
-
-
-        return loginResponseDTO;
+        MemberFindResponseDTO memberFindResponseDTO = MemberFindResponseDTO.createMemberFindResponseDTO(member);
+        return memberFindResponseDTO;
     }
 
     @Transactional
     public EmptyJSON update(Long seq,MemberUpdateRequestDTO memberUpdateRequestDTO){
         Member findMember = memberRepository.findByOne(seq)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new MemberNotFound());
 
         findMember.changeMember(memberUpdateRequestDTO);
         memberRepository.save(findMember);
@@ -83,7 +78,7 @@ public class MemberService {
     @Transactional
     public EmptyJSON delete(Long id) {
         Member findMember = memberRepository.findByOne(id)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new MemberNotFound());
 
         findMember.changeDeleteYn("N");
         memberRepository.save(findMember);
@@ -101,15 +96,6 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberFindResponseDTO findByMember(Long seq) {
-        Member member = memberRepository.findByOne(seq)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
-
-        MemberFindResponseDTO memberFindResponseDTO = MemberFindResponseDTO.createMemberFindResponseDTO(member);
-        return memberFindResponseDTO;
-    }
-
-    @Transactional
     public ImageDTO uploadProfileImage(MultipartFile imageDTO){
 
         String imageName = imageService.uploadImage(imageDTO);
@@ -117,7 +103,7 @@ public class MemberService {
         //TODO: Image Entity 에 save
         //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
         Member findByMember = memberJpaRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new MemberNotFound());
 
         Image image = Image.builder()
                 .originalFileName(imageDTO.getOriginalFilename())
@@ -130,6 +116,4 @@ public class MemberService {
 
         return new ImageDTO(image);
     }
-
-
 }

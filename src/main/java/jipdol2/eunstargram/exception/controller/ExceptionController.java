@@ -1,7 +1,6 @@
 package jipdol2.eunstargram.exception.controller;
 
 import jipdol2.eunstargram.exception.JipDol2Exception;
-import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.exception.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 @ControllerAdvice
 public class ExceptionController {
-
 
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
