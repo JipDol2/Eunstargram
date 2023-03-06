@@ -43,19 +43,30 @@ const getProfileInfo = async(event) => {
             const button = document.createElement("button");
             button.type = "button";
             button.class = "btn";
+            button.id = element.imageDTO.id;
             button.setAttribute("data-bs-toggle","modal");
             button.setAttribute("data-bs-target","#imageModal");
+
+            // Define a function that takes the parameters you want to pass
+            const clickHandler = (id) => {
+                alert(id);
+            };
 
             const img = document.createElement("img");
             // console.log(element.imageDTO.storedFileName)
             img.src = `/upload/${element.imageDTO.storedFileName}`;
-            img.id = element.imageDTO.id;
+            // img.id = element.imageDTO.id;
+
+            button.addEventListener("click", () => {
+                const imageContent = document.getElementById("modalImage");
+                imageContent.src = img.src;
+            });
 
             button.appendChild(img);
             divTag.appendChild(button);
             root.appendChild(divTag);
         });
-        console.log(root);
+
     }catch (e){
 
     }
