@@ -11,6 +11,9 @@ const addPostsEvent = () => {
 
     const savePostsForm = document.getElementById("savePosts");
     savePostsForm.addEventListener("click",savePosts);
+
+    const clickPosts = document.getElementsByName("postBtn");
+    clickPosts.addEventListener("click",clickPost);
 }
 
 //TODO: 이미지를 동적으로 추가한 뒤 그 이미지를 클릭했을 경우 모달창이 나와야 하는데.... 어떻게 구현?
@@ -20,7 +23,7 @@ const addPostsEvent = () => {
  * @param event
  * @returns {Promise<void>}
  */
-const getProfileInfo = async(event) => {
+const getPosts = async(event) => {
 
     const memberId = sessionStorage.getItem("Id");
 
@@ -43,7 +46,8 @@ const getProfileInfo = async(event) => {
             const button = document.createElement("button");
             button.type = "button";
             button.class = "btn";
-            button.id = element.imageDTO.id;
+            button.name = `postBtn`;
+            button.id = `btn_${element.imageDTO.id}`;
             button.setAttribute("data-bs-toggle","modal");
             button.setAttribute("data-bs-target","#imageModal");
 
@@ -57,10 +61,10 @@ const getProfileInfo = async(event) => {
             img.src = `/upload/${element.imageDTO.storedFileName}`;
             // img.id = element.imageDTO.id;
 
-            button.addEventListener("click", () => {
-                const imageContent = document.getElementById("modalImage");
-                imageContent.src = img.src;
-            });
+            // button.addEventListener("click", () => {
+            //     const imageContent = document.getElementById("modalImage");
+            //     imageContent.src = img.src;
+            // });
 
             button.appendChild(img);
             divTag.appendChild(button);
@@ -70,6 +74,12 @@ const getProfileInfo = async(event) => {
     }catch (e){
 
     }
+}
+
+const clickPost = (event) => {
+    event.preventDefault();
+    const id = event.target.id;
+    //TODO: post id console 로 확인한 뒤에 서버로 해당 게시글의 댓글 목록 request 작성
 }
 
 /**
@@ -154,5 +164,5 @@ const savePosts = async(event)=>{
     }
     location.reload();
 }
-getProfileInfo();
+getPosts();
 addPostsEvent();
