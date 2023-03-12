@@ -14,7 +14,7 @@ public class MemberSaveRequestDTO {
 
     private String password;
 
-    private String nickName;
+    private String nickname;
 
     private String phoneNumber;
 
@@ -23,10 +23,10 @@ public class MemberSaveRequestDTO {
     private String intro;
 
     @Builder
-    public MemberSaveRequestDTO(String memberEmail, String password, String nickName, String phoneNumber, String birthDay, String intro) {
+    public MemberSaveRequestDTO(String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro) {
         this.memberEmail = memberEmail;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;

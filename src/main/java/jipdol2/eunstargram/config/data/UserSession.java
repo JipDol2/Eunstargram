@@ -7,7 +7,7 @@ public class UserSession {
 
     public Long id;
 
-    public String name;
+    public String email;
 
     public UserSession(Long id){
         this.id = id;

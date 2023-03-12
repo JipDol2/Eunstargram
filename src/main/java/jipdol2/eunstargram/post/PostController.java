@@ -38,9 +38,11 @@ public class PostController {
 
     /** 2023/01/12 전체 게시글 조회 **/
     @GetMapping("/{memberId}")
-    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(@PathVariable("memberId") Long memberId){
-        log.info("memberId={}",memberId);
-        //TODO: 현재 memberSeq 로 조회하지만 memberId 로 수정 필요
+    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(
+            UserSession userSession,
+            @PathVariable("memberId") Long memberId
+    ){
+        log.info("userSession.id={}",userSession.getId());
         return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
     }
 

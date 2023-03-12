@@ -46,7 +46,7 @@ public class PostService {
          * TODO => 연관관계 편의 메소드 사용
          */
         Member member = memberRepository.findByOne(postDto.getMemberId())
-                .orElseThrow(()->new IllegalArgumentException("memberId가 존재하지 않습니다."));
+                .orElseThrow(()->new MemberNotFound());
 
         Image image = uploadPostImage(postDto.getImage());
 
@@ -84,7 +84,7 @@ public class PostService {
 
         //TODO: 후에 memberId 를 session or token 에서 가져온 값으로 변경 필요
         Member findByMember = memberJpaRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new MemberNotFound());
 
         Image image = Image.builder()
                 .originalFileName(imageDTO.getOriginalFilename())
@@ -115,7 +115,7 @@ public class PostService {
     public EmptyJSON deletePost(Long postId){
 
         Post findByPost = postRepository.findByOne(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시들이 존재하지 않습니다"));
+                .orElseThrow(() -> new PostNotFound());
 
         findByPost.changeDeleteYn("Y");
         postRepository.save(findByPost);

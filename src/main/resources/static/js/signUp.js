@@ -7,7 +7,7 @@ const singUpOperation = async (event) => {
     event.preventDefault();
 
     const singUpDTO = {
-        memberId: document.getElementById("id").value,
+        memberEmail: document.getElementById("id").value,
         password: document.getElementById("password").value,
         nickname: document.getElementById("nickname").value,
         phoneNumber: document.getElementById("phoneNumber").value,
