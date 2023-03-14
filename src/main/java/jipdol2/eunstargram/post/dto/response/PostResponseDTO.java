@@ -1,6 +1,6 @@
 package jipdol2.eunstargram.post.dto.response;
 
-import jipdol2.eunstargram.image.dto.ImageDTO;
+import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.post.entity.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,22 +19,22 @@ public class PostResponseDTO {
 
     private Long memberId;
 
-    private ImageDTO imageDTO;
+    private ImageResponseDTO imageResponseDTO;
 
     @Builder
-    public PostResponseDTO(Long id, Long likeNumber, String content, Long memberId, ImageDTO imageDTO) {
+    public PostResponseDTO(Long id, Long likeNumber, String content, Long memberId, ImageResponseDTO imageResponseDTO) {
         this.id = id;
         this.likeNumber = likeNumber;
         this.content = content;
         this.memberId = memberId;
-        this.imageDTO = imageDTO;
+        this.imageResponseDTO = imageResponseDTO;
     }
 
-    public PostResponseDTO(Post post,ImageDTO imageDTO){
+    public PostResponseDTO(Post post, ImageResponseDTO imageResponseDTO){
         this.id = post.getId();
         this.likeNumber = post.getLikeNumber();
         this.content = post.getContent();
         this.memberId = post.getMember().getId();
-        this.imageDTO = imageDTO;
+        this.imageResponseDTO = imageResponseDTO;
     }
 }

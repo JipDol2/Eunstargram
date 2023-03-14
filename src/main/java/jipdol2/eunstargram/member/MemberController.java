@@ -2,13 +2,11 @@ package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
-import jipdol2.eunstargram.image.dto.ImageDTO;
-import jipdol2.eunstargram.image.entity.Image;
+import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
+import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
-import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
-import jipdol2.eunstargram.member.dto.response.MemberLoginResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,7 +34,7 @@ public class MemberController {
 
     /** 2023/03/05 회원정보 조회 **/
     @GetMapping("/findByMember")
-    public ResponseEntity<Object> findByMember(UserSession userSession){
+    public ResponseEntity<MemberFindResponseDTO> findByMember(UserSession userSession){
         log.info("id={}",userSession.getId());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(userSession.getId()));
     }
@@ -71,9 +69,9 @@ public class MemberController {
     //TODO : response 시 Image Entity 말고 DTO 를 리턴(DTO class 생성 필요)
     /** 2023/01/25 회원 프로필 이미지 업로드 API 생성 **/
     @PostMapping("/profileImage")
-    public ResponseEntity<ImageDTO> uploadProfileImage(@RequestParam("image") MultipartFile profileImage){
-        log.info("image={}",profileImage.getOriginalFilename());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(profileImage));
+    public ResponseEntity<ImageResponseDTO> uploadProfileImage(@ModelAttribute ImageRequestDTO imageRequestDTO){
+        log.info("image={}",imageRequestDTO.getImage().getOriginalFilename());
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(imageRequestDTO));
     }
 
 }

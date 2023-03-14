@@ -4,7 +4,7 @@ import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.image.ImageService;
-import jipdol2.eunstargram.image.dto.ImageDTO;
+import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
@@ -74,7 +74,7 @@ public class PostService {
     }
 
     private static PostResponseDTO apply(Post p) {
-        return new PostResponseDTO(p, new ImageDTO(p.getImage()));
+        return new PostResponseDTO(p, new ImageResponseDTO(p.getImage()));
     }
 
     @Transactional

@@ -22,12 +22,10 @@ public class MemberFindResponseDTO {
 
     private String intro;
 
-    private String imagePath;
-
     private String deleteYn;
 
     @Builder
-    public MemberFindResponseDTO(Long id, String memberEmail, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+    public MemberFindResponseDTO(Long id, String memberEmail, String password, String nickName, String phoneNumber, String birthDay, String intro, String deleteYn) {
         this.id = id;
         this.memberEmail = memberEmail;
         this.password = password;
@@ -35,7 +33,6 @@ public class MemberFindResponseDTO {
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;
-        this.imagePath = imagePath;
         this.deleteYn = deleteYn;
     }
 

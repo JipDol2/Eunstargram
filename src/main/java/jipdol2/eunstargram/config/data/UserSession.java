@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.config.data;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -9,7 +10,12 @@ public class UserSession {
 
     public String email;
 
-    public UserSession(Long id){
+    public String nickname;
+
+    @Builder
+    public UserSession(Long id, String email,String nickname){
         this.id = id;
+        this.email = email;
+        this.nickname = nickname;
     }
 }

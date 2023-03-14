@@ -3,15 +3,14 @@ package jipdol2.eunstargram.member;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.image.ImageService;
-import jipdol2.eunstargram.image.dto.ImageDTO;
+import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
+import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
-import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
-import jipdol2.eunstargram.member.dto.response.MemberLoginResponseDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
@@ -96,17 +95,19 @@ public class MemberService {
     }
 
     @Transactional
-    public ImageDTO uploadProfileImage(MultipartFile imageDTO){
+    public ImageResponseDTO uploadProfileImage(ImageRequestDTO imageRequestDTO){
 
-        String imageName = imageService.uploadImage(imageDTO);
+        MultipartFile imageFile = imageRequestDTO.getImage();
+
+        String imageName = imageService.uploadImage(imageFile);
 
         //TODO: Image Entity 에 save
         //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
-        Member findByMember = memberJpaRepository.findById(1L)
+        Member findByMember = memberJpaRepository.findById(imageRequestDTO.getMemberId())
                 .orElseThrow(() -> new MemberNotFound());
 
         Image image = Image.builder()
-                .originalFileName(imageDTO.getOriginalFilename())
+                .originalFileName(imageFile.getOriginalFilename())
                 .storedFileName(imageName)
                 .member(findByMember)
                 .imageCode(ImageCode.PROFILE)
@@ -114,6 +115,6 @@ public class MemberService {
 
         imageJpaRepository.save(image);
 
-        return new ImageDTO(image);
+        return new ImageResponseDTO(image);
     }
 }

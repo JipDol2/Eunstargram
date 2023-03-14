@@ -1,5 +1,8 @@
 package jipdol2.eunstargram.comment;
 
+import jipdol2.eunstargram.comment.dto.response.CommentFindResponseDTO;
+import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.post.entity.PostRepository;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
@@ -13,10 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CommentSerivce {
+public class CommentService {
 
     private final CommentRepository commentRepository;
 
@@ -28,14 +34,14 @@ public class CommentSerivce {
     public EmptyJSON join(CommentSaveRequestDTO commentSaveRequestDTO){
 
         Post post = postRepository.findByOne(commentSaveRequestDTO.getPostId())
-                .orElseThrow(()->new IllegalArgumentException("postId가 존재하지 않습니다."));
+                .orElseThrow(()->new PostNotFound());
 
         Member member = memberRepository.findByOne(commentSaveRequestDTO.getMemberId())
-                .orElseThrow(()->new IllegalArgumentException("memberId가 존재하지 않습니다."));
+                .orElseThrow(()->new MemberNotFound());
 
         Comment comment = Comment.builder()
                 .content(commentSaveRequestDTO.getContent())
-                .likeNumber(commentSaveRequestDTO.getLikeNumber())
+                .likeNumber(0L)
                 .deleteYn("N")
                 .post(post)
                 .member(member)
@@ -43,5 +49,24 @@ public class CommentSerivce {
 
         commentRepository.save(comment);
         return new EmptyJSON();
+    }
+
+    @Transactional
+    public List<CommentFindResponseDTO> findByAllComments(String nickname,Long postId){
+
+        Post post = postRepository.findByOne(postId)
+                .orElseThrow(() -> new PostNotFound());
+
+        List<Comment> findByComments = post.getComments();
+        List<CommentFindResponseDTO> comments = findByComments.stream()
+                .map((c) -> CommentFindResponseDTO.builder()
+                        .id(c.getId())
+                        .content(c.getContent())
+                        .likeNumber(c.getLikeNumber())
+                        .deleteYn(c.getDeleteYn())
+                        .nickname(nickname)
+                        .build())
+                .collect(Collectors.toList());
+        return comments;
     }
 }
