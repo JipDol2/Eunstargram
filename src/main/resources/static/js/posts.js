@@ -79,9 +79,14 @@ const getPosts = async(event) => {
                 if(sectionCheck){
                     sectionCheck.remove();
                 }
+
                 const section = document.createElement("section");
                 section.setAttribute("class","scroll_section");
                 section.setAttribute("id","scroll_section");
+
+                const postContent = await findByPost(element.id);
+                section.appendChild(postContent);
+                section.appendChild(document.createElement("hr"));
 
                 const arr = await findByComments(element.id);
                 arr.forEach(element=>section.appendChild(element));
@@ -179,6 +184,33 @@ const savePosts = async(event)=>{
 }
 
 /**
+ * 게시글 조회
+ * @param postId
+ * @returns {Promise<void>}
+ */
+const findByPost = async (postId) => {
+    const header = {
+        method: 'GET'
+    };
+    const response = await fetchData(`/api/post/p/${postId}`,header);
+
+    const admin_container = document.createElement("div");
+    admin_container.setAttribute("class","comment");
+
+    const user_id = document.createElement("span");
+    user_id.setAttribute("class","user_id");
+    user_id.innerText = `${response.nickname} `;
+
+    const content = document.createElement("span");
+    content.innerText = response.content;
+
+    admin_container.appendChild(user_id);
+    admin_container.appendChild(content);
+
+    return admin_container;
+}
+
+/**
  * 댓글 조회
  */
 const findByComments = async (postId) =>{
@@ -212,6 +244,8 @@ const findByComments = async (postId) =>{
     });
     return arr;
 }
+
+//TODO : 댓글 저장 버튼 클릭시 댓글란 초기화
 /**
  * 댓글 저장
  * @param event

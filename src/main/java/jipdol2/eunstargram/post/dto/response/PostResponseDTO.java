@@ -19,14 +19,17 @@ public class PostResponseDTO {
 
     private Long memberId;
 
+    private String nickname;
+
     private ImageResponseDTO imageResponseDTO;
 
     @Builder
-    public PostResponseDTO(Long id, Long likeNumber, String content, Long memberId, ImageResponseDTO imageResponseDTO) {
+    public PostResponseDTO(Long id, Long likeNumber, String content, Long memberId, String nickname, ImageResponseDTO imageResponseDTO) {
         this.id = id;
         this.likeNumber = likeNumber;
         this.content = content;
         this.memberId = memberId;
+        this.nickname = nickname;
         this.imageResponseDTO = imageResponseDTO;
     }
 
@@ -35,6 +38,7 @@ public class PostResponseDTO {
         this.likeNumber = post.getLikeNumber();
         this.content = post.getContent();
         this.memberId = post.getMember().getId();
+        this.nickname = post.getMember().getNickname();
         this.imageResponseDTO = imageResponseDTO;
     }
 }

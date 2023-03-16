@@ -73,6 +73,15 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public PostResponseDTO findByOne(Long postId){
+
+        Post post = postRepository.findByOne(postId)
+                .orElseThrow(() -> new PostNotFound());
+
+        return apply(post);
+    }
+
     private static PostResponseDTO apply(Post p) {
         return new PostResponseDTO(p, new ImageResponseDTO(p.getImage()));
     }

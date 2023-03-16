@@ -46,19 +46,26 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
     }
 
+    @GetMapping("/p/{postId}")
+    public ResponseEntity<PostResponseDTO> findByPost(
+            @PathVariable("postId") Long postId
+    ){
+        log.info("postId={}",postId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByOne(postId));
+    }
+
     /** 2023/02/22 게시글 수정 **/
-    @PutMapping("/{memberId}/{postId}")
+    @PutMapping("/p/{postId}")
     public ResponseEntity<EmptyJSON> editPost(
-            @PathVariable("memberId") Long memberId,
             @PathVariable("postId") Long postId,
             @RequestBody PostEditRequestDTO postEditDto
     ){
-        log.info("memberId={},postId={},postEditDto={}",memberId,postId,postEditDto.toString());
+        log.info("postId={},postEditDto={}",postId,postEditDto.toString());
         return ResponseEntity.status(HttpStatus.OK).body(postService.edit(postId,postEditDto));
     }
 
     /** 2023/02/24 게시글 삭제 **/
-    @PostMapping("/{memberId}/{postId}")
+    @PostMapping("/p/delete/{postId}")
     public ResponseEntity<EmptyJSON> deletePost(
             @PathVariable("memberId") Long memberId,
             @PathVariable("postId") Long postId
