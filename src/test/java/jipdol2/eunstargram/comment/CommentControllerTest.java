@@ -1,6 +1,8 @@
 package jipdol2.eunstargram.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jipdol2.eunstargram.auth.entity.Session;
+import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;
@@ -18,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +44,9 @@ class CommentControllerTest {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private SessionJpaRepository sessionJpaRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -76,8 +82,10 @@ class CommentControllerTest {
         CommentSaveRequestDTO commentDto = CommentSaveRequestDTO.builder()
                 .content("already i had lunch")
                 .postId(postId)
-                .memberId(memberId)
                 .build();
+
+        Session session = member.addSession();
+        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
 
         String json = objectMapper.writeValueAsString(commentDto);
 
@@ -85,6 +93,7 @@ class CommentControllerTest {
         mockMvc.perform(post(COMMON_URL+"/upload")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .cookie(cookie)
                 )
                 .andExpect(status().isOk())
                 .andDo(print());

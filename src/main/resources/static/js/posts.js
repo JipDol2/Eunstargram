@@ -16,8 +16,6 @@ const addPostsEvent = () => {
     uploadComment.addEventListener("click",saveComment);
 }
 
-//TODO: 이미지를 동적으로 추가한 뒤 그 이미지를 클릭했을 경우 모달창이 나와야 하는데.... 어떻게 구현?
-
 /**
  * 로그인 후 게시글 페이지 로딩
  * @param event
@@ -40,16 +38,19 @@ const getPosts = async(event) => {
             const divTag = document.createElement("div");
             divTag.className='pic';
 
-            const button = document.createElement("button");
-            button.type = "button";
-            button.class = "btn";
+            // const button = document.createElement("button");
+            // button.type = "button";
+            // button.class = "btn";
             // button.name = `postBtn`;
             // button.id = `btn_${element.imageDTO.id}`;
-            button.setAttribute("data-bs-toggle","modal");
-            button.setAttribute("data-bs-target","#imageModal");
+            // button.setAttribute("data-bs-toggle","modal");
+            // button.setAttribute("data-bs-target","#imageModal");
 
             const img = document.createElement("img");
             // console.log(element.imageDTO.storedFileName)
+            img.setAttribute("class","img");
+            img.setAttribute("data-bs-toggle","modal");
+            img.setAttribute("data-bs-target","#imageModal");
             img.src = `/upload/${element.imageResponseDTO.storedFileName}`;
             img.id = element.id;    //postId
 
@@ -59,7 +60,7 @@ const getPosts = async(event) => {
              *    클릭은 image 를 클릭한 것이 되고 click event 가 event bubbling 때문에 button 에게도 올라간다.
              *    이때 button click 시 listener 를 등록해놓았기 때문데 event.target 에는 image 에 관한 정보가 담겨져있다.
              */
-            button.addEventListener("click", async (event) => {
+            img.addEventListener("click", async (event) => {
                 const imageContent = document.getElementById("modalImage");
                 /**
                  * hidden input 을 하나 두어서 거기에 postId 값을 담음
@@ -94,9 +95,10 @@ const getPosts = async(event) => {
                 const box = document.getElementById("detail--right_box");
                 box.prepend(section);
             });
-            button.appendChild(img);
-            divTag.appendChild(button);
-            root.appendChild(divTag);
+            divTag.appendChild(img);
+            // button.appendChild(img);
+            // divTag.appendChild(button);
+            root.prepend(divTag);
         }
     }catch (e){
         throw new Error("잘못된 게시글 목록 요청입니다.");
@@ -164,18 +166,28 @@ const savePosts = async(event)=>{
     event.preventDefault();
     const image = document.getElementById("contentFile");
 
+    let memberId = null;
+    try{
+        const header = {
+            method: 'GET'
+        }
+        const response = await fetchData("/api/member/findByMember",header);
+        memberId = response.id;
+    }catch (e){
+
+    }
+
     const formData = new FormData();
     // formData.append("likeNumber",0);
     formData.append("content",document.getElementById("content").value);
-    formData.append("memberId",1);
+    formData.append("memberId",memberId);
     formData.append("image",image.files[0]);
 
-    const header={
-        method:'POST',
-        body:formData
-    };
-
     try{
+        const header={
+            method:'POST',
+            body:formData
+        };
         const response = await fetchFileData('/api/post/upload',header);
     }catch(e){
 
@@ -184,7 +196,7 @@ const savePosts = async(event)=>{
 }
 
 /**
- * 게시글 조회
+ * 모달창 게시글 조회
  * @param postId
  * @returns {Promise<void>}
  */
@@ -203,6 +215,8 @@ const findByPost = async (postId) => {
 
     const content = document.createElement("span");
     content.innerText = response.content;
+    content.style.fontSize = "lighter";
+    content.style.fontSize = "small";
 
     admin_container.appendChild(user_id);
     admin_container.appendChild(content);
@@ -211,7 +225,9 @@ const findByPost = async (postId) => {
 }
 
 /**
- * 댓글 조회
+ * 모달창 댓글 조회
+ * @param postId
+ * @returns {Promise<*[]>}
  */
 const findByComments = async (postId) =>{
     const header = {
@@ -236,6 +252,8 @@ const findByComments = async (postId) =>{
 
         const content = document.createElement("span");
         content.innerText = element.content;
+        content.style.fontSize = "lighter";
+        content.style.fontSize = "small";
 
         comment.appendChild(user_id);
         comment.appendChild(content);
@@ -262,8 +280,7 @@ const saveComment = async (event)=>{
 
         const param={
             content : document.getElementById("inputComment").value,
-            postId : document.getElementsByName("postIdInput").id,
-            memberId : response.id
+            postId : document.getElementsByName("postIdInput").id
         };
 
         header={

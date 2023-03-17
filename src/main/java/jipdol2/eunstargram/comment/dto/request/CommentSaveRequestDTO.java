@@ -11,12 +11,9 @@ public class CommentSaveRequestDTO {
 
     private Long postId;
 
-    private Long memberId;
-
     @Builder
-    public CommentSaveRequestDTO(String content, Long postId, Long memberId) {
+    public CommentSaveRequestDTO(String content, Long postId) {
         this.content = content;
         this.postId = postId;
-        this.memberId = memberId;
     }
 }

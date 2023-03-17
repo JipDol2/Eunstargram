@@ -1,6 +1,8 @@
 package jipdol2.eunstargram.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jipdol2.eunstargram.auth.entity.Session;
+import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.member.entity.Member;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.Cookie;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +57,9 @@ class PostControllerTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private SessionJpaRepository sessionJpaRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -78,6 +84,9 @@ class PostControllerTest {
         Member member = createMember();
         memberRepository.save(member);
 
+        Session session = member.addSession();
+        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
 
         //when
@@ -85,6 +94,7 @@ class PostControllerTest {
                         .file((MockMultipartFile)postSaveRequestDTO.getImage())
                         .param("content",postSaveRequestDTO.getContent())
                         .param("memberId",Long.toString(postSaveRequestDTO.getMemberId()))
+                        .cookie(cookie)
                 )
                 .andExpect(status().isOk())
                 .andDo(print());

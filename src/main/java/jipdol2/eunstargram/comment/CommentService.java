@@ -31,12 +31,12 @@ public class CommentService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public EmptyJSON join(CommentSaveRequestDTO commentSaveRequestDTO){
+    public EmptyJSON join(Long memberId,CommentSaveRequestDTO commentSaveRequestDTO){
 
         Post post = postRepository.findByOne(commentSaveRequestDTO.getPostId())
                 .orElseThrow(()->new PostNotFound());
 
-        Member member = memberRepository.findByOne(commentSaveRequestDTO.getMemberId())
+        Member member = memberRepository.findByOne(memberId)
                 .orElseThrow(()->new MemberNotFound());
 
         Comment comment = Comment.builder()
