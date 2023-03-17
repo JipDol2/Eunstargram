@@ -7,6 +7,7 @@ import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class PostController {
 
     /** 2023/01/10 게시글 업로드 API 생성 **/
     @PostMapping("/upload")
-    public ResponseEntity<Long> uploadPost(@ModelAttribute PostSaveRequestDTO postDto){
+    public ResponseEntity<Long> uploadPost(UserSession userSession, @ModelAttribute PostSaveRequestDTO postDto){
         log.info("articleDTO={}",postDto.toString());
         return ResponseEntity.status(HttpStatus.OK).body(postService.save(postDto));
     }
@@ -45,20 +46,27 @@ public class PostController {
         log.info("userSession.id={}",userSession.getId());
         return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
     }
+    /** 2023/03/18 한건 게시글 조회 **/
+    @GetMapping("/p/{postId}")
+    public ResponseEntity<PostResponseDTO> findByPost(
+            @PathVariable("postId") Long postId
+    ){
+        log.info("postId={}",postId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByOne(postId));
+    }
 
     /** 2023/02/22 게시글 수정 **/
-    @PutMapping("/{memberId}/{postId}")
+    @PutMapping("/p/{postId}")
     public ResponseEntity<EmptyJSON> editPost(
-            @PathVariable("memberId") Long memberId,
             @PathVariable("postId") Long postId,
             @RequestBody PostEditRequestDTO postEditDto
     ){
-        log.info("memberId={},postId={},postEditDto={}",memberId,postId,postEditDto.toString());
+        log.info("postId={},postEditDto={}",postId,postEditDto.toString());
         return ResponseEntity.status(HttpStatus.OK).body(postService.edit(postId,postEditDto));
     }
 
     /** 2023/02/24 게시글 삭제 **/
-    @PostMapping("/{memberId}/{postId}")
+    @PostMapping("/p/delete/{postId}")
     public ResponseEntity<EmptyJSON> deletePost(
             @PathVariable("memberId") Long memberId,
             @PathVariable("postId") Long postId

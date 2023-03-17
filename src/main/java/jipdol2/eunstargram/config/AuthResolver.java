@@ -6,6 +6,7 @@ import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.Unauthorized;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -66,6 +67,10 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         Session session = sessionJpaRepository.findByAccessToken(accessToken)
                 .orElseThrow(Unauthorized::new);
 
-        return new UserSession(session.getMember().getId());
+        return UserSession.builder()
+                .id(session.getMember().getId())
+                .email(session.getMember().getMemberEmail())
+                .nickname(session.getMember().getNickname())
+                .build();
     }
 }

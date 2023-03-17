@@ -2,35 +2,29 @@ package jipdol2.eunstargram.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.exception.MemberNotFound;
-import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
-import jipdol2.eunstargram.member.dto.request.MemberLoginRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.io.FileInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //@WebMvcTest(MemberController.class)
 @AutoConfigureMockMvc
