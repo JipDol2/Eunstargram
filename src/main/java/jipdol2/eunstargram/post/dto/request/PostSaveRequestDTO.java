@@ -13,7 +13,7 @@ public class PostSaveRequestDTO {
 
     private String content;
 
-    private Long memberId;
+//    private Long memberId;
 
     private MultipartFile image;
 
@@ -26,9 +26,9 @@ public class PostSaveRequestDTO {
     }
 
     @Builder
-    public PostSaveRequestDTO(String content, Long memberId, MultipartFile image) {
+    public PostSaveRequestDTO(String content, MultipartFile image) {
         this.content = content;
-        this.memberId = memberId;
+//        this.memberId = memberId;
         this.image = image;
     }
 }

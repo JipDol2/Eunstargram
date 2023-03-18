@@ -53,14 +53,13 @@ class MemberControllerTest {
     @Transactional
     void signUpTest() throws Exception {
 
-        MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
-                        .memberEmail("jipdol2@gmail.com")
-                        .password("1234")
-                        .nickname("Rabbit96")
-                        .phoneNumber("010-1111-2222")
-                        .birthDay("20220107")
-                        .intro("Life is just one")
-                        .build();
+        MemberSaveRequestDTO memberSaveRequestDTO = createMemberSaveRequestDTO(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
 
         String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
 
@@ -79,13 +78,20 @@ class MemberControllerTest {
         assertThat(memberJpaRepository.count()).isEqualTo(1);
     }
 
+
     @Test
     @DisplayName("회원정보수정 : /api/member/update/{id} 요청시 200 status code 리턴")
     @Transactional
     void updateTest() throws Exception{
 
         //given
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
 
         Long id = saveMember.getId();
@@ -113,7 +119,13 @@ class MemberControllerTest {
     @Transactional
     void deleteTest() throws Exception {
         //given
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
         //when
         Long id=saveMember.getId();
@@ -143,7 +155,13 @@ class MemberControllerTest {
     @Transactional
     void findByMemberTest() throws Exception {
         //given
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
         //when
         mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/{id}",saveMember.getId()))
@@ -159,7 +177,13 @@ class MemberControllerTest {
     @Transactional
     void uploadProfileImageTest() throws Exception{
 
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
 
         String originalFilename = "testImage.jpg";
@@ -182,14 +206,42 @@ class MemberControllerTest {
                 .andDo(print());
     }
 
-    private Member createMember() {
+    private Member createMember(
+            String email,
+            String password,
+            String nickname,
+            String intro,
+            String phoneNumber,
+            String birthDay
+    ) {
         Member member = Member.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("Rabbit96")
-                .birthDay("19940715")
-                .intro("life is one time")
+                .memberEmail(email)
+                .password(password)
+                .nickname(nickname)
+                .intro(intro)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
                 .build();
         return member;
     }
+
+    private MemberSaveRequestDTO createMemberSaveRequestDTO(
+            String email,
+            String password,
+            String nickname,
+            String intro,
+            String phoneNumber,
+            String birthDay
+    ) {
+        MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
+                .memberEmail(email)
+                .password(password)
+                .nickname(nickname)
+                .intro(intro)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
+                .build();
+        return memberSaveRequestDTO;
+    }
+
 }

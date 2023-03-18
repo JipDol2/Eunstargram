@@ -34,17 +34,17 @@ public class PostController {
     @PostMapping("/upload")
     public ResponseEntity<Long> uploadPost(UserSession userSession, @ModelAttribute PostSaveRequestDTO postDto){
         log.info("articleDTO={}",postDto.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(postService.save(postDto));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.save(userSession.getId(),postDto));
     }
 
     /** 2023/01/12 전체 게시글 조회 **/
-    @GetMapping("/{memberId}")
+    @GetMapping("/{nickname}")
     public ResponseEntity<List<PostResponseDTO>> findByAllPosts(
             UserSession userSession,
-            @PathVariable("memberId") Long memberId
+            @PathVariable String nickname
     ){
         log.info("userSession.id={}",userSession.getId());
-        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(nickname));
     }
     /** 2023/03/18 한건 게시글 조회 **/
     @GetMapping("/p/{postId}")
@@ -68,10 +68,10 @@ public class PostController {
     /** 2023/02/24 게시글 삭제 **/
     @PostMapping("/p/delete/{postId}")
     public ResponseEntity<EmptyJSON> deletePost(
-            @PathVariable("memberId") Long memberId,
+            UserSession userSession,
             @PathVariable("postId") Long postId
     ){
-        log.info("memberId={},postId={}",memberId,postId);
+        log.info("userSession={},postId={}",userSession.toString(),postId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId));
     }
 

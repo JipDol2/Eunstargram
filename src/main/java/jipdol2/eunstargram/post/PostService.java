@@ -39,12 +39,12 @@ public class PostService {
     private final ImageJpaRepository imageJpaRepository;
 
     @Transactional
-    public Long save(PostSaveRequestDTO postDto) {
+    public Long save(Long memberId,PostSaveRequestDTO postDto) {
 
-        Member member = memberRepository.findByOne(postDto.getMemberId())
+        Member member = memberRepository.findByOne(memberId)
                 .orElseThrow(()->new MemberNotFound());
 
-        Image image = uploadPostImage(postDto.getMemberId(),postDto.getImage());
+        Image image = uploadPostImage(memberId,postDto.getImage());
 
         return postRepository.save(Post.builder()
                 .likeNumber(0L)
@@ -56,9 +56,9 @@ public class PostService {
     }
 
     @Transactional
-    public List<PostResponseDTO> findByAll(Long memberId){
+    public List<PostResponseDTO> findByAll(String nickname){
 
-        Member findByMember = memberJpaRepository.findById(memberId)
+        Member findByMember = memberJpaRepository.findByNickname(nickname)
                 .orElseThrow(() -> new MemberNotFound());
 
         List<Post> findByPosts = postRepository.findMemberIdByAll(findByMember.getId());
