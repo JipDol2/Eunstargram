@@ -2,12 +2,12 @@ package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
+import jipdol2.eunstargram.exception.ImageFileArgumentNotValidation;
 import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,18 +33,18 @@ public class PostController {
     /** 2023/01/10 게시글 업로드 API 생성 **/
     @PostMapping("/upload")
     public ResponseEntity<Long> uploadPost(UserSession userSession, @ModelAttribute PostSaveRequestDTO postDto){
+        postDto.validate();
         log.info("articleDTO={}",postDto.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(postService.save(postDto));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.save(userSession.getId(),postDto));
     }
 
     /** 2023/01/12 전체 게시글 조회 **/
-    @GetMapping("/{memberId}")
+    @GetMapping("/{nickname}")
     public ResponseEntity<List<PostResponseDTO>> findByAllPosts(
-            UserSession userSession,
-            @PathVariable("memberId") Long memberId
+            @PathVariable String nickname
     ){
-        log.info("userSession.id={}",userSession.getId());
-        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
+        log.info("nickname={}",nickname);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(nickname));
     }
     /** 2023/03/18 한건 게시글 조회 **/
     @GetMapping("/p/{postId}")
@@ -68,10 +68,10 @@ public class PostController {
     /** 2023/02/24 게시글 삭제 **/
     @PostMapping("/p/delete/{postId}")
     public ResponseEntity<EmptyJSON> deletePost(
-            @PathVariable("memberId") Long memberId,
+            UserSession userSession,
             @PathVariable("postId") Long postId
     ){
-        log.info("memberId={},postId={}",memberId,postId);
+        log.info("userSession={},postId={}",userSession.toString(),postId);
         return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId));
     }
 

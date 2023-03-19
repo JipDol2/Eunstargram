@@ -23,28 +23,29 @@ const addPostsEvent = () => {
  */
 const getPosts = async(event) => {
 
-    const memberId = sessionStorage.getItem("Id");
+    let nickname = null;
+    try{
+        const header = {
+            method: 'GET'
+        }
+        const response = await fetchData(`/api/member/findByMember`,header);
+        nickname = response.nickname;
+    }catch (e){
 
-    const header = {
-        method: 'GET'
     }
 
     try{
-        const response = await fetchData('/api/post/'+memberId,header);
+        const header = {
+            method: 'GET',
+        }
+
+        const response = await fetchData(`/api/post/${nickname}`,header);
 
         const root = document.querySelector('.mylist_contents');
 
         for (const element of response) {
             const divTag = document.createElement("div");
             divTag.className='pic';
-
-            // const button = document.createElement("button");
-            // button.type = "button";
-            // button.class = "btn";
-            // button.name = `postBtn`;
-            // button.id = `btn_${element.imageDTO.id}`;
-            // button.setAttribute("data-bs-toggle","modal");
-            // button.setAttribute("data-bs-target","#imageModal");
 
             const img = document.createElement("img");
             // console.log(element.imageDTO.storedFileName)
@@ -53,6 +54,7 @@ const getPosts = async(event) => {
             img.setAttribute("data-bs-target","#imageModal");
             img.src = `/upload/${element.imageResponseDTO.storedFileName}`;
             img.id = element.id;    //postId
+
 
             /**
              * Q. button click 시 event.target 이 왜 button 에 대한 정보가 아닌걸까?
@@ -65,46 +67,56 @@ const getPosts = async(event) => {
                 /**
                  * hidden input 을 하나 두어서 거기에 postId 값을 담음
                  */
-                const hiddenInput = document.getElementsByName("postIdInput");
+                const hiddenInput = document.getElementsByName("postIdInput")[0];
                 const postId = event.target.id;
 
                 imageContent.src = event.target.src;
                 hiddenInput.id = postId;   //postId
+                hiddenInput.value = postId;
 
                 // console.log(hiddenInput.id);
                 /**
                  * 게시글 및 댓글 조회
                  * - 직접 html 코드들을 생성해서 append 시켜줌
                  */
-                const sectionCheck = document.getElementById("scroll_section");
-                if(sectionCheck){
-                    sectionCheck.remove();
-                }
-
-                const section = document.createElement("section");
-                section.setAttribute("class","scroll_section");
-                section.setAttribute("id","scroll_section");
-
-                const postContent = await findByPost(element.id);
-                section.appendChild(postContent);
-                section.appendChild(document.createElement("hr"));
-
-                const arr = await findByComments(element.id);
-                arr.forEach(element=>section.appendChild(element));
-
-                const box = document.getElementById("detail--right_box");
-                box.prepend(section);
+                makeModal(postId);
             });
             divTag.appendChild(img);
-            // button.appendChild(img);
-            // divTag.appendChild(button);
             root.prepend(divTag);
         }
     }catch (e){
         throw new Error("잘못된 게시글 목록 요청입니다.");
     }
 }
+/**
+ * 모달창 생성
+ * @param element
+ * @returns {Promise<void>}
+ */
+const makeModal = async (postId) => {
+    const sectionCheck = document.getElementById("scroll_section");
+    if(sectionCheck){
+        sectionCheck.remove();
+    }
 
+    const box = document.getElementById("detail--right_box");
+
+    const section = document.createElement("section");
+    section.setAttribute("class","scroll_section");
+
+    section.setAttribute("id","scroll_section");
+    /**
+     *  게시글 조회
+     */
+    const postContent = await findByPost(postId);
+    section.appendChild(postContent);
+    /**
+     * 댓글 조회
+     */
+    const arr = await findByComments(postId);
+    arr.forEach(element=>section.appendChild(element));
+    box.prepend(section);
+}
 /**
  * 프로필 사진 업로드 버튼 클릭시 myFile input 클릭 이벤트 실행
  * @param event
@@ -166,21 +178,8 @@ const savePosts = async(event)=>{
     event.preventDefault();
     const image = document.getElementById("contentFile");
 
-    let memberId = null;
-    try{
-        const header = {
-            method: 'GET'
-        }
-        const response = await fetchData("/api/member/findByMember",header);
-        memberId = response.id;
-    }catch (e){
-
-    }
-
     const formData = new FormData();
-    // formData.append("likeNumber",0);
     formData.append("content",document.getElementById("content").value);
-    formData.append("memberId",memberId);
     formData.append("image",image.files[0]);
 
     try{
@@ -194,20 +193,23 @@ const savePosts = async(event)=>{
     }
     location.reload();
 }
-
 /**
  * 모달창 게시글 조회
  * @param postId
  * @returns {Promise<void>}
  */
 const findByPost = async (postId) => {
+
     const header = {
         method: 'GET'
     };
     const response = await fetchData(`/api/post/p/${postId}`,header);
 
-    const admin_container = document.createElement("div");
-    admin_container.setAttribute("class","comment");
+    const top = document.createElement("header");
+    top.setAttribute("class","top");
+
+    const user_container = document.createElement("div");
+    user_container.setAttribute("class","user_container");
 
     const user_id = document.createElement("span");
     user_id.setAttribute("class","user_id");
@@ -218,10 +220,16 @@ const findByPost = async (postId) => {
     content.style.fontSize = "lighter";
     content.style.fontSize = "small";
 
-    admin_container.appendChild(user_id);
-    admin_container.appendChild(content);
+    const sprite_more_icon = document.createElement("div");
+    sprite_more_icon.className="sprite_more_icon";
+    sprite_more_icon.setAttribute("data-name","more");
 
-    return admin_container;
+    user_container.appendChild(user_id);
+    user_container.appendChild(content);
+
+    top.appendChild(user_container);
+    top.appendChild(sprite_more_icon);
+    return top;
 }
 
 /**
@@ -255,15 +263,19 @@ const findByComments = async (postId) =>{
         content.style.fontSize = "lighter";
         content.style.fontSize = "small";
 
+        const sprite_more_icon = document.createElement("div");
+        sprite_more_icon.className="sprite_more_icon";
+        sprite_more_icon.setAttribute("data-name","more");
+
         comment.appendChild(user_id);
         comment.appendChild(content);
         container.appendChild(comment);
+        container.appendChild(sprite_more_icon);
         arr.push(container);
     });
     return arr;
 }
 
-//TODO : 댓글 저장 버튼 클릭시 댓글란 초기화
 /**
  * 댓글 저장
  * @param event
@@ -273,22 +285,20 @@ const saveComment = async (event)=>{
     event.preventDefault();
 
     try{
-        let header = {
-            method: 'GET'
-        }
-        let response = await fetchData("/api/member/findByMember",header);
-
         const param={
-            content : document.getElementById("inputComment").value,
-            postId : document.getElementsByName("postIdInput").id
+            content: document.getElementById("inputComment").value,
+            postId: document.getElementsByName("postIdInput")[0].value
         };
-
-        header={
+        const header={
             method: 'POST',
             body: JSON.stringify(param)
         }
-        response = await fetchData("/api/comment/upload",header);
-
+        const response = await fetchData("/api/comment/upload",header);
+        const inputBox = document.getElementById("inputComment");
+        inputBox.value = null;
+        //TODO: 게시 버튼 클릭 후 다시 모달창이 reload 되어야 하지만 현재 modal 창의 location 은 post 이다....
+        //TODO: 어떻게 해결을 해야될지 잘 모르겠음
+        location.reload();
     }catch(e){
 
     }

@@ -6,6 +6,7 @@ import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import java.io.FileInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@WebMvcTest(MemberController.class)
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional
 class MemberControllerTest {
 
     @Autowired
@@ -48,24 +51,27 @@ class MemberControllerTest {
 
     private static final String COMMON_URL="/api/member";
 
+    @BeforeEach
+    void init(){
+        memberJpaRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("회원가입 : /api/member/signUp 요청시 200 status code 리턴")
-    @Transactional
     void signUpTest() throws Exception {
 
-        MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
-                        .memberEmail("jipdol2@gmail.com")
-                        .password("1234")
-                        .nickname("Rabbit96")
-                        .phoneNumber("010-1111-2222")
-                        .birthDay("20220107")
-                        .intro("Life is just one")
-                        .build();
+        MemberSaveRequestDTO memberSaveRequestDTO = createMemberSaveRequestDTO(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
 
         String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
 
         //expected
-        mockMvc.perform(MockMvcRequestBuilders.post(COMMON_URL + "/signUp")
+        mockMvc.perform(post(COMMON_URL + "/signUp")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                 )
@@ -80,12 +86,95 @@ class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("회원가입 : 올바른 이메일 형식을 입력해야 합니다")
+    void signUpEmailTest() throws Exception{
+
+        MemberSaveRequestDTO memberSaveRequestDTO = createMemberSaveRequestDTO(
+                " jipdol2$naver.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
+
+        String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
+
+        // expected
+        mockMvc.perform(post(COMMON_URL + "/signUp")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.memberEmail").value("올바른 이메일 형식을 적어주세요"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원가입 : 비밀번호값은 필수 입니다")
+    void signUpPasswordTest() throws Exception{
+
+        MemberSaveRequestDTO memberSaveRequestDTO = createMemberSaveRequestDTO(
+                "jipdol2@gmail.com",
+                " ",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
+
+        String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
+
+        // expected
+        mockMvc.perform(post(COMMON_URL + "/signUp")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.password").value("비밀번호를 적어주세요"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원가입 : 닉네임은 필수입니다")
+    void signUpNicknameTest() throws Exception{
+
+        MemberSaveRequestDTO memberSaveRequestDTO = createMemberSaveRequestDTO(
+                "jipdol2@gmail.com",
+                "1234",
+                " ",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
+
+        String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
+
+        // expected
+        mockMvc.perform(post(COMMON_URL + "/signUp")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.nickname").value("닉네임을 적어주세요"))
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("회원정보수정 : /api/member/update/{id} 요청시 200 status code 리턴")
-    @Transactional
     void updateTest() throws Exception{
 
         //given
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
 
         Long id = saveMember.getId();
@@ -95,7 +184,7 @@ class MemberControllerTest {
                         .build();
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.patch(COMMON_URL + "/update/{id}", id)
+        mockMvc.perform(patch(COMMON_URL + "/update/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberB))
                 )
@@ -110,14 +199,19 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("회원탈퇴 : /api/member/delete/{id} 요청시 200 status code 리턴")
-    @Transactional
     void deleteTest() throws Exception {
         //given
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
         //when
         Long id=saveMember.getId();
-        mockMvc.perform(MockMvcRequestBuilders.patch(COMMON_URL+"/delete/{id}",id)
+        mockMvc.perform(patch(COMMON_URL+"/delete/{id}",id)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
@@ -130,23 +224,27 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("회원 전체조회 : /api/member/ 요청시 200 status code 와 회원정보들 리턴")
-    @Transactional
     void findByAllMemberTest() throws Exception {
         //expect
-        mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/"))
+        mockMvc.perform(get(COMMON_URL+"/"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
     @DisplayName("회원 조회 : /api/member/{id} 요청시 200 status code 와 회원정보 리턴")
-    @Transactional
     void findByMemberTest() throws Exception {
         //given
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
         //when
-        mockMvc.perform(MockMvcRequestBuilders.get(COMMON_URL+"/{id}",saveMember.getId()))
+        mockMvc.perform(get(COMMON_URL+"/{id}",saveMember.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberEmail").value("jipdol2@gmail.com"))
                 .andExpect(jsonPath("$.password").value("1234"))
@@ -156,10 +254,15 @@ class MemberControllerTest {
 
     @Test
     @DisplayName("회원 프로필 이미지 업로드 : /api/member/profileImage 200 status code 리턴")
-    @Transactional
     void uploadProfileImageTest() throws Exception{
 
-        Member member = createMember();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit96",
+                "im Rabbit96!!",
+                "19940715",
+                "life is one time");
         Member saveMember = memberJpaRepository.save(member);
 
         String originalFilename = "testImage.jpg";
@@ -174,7 +277,7 @@ class MemberControllerTest {
          */
         MockMultipartFile mockImage = new MockMultipartFile("image", originalFilename, "image/jpg", new FileInputStream(filePath));
 
-        mockMvc.perform(MockMvcRequestBuilders.multipart(COMMON_URL+"/profileImage")
+        mockMvc.perform(multipart(COMMON_URL+"/profileImage")
                         .file(mockImage)
                         .param("memberId",String.valueOf(saveMember.getId()))
                 )
@@ -182,14 +285,42 @@ class MemberControllerTest {
                 .andDo(print());
     }
 
-    private Member createMember() {
+    private Member createMember(
+            String email,
+            String password,
+            String nickname,
+            String intro,
+            String phoneNumber,
+            String birthDay
+    ) {
         Member member = Member.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("Rabbit96")
-                .birthDay("19940715")
-                .intro("life is one time")
+                .memberEmail(email)
+                .password(password)
+                .nickname(nickname)
+                .intro(intro)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
                 .build();
         return member;
     }
+
+    private MemberSaveRequestDTO createMemberSaveRequestDTO(
+            String email,
+            String password,
+            String nickname,
+            String intro,
+            String phoneNumber,
+            String birthDay
+    ) {
+        MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
+                .memberEmail(email)
+                .password(password)
+                .nickname(nickname)
+                .intro(intro)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
+                .build();
+        return memberSaveRequestDTO;
+    }
+
 }

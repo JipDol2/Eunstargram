@@ -43,7 +43,7 @@ public class Post extends BaseTimeEntity {
      * Post 를 조회할때 당연히 image 도 같이 조회되어야 하는데 Image 객체를 연관관계의 주인으로 설정했을 경우
      * Post 를 조회했음에도 불구하고 image 를 조회하지 못하는 문제가 발생했었음.
      */
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "IMAGE_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Image image;
 

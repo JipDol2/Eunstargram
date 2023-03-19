@@ -14,7 +14,7 @@ public class MemberFindResponseDTO {
 
     private String password;
 
-    private String nickName;
+    private String nickname;
 
     private String phoneNumber;
 
@@ -25,11 +25,11 @@ public class MemberFindResponseDTO {
     private String deleteYn;
 
     @Builder
-    public MemberFindResponseDTO(Long id, String memberEmail, String password, String nickName, String phoneNumber, String birthDay, String intro, String deleteYn) {
+    public MemberFindResponseDTO(Long id, String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro, String deleteYn) {
         this.id = id;
         this.memberEmail = memberEmail;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;
@@ -41,7 +41,7 @@ public class MemberFindResponseDTO {
                 .id(member.getId())
                 .memberEmail(member.getMemberEmail())
                 .password(member.getPassword())
-                .nickName(member.getNickname())
+                .nickname(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())
                 .birthDay(member.getBirthDay())
                 .intro(member.getIntro())

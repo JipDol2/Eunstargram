@@ -68,15 +68,7 @@
                     <ul class="middle">
                         <li>
                             <span>게시물</span>
-                            3
-                        </li>
-                        <li>
-                            <span>팔로워</span>
-                            3
-                        </li>
-                        <li>
-                            <span>팔로우</span>
-                            3
+
                         </li>
                     </ul>
                     <p class="about">
@@ -86,81 +78,9 @@
                 </div>
             </div>
             <div class="mylist_contents contents_container active">
-
             </div>
             <!----------------------------------------- Modal ----------------------------------------->
-            <div class="modal fade bd-example-modal-lg" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="contents cont01">
-                            <div class="img_section">
-                                <div class="trans_inner">
-                                    <div><img id="modalImage" src="" /></div>
-                                    <input type="hidden" id="" name="postIdInput"/>
-                                </div>
-                            </div>
-                            <div class="detail--right_box" id="detail--right_box">
-<!--                                <section class="scroll_section" id = "scroll_section">
-                                    <div class="admin_container">
-                                        <div class="admin"><img src="/img/thumb.jpeg" alt="user"></div>
-                                        <div class="comment">
-                                            <span class="user_id">Kindtiger</span>강아지가 많이 힘든가보다ㅜㅜㅜㅜㅜ조금만힘내
-                                            <div class="time">2시간</div>
-                                        </div>
-                                    </div>
-                                    <div class="user_container-detail">
-                                        <div class="comment">
-                                            <span class="user_id">in0.lee</span>
-                                            <span>너무귀엽네요</span>
-                                        </div>
-                                    </div>
-                                    <div class="user_container-detail">
-                                        <div class="comment">
-                                            <span class="user_id">in0.lee</span>
-                                            <span>너무귀엽네요</span>
-                                        </div>
-                                    </div>
-                                </section>-->
-                                <div class="commit_field">
-                                    <input type="text" id="inputComment" placeholder="댓글달기.." style="width: 90%">
-<!--                                    <div class="upload_btn" style="width: 10%">게시</div>-->
-                                    <button type="button" class="upload_btn" id="uploadComment" style="width: 15%">게시</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bookmark_contents contents_container">
-<!--                <div class="pic">
-                    <a href="#"><img src="img/img_section/img03.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"><img src="img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img03.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>-->
-            </div>
+            <div th:replace="modal/postModal.html :: postModal(${postId})"></div>
         </section>
     </div>
 </section>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.time.Duration;
 
 @Slf4j
@@ -35,7 +36,7 @@ public class AuthController {
      * @return
      */
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO loginRequestDTO){
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
 
         log.info(">>>login={}",loginRequestDTO.toString());
         String accessToken = authService.signIn(loginRequestDTO);

@@ -46,9 +46,6 @@ class CommentControllerTest {
     private CommentRepository commentRepository;
 
     @Autowired
-    private SessionJpaRepository sessionJpaRepository;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     private final String COMMON_URL = "/api/comment";
@@ -59,23 +56,17 @@ class CommentControllerTest {
     void commentSaveTest() throws Exception {
 
         //given
-        Member member = Member.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("jipdol2")
-                .intro("im jipdol2")
-                .phoneNumber("010-1234-5678")
-                .birthDay("1999-01-01")
-                .build();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "jipdol2",
+                "im jipdol2",
+                "010-1234-5678",
+                "1999-01-01");
 
         Long memberId = memberRepository.save(member);
 
-        Post post = Post.builder()
-                .content("can i have a lunch with me?")
-                .deleteYn("N")
-                .likeNumber(0L)
-                .member(member)
-                .build();
+        Post post = createPost(member,"can i have a lunch with me?");
 
         Long postId = postRepository.save(post);
 
@@ -112,47 +103,32 @@ class CommentControllerTest {
     @Transactional
     void commentFindAllTest() throws Exception{
         //given
-        Member member = Member.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("jipdol2")
-                .intro("im jipdol2")
-                .phoneNumber("010-1234-5678")
-                .birthDay("1999-01-01")
-                .build();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "jipdol2",
+                "im jipdol2",
+                "010-1234-5678",
+                "1999-01-01");
 
         Long memberId = memberRepository.save(member);
 
-        Post post = Post.builder()
-                .content("can i have a lunch with me?")
-                .deleteYn("N")
-                .likeNumber(0L)
-                .member(member)
-                .build();
+        Post post = createPost(member,"No,i don't enough time sorry friend!");
 
         Long postId = postRepository.save(post);
 
-        Comment comment1 = Comment.builder()
-                .content("already i had lunch")
-                .likeNumber(0L)
-                .deleteYn("N")
-                .post(post)
-                .member(member)
-                .build();
-
-        Comment comment2 = Comment.builder()
-                .content("i dont have lunch")
-                .likeNumber(0L)
-                .deleteYn("N")
-                .post(post)
-                .member(member)
-                .build();
+        Comment comment1 = createComment("already i had lunch",member, post);
+        Comment comment2 = createComment("i dont have lunch",member, post);
 
         commentRepository.save(comment1);
         commentRepository.save(comment2);
 
+        Session session = member.addSession();
+        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+
         //when
-        mockMvc.perform(get(COMMON_URL+"/{postId}",postId))
+        mockMvc.perform(get(COMMON_URL+"/{postId}",postId)
+                        .cookie(cookie))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -160,5 +136,38 @@ class CommentControllerTest {
                 .orElseThrow(() -> new PostNotFound());
         //then
         assertThat(findByPost.getComments().size()).isEqualTo(2);
+    }
+
+    private Member createMember(String email,String password,String nickname,String intro,String phoneNumber,String birthDay) {
+        Member member = Member.builder()
+                .memberEmail(email)
+                .password(password)
+                .nickname(nickname)
+                .intro(intro)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
+                .build();
+        return member;
+    }
+
+    private Post createPost(Member member,String content) {
+        Post post = Post.builder()
+                .content(content)
+                .deleteYn("N")
+                .likeNumber(0L)
+                .member(member)
+                .build();
+        return post;
+    }
+
+    private Comment createComment(String content,Member member, Post post) {
+        Comment comment1 = Comment.builder()
+                .content(content)
+                .likeNumber(0L)
+                .deleteYn("N")
+                .post(post)
+                .member(member)
+                .build();
+        return comment1;
     }
 }
