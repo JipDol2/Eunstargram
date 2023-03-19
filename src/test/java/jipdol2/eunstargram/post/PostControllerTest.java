@@ -97,6 +97,33 @@ class PostControllerTest {
     }
 
     @Test
+    @DisplayName("게시글 업로드 : 게시글 업로드시 Image 파일은 필수입니다")
+    @Transactional
+    void uploadPostImageTest() throws Exception {
+
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Session session = member.addSession();
+        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+
+        PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
+        postSaveRequestDTO.setImage(null);
+
+        //when
+        mockMvc.perform(multipart(COMMON_URL+ "/upload")
+                        .file("image",null)
+                        .param("content",postSaveRequestDTO.getContent())
+                        .cookie(cookie))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.image").value("이미지 파일은 필수입니다."))
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("게시글 전체 조회 : 게시글 전체 조회 200 status code 리턴 + 게시글 리턴")
     @Transactional
     void findByAllPosts() throws Exception{
@@ -111,12 +138,8 @@ class PostControllerTest {
         List<Post> postRequestListDTO = createPostRequestListDTO(member,image);
         postRequestListDTO.stream().forEach(postRepository::save);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
-
         //when
-        mockMvc.perform(get(COMMON_URL+"/{nickname}",member.getNickname())
-                        .cookie(cookie))
+        mockMvc.perform(get(COMMON_URL+"/{nickname}",member.getNickname()))
                 .andExpect(jsonPath("$[0].likeNumber").value(0L))
                 .andExpect(jsonPath("$[0].content").value("Im kim da mi!!"))
                 .andExpect(jsonPath("$[0].memberId").value(member.getId()))
@@ -232,7 +255,6 @@ class PostControllerTest {
                 .deleteYn("N")
                 .member(member)
                 .image(image)
-//                .image(createImage(member))
                 .build();
     }
 

@@ -1,11 +1,11 @@
 package jipdol2.eunstargram.member.entity;
 
 import jipdol2.eunstargram.auth.entity.Session;
-import jipdol2.eunstargram.image.entity.Image;
-import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
+import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
+import jipdol2.eunstargram.post.entity.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

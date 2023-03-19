@@ -55,6 +55,7 @@ const getPosts = async(event) => {
             img.src = `/upload/${element.imageResponseDTO.storedFileName}`;
             img.id = element.id;    //postId
 
+
             /**
              * Q. button click 시 event.target 이 왜 button 에 대한 정보가 아닌걸까?
              * A. 정답은 event bubbling (https://ko.javascript.info/bubbling-and-capturing) 때문이다.
@@ -78,38 +79,44 @@ const getPosts = async(event) => {
                  * 게시글 및 댓글 조회
                  * - 직접 html 코드들을 생성해서 append 시켜줌
                  */
-                const sectionCheck = document.getElementById("scroll_section");
-                if(sectionCheck){
-                    sectionCheck.remove();
-                }
-
-                const box = document.getElementById("detail--right_box");
-
-                const section = document.createElement("section");
-                section.setAttribute("class","scroll_section");
-
-                section.setAttribute("id","scroll_section");
-                //게시글 조회
-                const postContent = await findByPost(element.id);
-                section.appendChild(postContent);
-
-                // section.appendChild(document.createElement("hr"));
-                //댓글 조회
-                const arr = await findByComments(element.id);
-                arr.forEach(element=>section.appendChild(element));
-
-                box.prepend(section);
+                makeModal(postId);
             });
             divTag.appendChild(img);
-            // button.appendChild(img);
-            // divTag.appendChild(button);
             root.prepend(divTag);
         }
     }catch (e){
         throw new Error("잘못된 게시글 목록 요청입니다.");
     }
 }
+/**
+ * 모달창 생성
+ * @param element
+ * @returns {Promise<void>}
+ */
+const makeModal = async (postId) => {
+    const sectionCheck = document.getElementById("scroll_section");
+    if(sectionCheck){
+        sectionCheck.remove();
+    }
 
+    const box = document.getElementById("detail--right_box");
+
+    const section = document.createElement("section");
+    section.setAttribute("class","scroll_section");
+
+    section.setAttribute("id","scroll_section");
+    /**
+     *  게시글 조회
+     */
+    const postContent = await findByPost(postId);
+    section.appendChild(postContent);
+    /**
+     * 댓글 조회
+     */
+    const arr = await findByComments(postId);
+    arr.forEach(element=>section.appendChild(element));
+    box.prepend(section);
+}
 /**
  * 프로필 사진 업로드 버튼 클릭시 myFile input 클릭 이벤트 실행
  * @param event
@@ -186,7 +193,6 @@ const savePosts = async(event)=>{
     }
     location.reload();
 }
-
 /**
  * 모달창 게시글 조회
  * @param postId
@@ -280,20 +286,21 @@ const saveComment = async (event)=>{
 
     try{
         const param={
-            content : document.getElementById("inputComment").value,
-            postId : document.getElementsByName("postIdInput")[0].value
+            content: document.getElementById("inputComment").value,
+            postId: document.getElementsByName("postIdInput")[0].value
         };
-
         const header={
             method: 'POST',
             body: JSON.stringify(param)
         }
         const response = await fetchData("/api/comment/upload",header);
-
+        const inputBox = document.getElementById("inputComment");
+        inputBox.value = null;
         //TODO: 게시 버튼 클릭 후 다시 모달창이 reload 되어야 하지만 현재 modal 창의 location 은 post 이다....
         //TODO: 어떻게 해결을 해야될지 잘 모르겠음
         location.reload();
     }catch(e){
+
     }
 }
 getPosts();

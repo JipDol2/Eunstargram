@@ -53,7 +53,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("로그인 : 로그인 성공")
-    void loginTest1() throws Exception{
+    void loginSuccessTest() throws Exception{
         //given
         memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
@@ -79,9 +79,99 @@ class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 : 로그인 실패")
+    void loginFailTest() throws Exception{
+        //given
+        memberJpaRepository.save(Member.builder()
+                .memberEmail("jipdol2@gmail.com")
+                .password("1234")
+                .nickname("jipdol2")
+                .phoneNumber("010-1111-2222")
+                .birthDay("1999-01-01")
+                .intro("im jipdol2")
+                .build());
+
+        LoginRequestDTO login = LoginRequestDTO.builder()
+                .memberEmail("jipdol2@naver.com")
+                .password("1234")
+                .build();
+
+        String json = objectMapper.writeValueAsString(login);
+        //expected
+        mockMvc.perform(post(COMMON_URL+"/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation['id/password']").value("아이디/비밀번호가 올바르지 않습니다"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그인 : 이메일은 필수입니다")
+    void loginEmailTest() throws Exception{
+        //given
+        memberJpaRepository.save(Member.builder()
+                .memberEmail("jipdol2@gmail.com")
+                .password("1234")
+                .nickname("jipdol2")
+                .phoneNumber("010-1111-2222")
+                .birthDay("1999-01-01")
+                .intro("im jipdol2")
+                .build());
+
+        LoginRequestDTO login = LoginRequestDTO.builder()
+                .memberEmail(" ")
+                .password("1234")
+                .build();
+
+        String json = objectMapper.writeValueAsString(login);
+        //expected
+        mockMvc.perform(post(COMMON_URL+"/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.memberEmail").value("올바른 이메일 형식을 입력해주세요"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("로그인 : 비밀번호는 필수입니다")
+    void loginPasswordTest() throws Exception{
+        //given
+        memberJpaRepository.save(Member.builder()
+                .memberEmail("jipdol2@gmail.com")
+                .password("1234")
+                .nickname("jipdol2")
+                .phoneNumber("010-1111-2222")
+                .birthDay("1999-01-01")
+                .intro("im jipdol2")
+                .build());
+
+        LoginRequestDTO login = LoginRequestDTO.builder()
+                .memberEmail("jipdol2@gmail.com")
+                .password(" ")
+                .build();
+
+        String json = objectMapper.writeValueAsString(login);
+        //expected
+        mockMvc.perform(post(COMMON_URL+"/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.password").value("비밀번호를 입력해주세요"))
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("로그인 : 로그인 성공 후 세션 확인")
     @Transactional
-    void loginTest2() throws Exception{
+    void loginSuccessTest2() throws Exception{
         //given
         Member member = memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
@@ -115,7 +205,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("로그인 : 로그인 성공 후 세션 응답 확인")
-    void loginTest3() throws Exception{
+    void loginSessionTest() throws Exception{
         //given
         Member member = memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
@@ -145,7 +235,7 @@ class AuthControllerTest {
     @Test
     @DisplayName("권한 체크를 하는 API 에 접근")
     @Transactional
-    void loginTest4() throws Exception{
+    void loginAdminTest() throws Exception{
         //given
         Member member = Member.builder()
                 .memberEmail("jipdol2@gmail.com")

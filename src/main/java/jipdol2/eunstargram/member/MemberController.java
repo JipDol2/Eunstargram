@@ -12,9 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +29,7 @@ public class MemberController {
 
     /** 2022/01/09 회원가입 API 생성 **/
     @PostMapping("/signUp")
-    public ResponseEntity<EmptyJSON> joinMember(@RequestBody MemberSaveRequestDTO memberSaveRequestDTO){
+    public ResponseEntity<EmptyJSON> joinMember(@Valid @RequestBody MemberSaveRequestDTO memberSaveRequestDTO){
         log.info("memberSaveRequestDTO = {}", memberSaveRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberSaveRequestDTO));
     }

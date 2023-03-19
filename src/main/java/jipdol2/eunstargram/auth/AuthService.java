@@ -2,7 +2,7 @@ package jipdol2.eunstargram.auth;
 
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.entity.Session;
-import jipdol2.eunstargram.exception.InvalidSigninInformation;
+import jipdol2.eunstargram.exception.InvalidSignInInformation;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class AuthService {
     @Transactional
     public String signIn(LoginRequestDTO login){
         Member findByMember = memberJpaRepository.findByMemberEmailAndPassword(login.getMemberEmail(), login.getPassword())
-                .orElseThrow(InvalidSigninInformation::new);
+                .orElseThrow(() -> new InvalidSignInInformation("id/password","아이디/비밀번호가 올바르지 않습니다"));
         Session session = findByMember.addSession();
         return session.getAccessToken();
     }

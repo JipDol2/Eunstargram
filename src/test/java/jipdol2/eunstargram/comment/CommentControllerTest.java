@@ -66,7 +66,7 @@ class CommentControllerTest {
 
         Long memberId = memberRepository.save(member);
 
-        Post post = getPost(member,"can i have a lunch with me?");
+        Post post = createPost(member,"can i have a lunch with me?");
 
         Long postId = postRepository.save(post);
 
@@ -113,7 +113,7 @@ class CommentControllerTest {
 
         Long memberId = memberRepository.save(member);
 
-        Post post = getPost(member,"No,i don't enough time sorry friend!");
+        Post post = createPost(member,"No,i don't enough time sorry friend!");
 
         Long postId = postRepository.save(post);
 
@@ -150,7 +150,7 @@ class CommentControllerTest {
         return member;
     }
 
-    private Post getPost(Member member,String content) {
+    private Post createPost(Member member,String content) {
         Post post = Post.builder()
                 .content(content)
                 .deleteYn("N")
