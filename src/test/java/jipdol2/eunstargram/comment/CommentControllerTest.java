@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -96,6 +97,92 @@ class CommentControllerTest {
 
         //then
         assertThat(comments.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("댓글 저장 : 댓글 내용은 필수입니다")
+    @Transactional
+    void commentSaveContentTest() throws Exception {
+
+        //given
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "jipdol2",
+                "im jipdol2",
+                "010-1234-5678",
+                "1999-01-01");
+
+        Long memberId = memberRepository.save(member);
+
+        Post post = createPost(member,"can i have a lunch with me?");
+
+        Long postId = postRepository.save(post);
+
+        CommentSaveRequestDTO commentDto = CommentSaveRequestDTO.builder()
+                .content("  ")
+                .postId(postId)
+                .build();
+
+        Session session = member.addSession();
+        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+
+        String json = objectMapper.writeValueAsString(commentDto);
+
+        //expect
+        mockMvc.perform(post(COMMON_URL+"/upload")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .cookie(cookie)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.content").value("댓글을 입력해주세요"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("댓글 저장 : 댓글 내용은 필수입니다")
+    @Transactional
+    void commentSavePostIdTest() throws Exception {
+
+        //given
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "jipdol2",
+                "im jipdol2",
+                "010-1234-5678",
+                "1999-01-01");
+
+        Long memberId = memberRepository.save(member);
+
+        Post post = createPost(member,"can i have a lunch with me?");
+
+        Long postId = postRepository.save(post);
+
+        CommentSaveRequestDTO commentDto = CommentSaveRequestDTO.builder()
+                .content("can i have a lunch with me?")
+                .postId(null)
+                .build();
+
+        Session session = member.addSession();
+        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+
+        String json = objectMapper.writeValueAsString(commentDto);
+
+        //expect
+        mockMvc.perform(post(COMMON_URL+"/upload")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .cookie(cookie)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.validation.postId").value("postId 는 null 일 수 없습니다"))
+                .andDo(print());
     }
 
     @Test

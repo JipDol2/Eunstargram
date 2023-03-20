@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +24,7 @@ public class CommentController {
 
     /** 2023/01/14 댓글 업로드 API 생성 **/
     @PostMapping("/upload")
-    public ResponseEntity<EmptyJSON> uploadComment(UserSession userSession,@RequestBody CommentSaveRequestDTO commentSaveRequestDTO){
+    public ResponseEntity<EmptyJSON> uploadComment(UserSession userSession,@Valid @RequestBody CommentSaveRequestDTO commentSaveRequestDTO){
         log.info("userSession={},comment={}",userSession.toString(),commentSaveRequestDTO.toString());
         return ResponseEntity.status(HttpStatus.OK).body(commentService.join(userSession.getId(),commentSaveRequestDTO));
     }

@@ -68,7 +68,6 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
     }
 
-    //TODO : response 시 Image Entity 말고 DTO 를 리턴(DTO class 생성 필요)
     /** 2023/01/25 회원 프로필 이미지 업로드 API 생성 **/
     @PostMapping("/profileImage")
     public ResponseEntity<ImageResponseDTO> uploadProfileImage(@ModelAttribute ImageRequestDTO imageRequestDTO){

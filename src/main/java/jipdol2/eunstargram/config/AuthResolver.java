@@ -1,5 +1,9 @@
 package jipdol2.eunstargram.config;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.config.data.UserSession;
@@ -7,7 +11,9 @@ import jipdol2.eunstargram.exception.Unauthorized;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -16,6 +22,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * ArgumentResolver 는 HandlerAdapter(RequestMappingHandlerAdapter)가
@@ -27,6 +34,15 @@ import java.util.Arrays;
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
     private final SessionJpaRepository sessionJpaRepository;
+
+    /**
+     * TODO:jwt.secret 이 null 인 문제...
+     * why???
+     */
+//    @Value("${jwt.secret}")
+//    private String KEY;
+
+    private static final String KEY = "ZxV0wmgRyU8ZGYBRITUGcaOi03osZK1bsy7qEUUjgBs=";
 
     /**
      * parameter 에는 UserSesseion 클래스가 넘어온다.
@@ -44,9 +60,11 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
         return parameter.getParameterType().equals(UserSession.class);
     }
 
-    @Override
+    /**
+     * UUID Token 값을 DB 에 저장 후에 조회한 후 인증 절차 진행
+     */
+/*    @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-//        String accessToken = webRequest.getHeader("Authorization");   //header 에서 token을 꺼내는 방법
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         if(request == null){
             log.error("servletRequest null");
@@ -58,10 +76,6 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             throw new Unauthorized();
         }
 
-//        if(accessToken==null || accessToken.equals("")){
-//            throw new Unauthorized();
-//        }
-
         String accessToken = cookies[0].getValue();
 
         Session session = sessionJpaRepository.findByAccessToken(accessToken)
@@ -72,5 +86,31 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
                 .email(session.getMember().getMemberEmail())
                 .nickname(session.getMember().getNickname())
                 .build();
+    }*/
+
+    /**
+     * Jwt Token 사용
+     */
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        String jws = webRequest.getHeader("Authorization");   //header 에서 token을 꺼내는 방법
+
+        if(jws == null || jws.equals("")){
+            log.error("servletRequest null");
+            throw new Unauthorized();
+        }
+        log.info(KEY);
+        byte[] decodedKey = Base64.getDecoder().decode(KEY);
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder()
+                    .setSigningKey(decodedKey)
+                    .build()
+                    .parseClaimsJws(jws);
+
+            String userId = claims.getBody().getSubject();
+            return new UserSession(Long.parseLong(userId));
+        } catch (JwtException e) {
+            throw new Unauthorized();
+        }
     }
 }
