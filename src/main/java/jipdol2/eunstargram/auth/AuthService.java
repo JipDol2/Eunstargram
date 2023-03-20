@@ -18,11 +18,19 @@ public class AuthService {
     private final MemberJpaRepository memberJpaRepository;
 
     @Transactional
-    public String signIn(LoginRequestDTO login){
+    public String signInSession(LoginRequestDTO login){
         Member findByMember = memberJpaRepository.findByMemberEmailAndPassword(login.getMemberEmail(), login.getPassword())
                 .orElseThrow(() -> new InvalidSignInInformation("id/password","아이디/비밀번호가 올바르지 않습니다"));
         Session session = findByMember.addSession();
         return session.getAccessToken();
+    }
+
+    @Transactional
+    public Member signInJwt(LoginRequestDTO login){
+        Member findByMember = memberJpaRepository.findByMemberEmailAndPassword(login.getMemberEmail(), login.getPassword())
+                .orElseThrow(() -> new InvalidSignInInformation("id/password","아이디/비밀번호가 올바르지 않습니다"));
+        Session session = findByMember.addSession();
+        return findByMember;
     }
 
 }

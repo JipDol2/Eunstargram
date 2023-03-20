@@ -18,7 +18,6 @@ public class PostSaveRequestDTO {
 
     private String content;
 
-    @NotNull(message = "이미지 파일은 필수입니다")
     private MultipartFile image;
 
     /**

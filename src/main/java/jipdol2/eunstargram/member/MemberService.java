@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService {
 
     //Service
@@ -33,8 +34,6 @@ public class MemberService {
     private final MemberJpaRepository memberJpaRepository;
     private final ImageJpaRepository imageJpaRepository;
 
-    //TODO : 추후 삭제 요망
-    @Transactional
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
         validationDuplicateMember(memberSaveRequestDTO);
         memberRepository.save(Member.builder()
@@ -48,13 +47,13 @@ public class MemberService {
         return new EmptyJSON();
     }
 
+    //TODO: 중복 회원 exception 생성필요
     private void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
         if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberEmail()).isEmpty()){
             throw new IllegalArgumentException("이미 존재하는 회원입니다");
         }
     }
 
-    @Transactional
     public MemberFindResponseDTO findByMember(Long id) {
         Member member = memberRepository.findByOne(id)
                 .orElseThrow(() -> new MemberNotFound());
@@ -63,7 +62,6 @@ public class MemberService {
         return memberFindResponseDTO;
     }
 
-    @Transactional
     public EmptyJSON update(Long seq,MemberUpdateRequestDTO memberUpdateRequestDTO){
         Member findMember = memberRepository.findByOne(seq)
                 .orElseThrow(() -> new MemberNotFound());
@@ -74,7 +72,6 @@ public class MemberService {
         return new EmptyJSON();
     }
 
-    @Transactional
     public EmptyJSON delete(Long id) {
         Member findMember = memberRepository.findByOne(id)
                 .orElseThrow(() -> new MemberNotFound());
@@ -85,7 +82,6 @@ public class MemberService {
         return new EmptyJSON();
     }
 
-    @Transactional
     public List<MemberFindResponseDTO> findByAll(){
         List<Member> findMembers = memberRepository.findByAll();
         List<MemberFindResponseDTO> members = findMembers.stream()
@@ -94,7 +90,6 @@ public class MemberService {
         return members;
     }
 
-    @Transactional
     public ImageResponseDTO uploadProfileImage(ImageRequestDTO imageRequestDTO){
 
         MultipartFile imageFile = imageRequestDTO.getImage();
