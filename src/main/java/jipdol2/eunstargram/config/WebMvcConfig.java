@@ -15,6 +15,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final SessionJpaRepository sessionJpaRepository;
 
+    private final AuthResolver authResolver;
+
     /**
      * 프로젝트 내부의 이미지가 아닌 외부이미지에 접속하기 위해선 리소스 핸들러를 정의해주어야 한다.
      * - ResourceHandlerRegistry 에 대해서 반드시 공부 필요 + WebMvcConfgiruer
@@ -35,6 +37,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new AuthResolver(sessionJpaRepository));
+//        resolvers.add(new AuthResolver(sessionJpaRepository));
+        resolvers.add(authResolver);
     }
 }

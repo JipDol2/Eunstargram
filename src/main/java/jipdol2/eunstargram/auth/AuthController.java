@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import java.security.Key;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Date;
 
 import static java.util.Base64.*;
 
@@ -81,6 +82,7 @@ public class AuthController {
         String jws = Jwts.builder()
                 .setSubject(String.valueOf(member.getId()))
                 .signWith(key)
+                .setIssuedAt(new Date())
                 .compact();
         return new SessionResponseDTO(jws);
     }
