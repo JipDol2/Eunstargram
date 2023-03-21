@@ -30,6 +30,7 @@ import java.util.Base64;
  * 전달 데이터를 생성한다. *
  */
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
@@ -39,10 +40,10 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
      * TODO:jwt.secret 이 null 인 문제...
      * why???
      */
-//    @Value("${jwt.secret}")
-//    private String KEY;
+    @Value("${jwt.secret}")
+    private String KEY;
 
-    private static final String KEY = "ZxV0wmgRyU8ZGYBRITUGcaOi03osZK1bsy7qEUUjgBs=";
+//    private static final String KEY = "ZxV0wmgRyU8ZGYBRITUGcaOi03osZK1bsy7qEUUjgBs=";
 
     /**
      * parameter 에는 UserSesseion 클래스가 넘어온다.
@@ -99,7 +100,6 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             log.error("servletRequest null");
             throw new Unauthorized();
         }
-        log.info(KEY);
         byte[] decodedKey = Base64.getDecoder().decode(KEY);
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
