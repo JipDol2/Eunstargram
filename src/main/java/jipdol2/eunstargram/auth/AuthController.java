@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.auth;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -79,8 +80,13 @@ public class AuthController {
 
         SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
 
+        Claims claims = Jwts.claims();
+        claims.put("id",member.getId());
+        claims.put("email",member.getMemberEmail());
+        claims.put("nickname",member.getNickname());
+
         String jws = Jwts.builder()
-                .setSubject(String.valueOf(member.getId()))
+                .setClaims(claims)
                 .signWith(key)
                 .setIssuedAt(new Date())
                 .compact();

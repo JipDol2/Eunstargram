@@ -15,6 +15,7 @@ import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,9 +37,15 @@ public class MemberService {
 
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
         validationDuplicateMember(memberSaveRequestDTO);
+
+        SCryptPasswordEncoder encoder =
+                new SCryptPasswordEncoder(32,8,1,32,64);
+
+        String cryptPassword = encoder.encode(memberSaveRequestDTO.getPassword());
+
         memberRepository.save(Member.builder()
                 .memberEmail(memberSaveRequestDTO.getMemberEmail())
-                .password(memberSaveRequestDTO.getPassword())
+                .password(cryptPassword)
                 .nickname(memberSaveRequestDTO.getNickname())
                 .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
                 .birthDay(memberSaveRequestDTO.getBirthDay())
