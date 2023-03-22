@@ -15,7 +15,9 @@ public class UserSession {
     public String nickname;
 
     @Builder
-    public UserSession(Long id){
+    public UserSession(Long id,String email,String nickname){
         this.id = id;
+        this.email = email;
+        this.nickname = nickname;
     }
 }

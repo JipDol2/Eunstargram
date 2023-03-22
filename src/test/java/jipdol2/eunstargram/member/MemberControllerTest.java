@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jipdol2.eunstargram.auth.AuthController;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
@@ -43,6 +44,9 @@ class MemberControllerTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
+    @Autowired
+    private AuthController authController;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -56,6 +60,7 @@ class MemberControllerTest {
         memberJpaRepository.deleteAll();
     }
 
+    //TODO: 암호화한 password 테스트 진행
     @Test
     @DisplayName("회원가입 : /api/member/signUp 요청시 200 status code 리턴")
     void signUpTest() throws Exception {

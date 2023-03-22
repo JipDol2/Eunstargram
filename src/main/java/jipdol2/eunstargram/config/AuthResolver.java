@@ -43,8 +43,6 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     @Value("${jwt.secret}")
     private String KEY;
 
-//    private static final String KEY = "ZxV0wmgRyU8ZGYBRITUGcaOi03osZK1bsy7qEUUjgBs=";
-
     /**
      * parameter 에는 UserSesseion 클래스가 넘어온다.
      * 이때 supportsParameter 가 해당 클래스가 맞는지 검증한다.
@@ -107,8 +105,15 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
                     .build()
                     .parseClaimsJws(jws);
 
-            String userId = claims.getBody().getSubject();
-            return new UserSession(Long.parseLong(userId));
+            Long userId = claims.getBody().get("id",Long.class);
+            String email = claims.getBody().get("email",String.class);
+            String nickname = claims.getBody().get("nickname",String.class);
+
+            return UserSession.builder()
+                    .id(userId)
+                    .email(email)
+                    .nickname(nickname)
+                    .build();
         } catch (JwtException e) {
             throw new Unauthorized();
         }
