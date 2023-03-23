@@ -74,8 +74,10 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         findMember.changeMember(memberUpdateRequestDTO);
-        memberRepository.save(findMember);
-
+        /**
+         * save 를 할 필요가 없다. dirty checking 이 일어나기 때문
+         */
+//        memberRepository.save(findMember);
         return new EmptyJSON();
     }
 
