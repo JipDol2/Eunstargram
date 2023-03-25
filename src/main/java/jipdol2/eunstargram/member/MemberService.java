@@ -1,6 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
@@ -37,20 +38,11 @@ public class MemberService {
 
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
         validationDuplicateMember(memberSaveRequestDTO);
+        Member member = Member.transferMember(memberSaveRequestDTO);
+        /** password 암호화 */
+        member.encryptPassword();
 
-        SCryptPasswordEncoder encoder =
-                new SCryptPasswordEncoder(32,8,1,32,64);
-
-        String cryptPassword = encoder.encode(memberSaveRequestDTO.getPassword());
-
-        memberRepository.save(Member.builder()
-                .memberEmail(memberSaveRequestDTO.getMemberEmail())
-                .password(cryptPassword)
-                .nickname(memberSaveRequestDTO.getNickname())
-                .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
-                .birthDay(memberSaveRequestDTO.getBirthDay())
-                .intro(memberSaveRequestDTO.getIntro())
-                .build());
+        memberRepository.save(member);
         return new EmptyJSON();
     }
 
@@ -73,7 +65,7 @@ public class MemberService {
         Member findMember = memberRepository.findByOne(seq)
                 .orElseThrow(() -> new MemberNotFound());
 
-        findMember.changeMember(memberUpdateRequestDTO);
+        findMember.updateMember(memberUpdateRequestDTO);
         /**
          * save 를 할 필요가 없다. dirty checking 이 일어나기 때문
          */

@@ -2,6 +2,7 @@ package jipdol2.eunstargram.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.AuthController;
+import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
@@ -60,7 +61,6 @@ class MemberControllerTest {
         memberJpaRepository.deleteAll();
     }
 
-    //TODO: 암호화한 password 테스트 진행
     @Test
     @DisplayName("회원가입 : /api/member/signUp 요청시 200 status code 리턴")
     void signUpTest() throws Exception {
@@ -69,9 +69,9 @@ class MemberControllerTest {
                 "jipdol2@gmail.com",
                 "1234",
                 "Rabbit96",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
 
         String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
 
@@ -83,10 +83,6 @@ class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        Member findByMember = memberJpaRepository.findById(1L)
-                .orElseThrow(() -> new MemberNotFound());
-
-        assertThat(findByMember.getId()).isEqualTo(findByMember.getId());
         assertThat(memberJpaRepository.count()).isEqualTo(1);
     }
 
@@ -98,9 +94,9 @@ class MemberControllerTest {
                 " jipdol2$naver.com",
                 "1234",
                 "Rabbit96",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
 
         String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
 
@@ -124,9 +120,9 @@ class MemberControllerTest {
                 "jipdol2@gmail.com",
                 " ",
                 "Rabbit96",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
 
         String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
 
@@ -150,9 +146,9 @@ class MemberControllerTest {
                 "jipdol2@gmail.com",
                 "1234",
                 " ",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
 
         String json = objectMapper.writeValueAsString(memberSaveRequestDTO);
 
@@ -177,9 +173,9 @@ class MemberControllerTest {
                 "jipdol2@gmail.com",
                 "1234",
                 "Rabbit96",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
         Member saveMember = memberJpaRepository.save(member);
 
         Long id = saveMember.getId();
@@ -210,9 +206,9 @@ class MemberControllerTest {
                 "jipdol2@gmail.com",
                 "1234",
                 "Rabbit96",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
         Member saveMember = memberJpaRepository.save(member);
         //when
         Long id=saveMember.getId();
@@ -239,22 +235,26 @@ class MemberControllerTest {
     @Test
     @DisplayName("회원 조회 : /api/member/{id} 요청시 200 status code 와 회원정보 리턴")
     void findByMemberTest() throws Exception {
+
         //given
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptPassword = encoder.encrypt("1234");
+
+
         Member member = createMember(
                 "jipdol2@gmail.com",
-                "1234",
+                encryptPassword,
                 "Rabbit96",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
         Member saveMember = memberJpaRepository.save(member);
         //when
         mockMvc.perform(get(COMMON_URL+"/{id}",saveMember.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberEmail").value("jipdol2@gmail.com"))
-                .andExpect(jsonPath("$.password").value("1234"))
+                .andExpect(jsonPath("$.password").isNotEmpty())
                 .andDo(print());
-
     }
 
     @Test
@@ -265,9 +265,9 @@ class MemberControllerTest {
                 "jipdol2@gmail.com",
                 "1234",
                 "Rabbit96",
-                "im Rabbit96!!",
+                "010-1111-2222",
                 "19940715",
-                "life is one time");
+                "im Rabbit96!!");
         Member saveMember = memberJpaRepository.save(member);
 
         String originalFilename = "testImage.jpg";
@@ -294,17 +294,26 @@ class MemberControllerTest {
             String email,
             String password,
             String nickname,
-            String intro,
             String phoneNumber,
-            String birthDay
+            String birthDay,
+            String intro
     ) {
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptPassword;
+        if(!password.equals(" ")){
+             encryptPassword = encoder.encrypt(password);
+        }
+        else{
+            encryptPassword=password;
+        }
+
         Member member = Member.builder()
                 .memberEmail(email)
-                .password(password)
+                .password(encryptPassword)
                 .nickname(nickname)
-                .intro(intro)
                 .phoneNumber(phoneNumber)
                 .birthDay(birthDay)
+                .intro(intro)
                 .build();
         return member;
     }
@@ -313,17 +322,27 @@ class MemberControllerTest {
             String email,
             String password,
             String nickname,
-            String intro,
             String phoneNumber,
-            String birthDay
+            String birthDay,
+            String intro
     ) {
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptPassword = encoder.encrypt(password);
+
+        if(!password.equals(" ")){
+            encryptPassword = encoder.encrypt(password);
+        }
+        else{
+            encryptPassword=password;
+        }
+
         MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
                 .memberEmail(email)
-                .password(password)
+                .password(encryptPassword)
                 .nickname(nickname)
-                .intro(intro)
                 .phoneNumber(phoneNumber)
                 .birthDay(birthDay)
+                .intro(intro)
                 .build();
         return memberSaveRequestDTO;
     }

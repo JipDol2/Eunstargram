@@ -3,7 +3,9 @@ package jipdol2.eunstargram.member.entity;
 import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
+import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.image.entity.Image;
+import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.post.entity.Post;
 import lombok.AccessLevel;
@@ -85,31 +87,27 @@ public class Member extends BaseTimeEntity {
         return session;
     }
 
-    public void changePassword(String password){
-        this.password = password;
-    }
-
-    public void changeNickName(String nickname){
-        this.nickname = nickname;
-    }
-
-    public void changePhoneNumber(String phoneNumber){
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void changeBirthDay(String birthDay){
-        this.birthDay = birthDay;
-    }
-
-    public void changeIntro(String intro){
-        this.intro = intro;
-    }
-
     public void changeDeleteYn(String deleteYn){
         this.deleteYn = deleteYn;
     }
 
-    public void changeMember(MemberUpdateRequestDTO updateRequestDTO){
+    public void encryptPassword(){
+        PasswordEncoder encoder = new PasswordEncoder();
+        this.password = encoder.encrypt(this.password);
+    }
+
+    public static Member transferMember(MemberSaveRequestDTO memberSaveRequestDTO){
+        return Member.builder()
+                .memberEmail(memberSaveRequestDTO.getMemberEmail())
+                .password(memberSaveRequestDTO.getPassword())
+                .nickname(memberSaveRequestDTO.getNickname())
+                .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
+                .birthDay(memberSaveRequestDTO.getBirthDay())
+                .intro(memberSaveRequestDTO.getIntro())
+                .build();
+    }
+
+    public void updateMember(MemberUpdateRequestDTO updateRequestDTO){
         this.password = updateRequestDTO.getPassword();
         this.nickname = updateRequestDTO.getNickName();
         this.phoneNumber = updateRequestDTO.getPhoneNumber();
@@ -117,6 +115,4 @@ public class Member extends BaseTimeEntity {
         this.intro = updateRequestDTO.getIntro();
         this.deleteYn = updateRequestDTO.getDeleteYn();
     }
-
-
 }
