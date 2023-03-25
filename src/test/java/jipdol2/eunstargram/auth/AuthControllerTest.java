@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
+import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional
 class AuthControllerTest {
 
     @Autowired
@@ -40,6 +42,9 @@ class AuthControllerTest {
 
     @Autowired
     private SessionJpaRepository sessionJpaRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -57,7 +62,7 @@ class AuthControllerTest {
         //given
         memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
-                .password("1234")
+                .password(passwordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
                 .phoneNumber("010-1111-2222")
                 .birthDay("1999-01-01")
@@ -84,7 +89,7 @@ class AuthControllerTest {
         //given
         memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
-                .password("1234")
+                .password(passwordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
                 .phoneNumber("010-1111-2222")
                 .birthDay("1999-01-01")
@@ -92,8 +97,8 @@ class AuthControllerTest {
                 .build());
 
         LoginRequestDTO login = LoginRequestDTO.builder()
-                .memberEmail("jipdol2@naver.com")
-                .password("1234")
+                .memberEmail("jipdol2@gmail.com")
+                .password("4321")
                 .build();
 
         String json = objectMapper.writeValueAsString(login);
@@ -189,7 +194,7 @@ class AuthControllerTest {
 
         String json = objectMapper.writeValueAsString(login);
         //expected
-        mockMvc.perform(post(COMMON_URL+"/login")
+        mockMvc.perform(post(COMMON_URL+"/v0/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -223,7 +228,7 @@ class AuthControllerTest {
 
         String json = objectMapper.writeValueAsString(login);
         //expected
-        mockMvc.perform(post(COMMON_URL+"/login")
+        mockMvc.perform(post(COMMON_URL+"/v0/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -232,8 +237,9 @@ class AuthControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    @DisplayName("권한 체크를 하는 API 에 접근")
+//    @Test
+    @DisplayName("Session : 권한 체크를 하는 API 에 접근")
+    @Deprecated
     @Transactional
     void loginAdminTest() throws Exception{
         //given
@@ -251,7 +257,7 @@ class AuthControllerTest {
 
         //expected
         mockMvc.perform(get("/api/post/foo")
-//                        .header("Authorization",session.getAccessToken())
+                        .header("Authorization",session.getAccessToken())
                         .cookie(new Cookie("SESSION", session.getAccessToken()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

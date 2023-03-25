@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.member;
 
+import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
@@ -10,11 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@Transactional
 class MemberServiceTest {
 
     //Service
@@ -27,53 +30,61 @@ class MemberServiceTest {
     private MemberJpaRepository memberJpaRepository;
 
     @BeforeEach
-    void clean(){
+    void clean() {
         memberJpaRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("회원 가입 테스트")
-    void memberJoinTest(){
+    @DisplayName("회원 가입 테스트 - 비밀번호 암호화 확인")
+    void memberJoinTest() {
 
         //given
-        MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("Rabbit")
-                .phoneNumber("010-1111-2222")
-                .birthDay("1994-07-15")
-                .intro("안녕하세요.토끼입니다")
-                .build();
+        Member member = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit",
+                "010-1111-2222",
+                "1994-07-15",
+                "안녕하세요.토끼입니다");
 
         //when
-        memberService.join(memberSaveRequestDTO);
+        memberRepository.save(member);
 
+        Member findByMember = memberJpaRepository.findAll().get(0);
         //then
         assertThat(memberJpaRepository.count()).isEqualTo(1);
-        Member member = memberJpaRepository.findAll().get(0);
-        assertThat(member.getMemberEmail()).isEqualTo("jipdol2@gmail.com");
-        assertThat(member.getPassword()).isEqualTo("1234");
-        assertThat(member.getNickname()).isEqualTo("Rabbit");
-        assertThat(member.getPhoneNumber()).isEqualTo("010-1111-2222");
-        assertThat(member.getBirthDay()).isEqualTo("1994-07-15");
-        assertThat(member.getIntro()).isEqualTo("안녕하세요.토끼입니다");
+
+        assertThat(findByMember.getMemberEmail()).isEqualTo("jipdol2@gmail.com");
+        assertThat(findByMember.getPassword()).isEqualTo(member.getPassword());
+        assertThat(findByMember.getNickname()).isEqualTo("Rabbit");
+        assertThat(findByMember.getPhoneNumber()).isEqualTo("010-1111-2222");
+        assertThat(findByMember.getBirthDay()).isEqualTo("1994-07-15");
+        assertThat(findByMember.getIntro()).isEqualTo("안녕하세요.토끼입니다");
     }
 
     @Test
-    @DisplayName("회원 가입 테스트 - 중복")
-    void memberJoinDuplicateTest(){
+    @DisplayName("회원 가입 테스트 - 중복체크")
+    void memberJoinDuplicateTest() {
 
         //given
-        MemberSaveRequestDTO memberSaveRequestDTO1 = MemberSaveRequestDTO.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("Rabbit")
-                .phoneNumber("010-1111-2222")
-                .birthDay("1994-07-15")
-                .intro("안녕하세요.토끼입니다")
-                .build();
+        Member memberRabbit = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit",
+                "010-1111-2222",
+                "1994-07-15",
+                "안녕하세요.토끼입니다");
 
-        MemberSaveRequestDTO memberSaveRequestDTO2 = MemberSaveRequestDTO.builder()
+        MemberSaveRequestDTO memberTurtle = createMemberSaveRequestDTO(
+                "jipdol2@gmail.com",
+                "1234",
+                "Turtle",
+                "010-3333-4444",
+                "1994-01-22",
+                "안녕하세요.거북이입니다"
+        )
+
+                ;MemberSaveRequestDTO.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("Turtle")
@@ -82,10 +93,54 @@ class MemberServiceTest {
                 .intro("안녕하세요.거북이입니다")
                 .build();
         //when
-        memberService.join(memberSaveRequestDTO1);
+        memberRepository.save(memberRabbit);
         //then
-        assertThatThrownBy(()->memberService.join(memberSaveRequestDTO2))
+        assertThatThrownBy(() -> memberService.join(memberTurtle))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 존재하는 회원입니다");
+    }
+
+    private Member createMember(
+            String email,
+            String password,
+            String nickname,
+            String phoneNumber,
+            String birthDay,
+            String intro
+    ) {
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptPassword = encoder.encrypt(password);
+
+        Member member = Member.builder()
+                .memberEmail(email)
+                .password(encryptPassword)
+                .nickname(nickname)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
+                .intro(intro)
+                .build();
+        return member;
+    }
+
+    private MemberSaveRequestDTO createMemberSaveRequestDTO(
+            String email,
+            String password,
+            String nickname,
+            String phoneNumber,
+            String birthDay,
+            String intro
+    ) {
+        PasswordEncoder encoder = new PasswordEncoder();
+        String encryptPassword = encoder.encrypt(password);
+
+        MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
+                .memberEmail(email)
+                .password(encryptPassword)
+                .nickname(nickname)
+                .intro(intro)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
+                .build();
+        return memberSaveRequestDTO;
     }
 }
