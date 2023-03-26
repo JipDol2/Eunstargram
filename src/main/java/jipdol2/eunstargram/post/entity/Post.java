@@ -4,6 +4,7 @@ import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.member.entity.Member;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,19 +13,19 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    private String imagePath;
-
     private Long likeNumber;
 
     private String content;
 
-    @ManyToOne
+    private String deleteYn;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
@@ -42,14 +43,15 @@ public class Post extends BaseTimeEntity {
      * Post 를 조회할때 당연히 image 도 같이 조회되어야 하는데 Image 객체를 연관관계의 주인으로 설정했을 경우
      * Post 를 조회했음에도 불구하고 image 를 조회하지 못하는 문제가 발생했었음.
      */
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "IMAGE_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Image image;
 
     @Builder
-    public Post(Long likeNumber, String content, Member member,Image image) {
+    public Post(Long likeNumber, String content,String deleteYn, Member member,Image image) {
         this.likeNumber = likeNumber;
         this.content = content;
+        this.deleteYn = deleteYn;
         /**
          * 양방향 연관관계 편의 메소드 구현
          */
@@ -66,4 +68,11 @@ public class Post extends BaseTimeEntity {
         this.image = image;
     }
 
+    public void changeDeleteYn(String deleteYn){
+        this.deleteYn = deleteYn;
+    }
+
+    public void edit(PostEditRequestDTO editPostDto){
+        this.content = editPostDto.getContent() != null ? editPostDto.getContent() : this.content;
+    }
 }

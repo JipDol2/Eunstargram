@@ -22,9 +22,9 @@ public class MemberRepository {
         return Optional.ofNullable(em.find(Member.class,id));
     }
 
-    public List<Member> findByMemberId(String memberId){
-        return em.createQuery("SELECT m FROM Member m WHERE m.memberId = :memberId",Member.class)
-                .setParameter("memberId",memberId)
+    public List<Member> findByMemberId(String memberEmail){
+        return em.createQuery("SELECT m FROM Member m WHERE m.memberEmail = :memberEmail",Member.class)
+                .setParameter("memberEmail",memberEmail)
                 .getResultList();
     }
 

@@ -1,0 +1,1 @@
+INSERT INTO `MEMBER` (member_email,password,nickname,phone_number,birth_day,intro,delete_yn,create_date,modified_date) VALUES ('jipdol2@gmail.com','1234','집돌이','010-1111-2222','1999-09-09','imjipdol2','N','2023-03-01 11:30:00','2023-03-01 11:30:00')

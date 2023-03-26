@@ -16,7 +16,7 @@
                             <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#profileModal">
                                 <img src="/upload/fox.jpg" alt="착한호랑이" id="profileImage">
                             </button>
-                            <!-- Modal -->
+                            <!----------------------------------------- Modal ----------------------------------------->
                             <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -45,7 +45,7 @@
                         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#postsModal">게시글 업로드</button>
 <!--                        <a href="profile_edit.html" class="profile_edit">게시글 업로드</a>-->
                         <a href="#" class="logout">로그아웃</a>
-                        <!-- Modal -->
+                        <!----------------------------------------- Modal ----------------------------------------->
                         <div class="modal fade" id="postsModal" tabindex="-1" aria-labelledby="postsModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
@@ -68,15 +68,7 @@
                     <ul class="middle">
                         <li>
                             <span>게시물</span>
-                            3
-                        </li>
-                        <li>
-                            <span>팔로워</span>
-                            3
-                        </li>
-                        <li>
-                            <span>팔로우</span>
-                            3
+
                         </li>
                     </ul>
                     <p class="about">
@@ -86,64 +78,9 @@
                 </div>
             </div>
             <div class="mylist_contents contents_container active">
-                <div class="pic">
-                    <a href="#"><img src="/img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"><img src="/img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="/img/img_section/img03.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="/img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="/img/img_section/img03.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="/img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="/img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="/img/img_section/img03.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="/img/img_section/img01.jpg" alt=""></a>
-                </div>
             </div>
-
-            <div class="bookmark_contents contents_container">
-                <div class="pic">
-                    <a href="#"><img src="img/img_section/img03.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"><img src="img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img03.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img01.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>
-                <div class="pic">
-                    <a href="#"> <img src="img/img_section/img02.jpg" alt=""></a>
-                </div>
-            </div>
+            <!----------------------------------------- Modal ----------------------------------------->
+            <div th:replace="modal/postModal.html :: postModal(${postId})"></div>
         </section>
     </div>
 </section>

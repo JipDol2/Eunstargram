@@ -10,13 +10,13 @@ import lombok.ToString;
 @NoArgsConstructor
 public class MemberLoginRequestDTO {
 
-    private String memberId;
+    private String memberEmail;
 
     private String password;
 
     @Builder
-    public MemberLoginRequestDTO(String memberId, String password) {
-        this.memberId = memberId;
+    public MemberLoginRequestDTO(String memberEmail, String password) {
+        this.memberEmail = memberEmail;
         this.password = password;
     }
 }

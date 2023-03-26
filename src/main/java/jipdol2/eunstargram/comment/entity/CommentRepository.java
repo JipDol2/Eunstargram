@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class CommentRepository {
@@ -13,6 +14,7 @@ public class CommentRepository {
 
     public Long save(Comment comment){
         em.persist(comment);
-        return comment.getSeq();
+        return comment.getId();
     }
+
 }

@@ -10,11 +10,11 @@ public class MemberFindResponseDTO {
 
     private Long id;
 
-    private String memberId;
+    private String memberEmail;
 
     private String password;
 
-    private String nickName;
+    private String nickname;
 
     private String phoneNumber;
 
@@ -22,29 +22,26 @@ public class MemberFindResponseDTO {
 
     private String intro;
 
-    private String imagePath;
-
     private String deleteYn;
 
     @Builder
-    public MemberFindResponseDTO(Long id, String memberId, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+    public MemberFindResponseDTO(Long id, String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro, String deleteYn) {
         this.id = id;
-        this.memberId = memberId;
+        this.memberEmail = memberEmail;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;
-        this.imagePath = imagePath;
         this.deleteYn = deleteYn;
     }
 
     public static MemberFindResponseDTO createMemberFindResponseDTO(Member member){
         return MemberFindResponseDTO.builder()
                 .id(member.getId())
-                .memberId(member.getMemberId())
+                .memberEmail(member.getMemberEmail())
                 .password(member.getPassword())
-                .nickName(member.getNickname())
+                .nickname(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())
                 .birthDay(member.getBirthDay())
                 .intro(member.getIntro())

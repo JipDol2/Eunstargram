@@ -1,9 +1,11 @@
 package jipdol2.eunstargram.post;
 
-import jipdol2.eunstargram.image.entity.Image;
-import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
-import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.config.data.UserSession;
+import jipdol2.eunstargram.exception.ImageFileArgumentNotValidation;
+import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
+import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
+import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,30 +23,56 @@ public class PostController {
 
     private final PostService postService;
 
-    //TODO : @RequestBody -> @ModelAttribute 변경 필요
+    @ResponseBody
+    @GetMapping("/foo")
+    public Long foo(UserSession userSession){
+        log.info(">>>{}",userSession.id);
+        return userSession.id;
+    }
+
     /** 2023/01/10 게시글 업로드 API 생성 **/
     @PostMapping("/upload")
-    public ResponseEntity<Long> uploadPost(@ModelAttribute PostSaveRequestDTO postDto){
+    public ResponseEntity<Long> uploadPost(UserSession userSession, @ModelAttribute PostSaveRequestDTO postDto){
+        postDto.validate();
         log.info("articleDTO={}",postDto.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(postService.save(postDto));
+        return ResponseEntity.status(HttpStatus.OK).body(postService.save(userSession.getId(),postDto));
     }
 
     /** 2023/01/12 전체 게시글 조회 **/
-    @GetMapping("/{memberId}")
-    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(@PathVariable("memberId") Long memberId){
-        log.info("memberId={}",memberId);
-        //TODO: 현재 memberSeq 로 조회하지만 memberId 로 수정 필요
-        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(memberId));
+    @GetMapping("/{nickname}")
+    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(
+            @PathVariable String nickname
+    ){
+        log.info("nickname={}",nickname);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(nickname));
+    }
+    /** 2023/03/18 한건 게시글 조회 **/
+    @GetMapping("/p/{postId}")
+    public ResponseEntity<PostResponseDTO> findByPost(
+            @PathVariable("postId") Long postId
+    ){
+        log.info("postId={}",postId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.findByOne(postId));
     }
 
-    /** 2023/02/02 포스팅 글 전체 가져오기 **/
-    @GetMapping("/{memberId}/postImage")
-    public ResponseEntity<List<Image>> findByPostImage(@PathVariable("memberId") String memberId){
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+    /** 2023/02/22 게시글 수정 **/
+    @PutMapping("/p/{postId}")
+    public ResponseEntity<EmptyJSON> editPost(
+            @PathVariable("postId") Long postId,
+            @RequestBody PostEditRequestDTO postEditDto
+    ){
+        log.info("postId={},postEditDto={}",postId,postEditDto.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(postService.edit(postId,postEditDto));
     }
 
-    //TODO: 2023/01/19 게시글 힌건 조회(url 을 어떻게 정의해야되는지)
-
-    //TODO: 2023/02/05 게시글 이미지 전체 조회
+    /** 2023/02/24 게시글 삭제 **/
+    @PostMapping("/p/delete/{postId}")
+    public ResponseEntity<EmptyJSON> deletePost(
+            UserSession userSession,
+            @PathVariable("postId") Long postId
+    ){
+        log.info("userSession={},postId={}",userSession.toString(),postId);
+        return ResponseEntity.status(HttpStatus.OK).body(postService.deletePost(postId));
+    }
 
 }
