@@ -5,16 +5,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @ToString
 @NoArgsConstructor
 public class MemberSaveRequestDTO {
 
-    private String memberId;
+    @Email(message = "올바른 이메일 형식을 적어주세요")
+    private String memberEmail;
 
+    @NotBlank(message = "비밀번호를 적어주세요")
     private String password;
 
-    private String nickName;
+    @NotBlank(message = "닉네임을 적어주세요")
+    private String nickname;
 
     private String phoneNumber;
 
@@ -22,19 +28,13 @@ public class MemberSaveRequestDTO {
 
     private String intro;
 
-    private String imagePath;
-
-    private String deleteYn;
-
     @Builder
-    public MemberSaveRequestDTO(String memberId, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
-        this.memberId = memberId;
+    public MemberSaveRequestDTO(String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro) {
+        this.memberEmail = memberEmail;
         this.password = password;
-        this.nickName = nickName;
+        this.nickname = nickname;
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;
-        this.imagePath = imagePath;
-        this.deleteYn = deleteYn;
     }
 }

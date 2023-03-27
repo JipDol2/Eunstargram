@@ -20,3 +20,9 @@ html, body {
     font-style: normal;
 }
 
+.sprite_more_icon {
+    /* display: inline-block; */
+    background: url('../img/background01.png') no-repeat -301px -218px;
+    width: 15px;
+    height: 3px;
+}
