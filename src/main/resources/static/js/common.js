@@ -10,12 +10,14 @@ const fetchData = async (url, option) => {
                 },
                 ...option,
             });
-        const data = await res.json();
         if (res.status !== 200) {
             // alert(data.message);
             throw new Error();
         }
-        return data;
+        if(url==='/api/auth/login'){
+            sessionStorage.setItem("Authorization",res.headers.get("Authorization"));
+        }
+        return await res.json();
     } catch (error) {
         throw new Error();
     }
