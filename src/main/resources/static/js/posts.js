@@ -40,6 +40,8 @@ const getPosts = async(event) => {
         }
 
         const response = await fetchData(`/api/post/${nickname}`,header);
+        document.getElementById("postNumber").innerText = response.length;
+        // console.log(response.length);
 
         const root = document.querySelector('.mylist_contents');
 
@@ -155,14 +157,7 @@ const saveFile = async (event) =>{
         response = await fetchFileData('/api/member/profileImage',header);
         // console.log(response.storedFileName);
         // console.log(response.originalFileName);
-
         document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
-
-        /**
-         * TODO: 이미지 업로드 이후 modal 창 닫기 그리고 프로필 사진 변경 적용
-         * TODO: fetch 를 사용해서 multipart-form server 로 전송 방법 블로그에 글 쓰기
-         * TODO: https://stackoverflow.com/questions/35192841/how-do-i-post-with-multipart-form-data-using-fetch
-         */
     }catch(e){
 
     }

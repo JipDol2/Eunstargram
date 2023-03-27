@@ -38,6 +38,8 @@ public class AuthController {
 
     @Value("${jwt.secret}")
     private String KEY;
+
+    private static final int expireTime = 60*5*1000;   //30분
     /**
      * Q. 로그인 처리를 하고 accessToken 은 cookie 값에 담음
      *    그 후 브라우저에서 로그인을 했다는 것을 알 수 있는 수단이 있어야 됨
@@ -72,12 +74,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public SessionResponseDTO login(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
+    public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
 
         log.info(">>>login={}",loginRequestDTO.toString());
 
         Member member = authService.signInJwt(loginRequestDTO);
 
+        /**
+         * @Value("${jwt.secret}")
+         * Secret Key 생성 후 application-secret.yml 에 저장
+         *
+         * Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+         * byte[] encoded = key.getEncoded();
+         * String secretKey = getEncoder().encodeToString(encoded);
+         */
         SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
 
         Claims claims = Jwts.claims();
@@ -89,7 +99,11 @@ public class AuthController {
                 .setClaims(claims)
                 .signWith(key)
                 .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis()+expireTime))
                 .compact();
-        return new SessionResponseDTO(jws);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION,jws)
+                .body(new EmptyJSON());
     }
 }
