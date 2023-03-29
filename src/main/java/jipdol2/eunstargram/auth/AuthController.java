@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.dto.response.SessionResponseDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +37,12 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Value("${jwt.secret}")
-    private String KEY;
+    private final JwtManager jwtManager;
+//    @Value("${jwt.secret}")
+//    private String KEY;
 
-    private static final int expireTime = 60*5*1000;   //30분
+//    private static final int expireTime = 60*5*1000;   //30분
+
     /**
      * Q. 로그인 처리를 하고 accessToken 은 cookie 값에 담음
      *    그 후 브라우저에서 로그인을 했다는 것을 알 수 있는 수단이 있어야 됨
@@ -88,22 +91,14 @@ public class AuthController {
          * byte[] encoded = key.getEncoded();
          * String secretKey = getEncoder().encodeToString(encoded);
          */
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
 
-        Claims claims = Jwts.claims();
-        claims.put("id",member.getId());
-        claims.put("email",member.getMemberEmail());
-        claims.put("nickname",member.getNickname());
+        String accessToken = jwtManager.makeAccessToken(member.getId(),"ACCESS");
+        String refreshToken = jwtManager.makeAccessToken(member.getId(),"REFRESH");
 
-        String jws = Jwts.builder()
-                .setClaims(claims)
-                .signWith(key)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+expireTime))
-                .compact();
+        //TODO: redis 에 refreshToken 을 저장 (key : value = member id : refreshToken)
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION,jws)
+                .header(HttpHeaders.AUTHORIZATION,accessToken)
                 .body(new EmptyJSON());
     }
 }

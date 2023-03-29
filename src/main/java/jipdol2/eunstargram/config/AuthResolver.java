@@ -36,10 +36,6 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
     private final SessionJpaRepository sessionJpaRepository;
 
-    /**
-     * TODO:jwt.secret 이 null 인 문제...
-     * why???
-     */
     @Value("${jwt.secret}")
     private String KEY;
 
@@ -108,6 +104,10 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             Long userId = claims.getBody().get("id",Long.class);
             String email = claims.getBody().get("email",String.class);
             String nickname = claims.getBody().get("nickname",String.class);
+
+            //TODO: redis 에서 userId 를 key 값으로 조회 체크
+            //TODO: 만약 accessToken 이 시간이 만료되고 refreshToken 이 존재한다면 재발급
+            //TODO: 그렇지 않고 refreshToken 이 존재하지 않는다면 로그인 상태가 아니라는 뜻이므로 exception 발생
 
             return UserSession.builder()
                     .id(userId)
