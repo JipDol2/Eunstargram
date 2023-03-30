@@ -37,6 +37,12 @@ spring:
   profiles:
     include: secret
 
+#redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+
 com:
   upload:
     path: D:/
