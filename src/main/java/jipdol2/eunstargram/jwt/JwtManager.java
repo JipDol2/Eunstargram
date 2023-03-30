@@ -20,7 +20,7 @@ public class JwtManager {
 
     private static final int REFRESH_TOKEN = 60*30*1000;    //30분
 
-    public String makeAccessToken(Long id, String type){
+    public String makeToken(Long id, String type){
 
         SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
 

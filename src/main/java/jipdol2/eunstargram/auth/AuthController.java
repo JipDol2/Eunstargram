@@ -92,8 +92,8 @@ public class AuthController {
          * String secretKey = getEncoder().encodeToString(encoded);
          */
 
-        String accessToken = jwtManager.makeAccessToken(member.getId(),"ACCESS");
-        String refreshToken = jwtManager.makeAccessToken(member.getId(),"REFRESH");
+        String accessToken = jwtManager.makeToken(member.getId(),"ACCESS");
+        String refreshToken = jwtManager.makeToken(member.getId(),"REFRESH");
 
         //TODO: redis 에 refreshToken 을 저장 (key : value = member id : refreshToken)
 
