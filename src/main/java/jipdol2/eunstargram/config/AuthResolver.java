@@ -1,16 +1,13 @@
 package jipdol2.eunstargram.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.Unauthorized;
+import jipdol2.eunstargram.jwt.JwtManager;
+import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -21,8 +18,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Base64;
 
 /**
  * ArgumentResolver 는 HandlerAdapter(RequestMappingHandlerAdapter)가
@@ -33,6 +28,8 @@ import java.util.Base64;
 @Component
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
+
+    private final JwtManager jwtManager;
 
     private final SessionJpaRepository sessionJpaRepository;
 
@@ -58,7 +55,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     /**
      * UUID Token 값을 DB 에 저장 후에 조회한 후 인증 절차 진행
      */
-/*    @Override
+    @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         if(request == null){
@@ -81,41 +78,38 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
                 .email(session.getMember().getMemberEmail())
                 .nickname(session.getMember().getNickname())
                 .build();
-    }*/
+    }
 
     /**
      * Jwt Token 사용
      */
-    @Override
+    /*@Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        String jws = webRequest.getHeader("Authorization");   //header 에서 token을 꺼내는 방법
+
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+
+        if(request == null){
+            log.error("servletRequest null");
+            throw new Unauthorized();
+        }
+        //AccessToken 추출
+        String jws = request.getHeader("Authorization");   //header 에서 token을 꺼내는 방법
 
         if(jws == null || jws.equals("")){
             log.error("servletRequest null");
             throw new Unauthorized();
         }
-        byte[] decodedKey = Base64.getDecoder().decode(KEY);
-        try {
-            Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(decodedKey)
-                    .build()
-                    .parseClaimsJws(jws);
 
-            Long userId = claims.getBody().get("id",Long.class);
-            String email = claims.getBody().get("email",String.class);
-            String nickname = claims.getBody().get("nickname",String.class);
+        if(jwtManager.validateToken(jws)){
 
-            //TODO: redis 에서 userId 를 key 값으로 조회 체크
-            //TODO: 만약 accessToken 이 시간이 만료되고 refreshToken 이 존재한다면 재발급
-            //TODO: 그렇지 않고 refreshToken 이 존재하지 않는다면 로그인 상태가 아니라는 뜻이므로 exception 발생
+            UserSessionDTO sessionDTO = jwtManager.getMemberIdFromToken(jws);
 
             return UserSession.builder()
-                    .id(userId)
-                    .email(email)
-                    .nickname(nickname)
+                    .id(sessionDTO.getId())
+                    .email(sessionDTO.getEmail())
+                    .nickname(sessionDTO.getNickname())
                     .build();
-        } catch (JwtException e) {
-            throw new Unauthorized();
         }
-    }
+        return null;
+    }*/
 }

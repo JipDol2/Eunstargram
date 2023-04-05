@@ -15,23 +15,36 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberJpaRepository memberJpaRepository;
+//    private final TokenJpaRepository tokenJpaRepository;
 
-    @Transactional
     public String signInSession(LoginRequestDTO login){
 
-        PasswordEncoder encoder = new PasswordEncoder();
-
-        Member findByMember = memberJpaRepository.findByMemberEmailAndPassword(login.getMemberEmail(), login.getPassword())
+        Member findByMember = memberJpaRepository.findByMemberEmail(login.getMemberEmail())
                 .orElseThrow(() -> new InvalidSignInInformation("id/password","아이디/비밀번호가 올바르지 않습니다"));
+
+        boolean matcherPassword = passwordEncoder.matcher(login.getPassword(),findByMember.getPassword());
+
+        if(!matcherPassword){
+            throw new InvalidSignInInformation("id/password","아이디/비밀번호가 올바르지 않습니다");
+        }
+
         Session session = findByMember.addSession();
         return session.getAccessToken();
     }
 
-    @Transactional
+    public void signOutSession(Long id,String accessToken){
+
+        Member findByMember = memberJpaRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFound());
+
+        findByMember.removeSession(accessToken);
+    }
+
     public Member signInJwt(LoginRequestDTO login){
 
         Member findByMember = memberJpaRepository.findByMemberEmail(login.getMemberEmail())
@@ -45,4 +58,5 @@ public class AuthService {
 
         return findByMember;
     }
+
 }

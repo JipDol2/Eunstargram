@@ -1,33 +1,22 @@
 package jipdol2.eunstargram.auth;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
-import jipdol2.eunstargram.auth.dto.response.SessionResponseDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.jwt.JwtManager;
+import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.SecretKey;
+import javax.servlet.http.Cookie;
 import javax.validation.Valid;
-import java.security.Key;
 import java.time.Duration;
-import java.util.Base64;
-import java.util.Date;
-
-import static java.util.Base64.*;
 
 @Slf4j
 @RestController
@@ -38,6 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     private final JwtManager jwtManager;
+
 //    @Value("${jwt.secret}")
 //    private String KEY;
 
@@ -55,7 +45,7 @@ public class AuthController {
      * @return
      */
     @PostMapping("/v0/login")
-    public ResponseEntity<Object> loginV0(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
+    public ResponseEntity<EmptyJSON> loginV0(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
 
         log.info(">>>login={}",loginRequestDTO.toString());
         String accessToken = authService.signInSession(loginRequestDTO);
@@ -73,15 +63,33 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE,cookie.toString())
+                .header(HttpHeaders.AUTHORIZATION,accessToken)
+                .body(new EmptyJSON());
+    }
+
+    @PostMapping("/v0/logout")
+    public ResponseEntity<EmptyJSON> logoutV0(UserSession userSession, @CookieValue(value = "SESSION") Cookie cookie){
+
+        String accessToken = cookie.getValue();
+
+        authService.signOutSession(userSession.getId(),accessToken);
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(new EmptyJSON());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
+    public ResponseEntity<EmptyJSON> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO){
 
         log.info(">>>login={}",loginRequestDTO.toString());
 
         Member member = authService.signInJwt(loginRequestDTO);
+
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
 
         /**
          * @Value("${jwt.secret}")
@@ -92,11 +100,12 @@ public class AuthController {
          * String secretKey = getEncoder().encodeToString(encoded);
          */
 
-        String accessToken = jwtManager.makeToken(member.getId(),"ACCESS");
-        String refreshToken = jwtManager.makeToken(member.getId(),"REFRESH");
+        String accessToken = jwtManager.makeToken(sessionDTO,"ACCESS");
 
-        //TODO: redis 에 refreshToken 을 저장 (key : value = member id : refreshToken)
-
+        /**
+         * accessToken 은 HEADER, refreshToken 은 Cookie 에 저장
+         * - client 는 refreshToken 을 직접적으로 인증수단으로 사용하지 않음. 따라서 브라우저에서 접근하지 못하게 HttpOnly 속성 설정
+         */
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION,accessToken)
                 .body(new EmptyJSON());
