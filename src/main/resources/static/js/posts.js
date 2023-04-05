@@ -14,6 +14,9 @@ const addPostsEvent = () => {
 
     const uploadComment = document.getElementById("uploadComment");
     uploadComment.addEventListener("click",saveComment);
+
+    const logOutButton = document.getElementById("logout-button");
+    logOutButton.addEventListener("click",clickLogOutOperation);
 }
 
 /**
@@ -30,8 +33,8 @@ const getPosts = async(event) => {
         }
         const response = await fetchData(`/api/member/findByMember`,header);
         nickname = response.nickname;
-    }catch (e){
-
+    }catch (error){
+        throw new Error("등록된 회원이 아닙니다");
     }
 
     try{
@@ -298,5 +301,26 @@ const saveComment = async (event)=>{
 
     }
 }
+
+/**
+ * 로그아웃
+ * @param event
+ * @returns {Promise<void>}
+ */
+const clickLogOutOperation = async (event) => {
+
+    const header={
+        method: 'POST'
+    };
+
+    try{
+        const response = await fetchData(`/api/auth/v0/logout`,header);
+        sessionStorage.clear();
+    }catch(e){
+        throw new Error("로그아웃 실패");
+    }
+    location.href = location.origin+"/";
+}
+
 getPosts();
 addPostsEvent();

@@ -12,14 +12,14 @@ const fetchData = async (url, option) => {
             });
         if (res.status !== 200) {
             // alert(data.message);
-            throw new Error();
+            throw new Error(res);
         }
-        if(url==='/api/auth/login'){
+        if(url==='/api/auth/v0/login'){
             sessionStorage.setItem("Authorization",res.headers.get("Authorization"));
         }
         return await res.json();
     } catch (error) {
-        throw new Error();
+        throw new Error(error);
     }
 }
 
