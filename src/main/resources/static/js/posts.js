@@ -43,12 +43,12 @@ const getPosts = async(event) => {
         }
 
         const response = await fetchData(`/api/post/${nickname}`,header);
-        document.getElementById("postNumber").innerText = response.length;
+        document.getElementById("postNumber").innerText = response.data.length;
         // console.log(response.length);
 
         const root = document.querySelector('.mylist_contents');
 
-        for (const element of response) {
+        for (const element of response.data) {
             const divTag = document.createElement("div");
             divTag.className='pic';
 

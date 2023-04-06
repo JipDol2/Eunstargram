@@ -140,14 +140,14 @@ class PostControllerTest {
 
         //when
         mockMvc.perform(get(COMMON_URL+"/{nickname}",member.getNickname()))
-                .andExpect(jsonPath("$[0].likeNumber").value(0L))
-                .andExpect(jsonPath("$[0].content").value("Im kim da mi!!"))
-                .andExpect(jsonPath("$[0].memberId").value(member.getId()))
-                .andExpect(jsonPath("$[0].imageResponseDTO.originalFileName").value("testImage.jpg"))
-                .andExpect(jsonPath("$[1].likeNumber").value(0L))
-                .andExpect(jsonPath("$[1].content").value("Im not puppy!!"))
-                .andExpect(jsonPath("$[1].memberId").value(member.getId()))
-                .andExpect(jsonPath("$[1].imageResponseDTO.originalFileName").value("testImage.jpg"))
+                .andExpect(jsonPath("$.data[0].likeNumber").value(0L))
+                .andExpect(jsonPath("$.data[0].content").value("Im kim da mi!!"))
+                .andExpect(jsonPath("$.data[0].memberId").value(member.getId()))
+                .andExpect(jsonPath("$.data[0].imageResponseDTO.originalFileName").value("testImage.jpg"))
+                .andExpect(jsonPath("$.data[1].likeNumber").value(0L))
+                .andExpect(jsonPath("$.data[1].content").value("Im not puppy!!"))
+                .andExpect(jsonPath("$.data[1].memberId").value(member.getId()))
+                .andExpect(jsonPath("$.data[1].imageResponseDTO.originalFileName").value("testImage.jpg"))
                 .andDo(print());
 
         //then

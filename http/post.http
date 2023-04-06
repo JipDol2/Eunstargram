@@ -5,7 +5,7 @@ Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MjgsImVtYWlsIjoiamlwZG9sMkBnbWFpbC5jb20iLCJuaWNrbmFtZSI6IuynkeuPjOydtCIsImlhdCI6MTY3OTQ5MDM4MH0.VDf2SvXwL3KZrHu-0Q6IJKpDebTxhPbZtIF5IAIphBw"
 
 ### 게시글 전체조회
-GET http://localhost:8080/api/post/1
+GET http://localhost:8080/api/post/jipdol2
 
 ### 게시글 수정
 PUT http://localhost:8080/api/post/1/1
