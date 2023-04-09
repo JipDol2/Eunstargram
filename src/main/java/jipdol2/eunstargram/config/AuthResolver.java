@@ -1,6 +1,5 @@
 package jipdol2.eunstargram.config;
 
-import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.Unauthorized;
@@ -55,6 +54,7 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     /**
      * UUID Token 값을 DB 에 저장 후에 조회한 후 인증 절차 진행
      */
+/*
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
@@ -79,11 +79,12 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
                 .nickname(session.getMember().getNickname())
                 .build();
     }
+*/
 
     /**
      * Jwt Token 사용
      */
-    /*@Override
+    @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
@@ -92,17 +93,25 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
             log.error("servletRequest null");
             throw new Unauthorized();
         }
-        //AccessToken 추출
-        String jws = request.getHeader("Authorization");   //header 에서 token을 꺼내는 방법
 
-        if(jws == null || jws.equals("")){
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies == null){
+            log.error("cookie is null");
+            throw new Unauthorized();
+        }
+
+        //AccessToken 추출
+        String accessToken = cookies[0].getValue();
+
+        if(accessToken == null || accessToken.equals("")){
             log.error("servletRequest null");
             throw new Unauthorized();
         }
 
-        if(jwtManager.validateToken(jws)){
-
-            UserSessionDTO sessionDTO = jwtManager.getMemberIdFromToken(jws);
+        //jwt token 유효성 검사
+        if(jwtManager.validateToken(accessToken)){
+            UserSessionDTO sessionDTO = jwtManager.getMemberIdFromToken(accessToken);
 
             return UserSession.builder()
                     .id(sessionDTO.getId())
@@ -111,5 +120,5 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
                     .build();
         }
         return null;
-    }*/
+    }
 }

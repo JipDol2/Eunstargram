@@ -27,11 +27,11 @@ public class Image extends BaseTimeEntity {
 
 //    @JsonIgnore : image entity를 직접 클라이언트에게 응답했었다. 그러나 무한순환참조로 인한 에러 발생
 //    @JsonIgnore 어노테이션으로 해결할 수 있지만 좋지 못한 방법->DTO 를 생성해라
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID", foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
-    @OneToOne(mappedBy = "image")
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
     private Post post;
 
     @Builder

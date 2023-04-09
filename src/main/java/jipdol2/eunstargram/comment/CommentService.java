@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -30,7 +31,6 @@ public class CommentService {
 
     private final MemberRepository memberRepository;
 
-    @Transactional
     public EmptyJSON join(Long memberId,CommentSaveRequestDTO commentSaveRequestDTO){
 
         Post post = postRepository.findByOne(commentSaveRequestDTO.getPostId())
@@ -51,7 +51,7 @@ public class CommentService {
         return new EmptyJSON();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CommentFindResponseDTO> findByAllComments(String nickname,Long postId){
 
         Post post = postRepository.findByOne(postId)
