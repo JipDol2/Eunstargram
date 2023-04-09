@@ -3,11 +3,13 @@ package jipdol2.eunstargram.config;
 import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,7 +29,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
         registry.addResourceHandler("/upload/**")
-                .addResourceLocations("file:///D:/upload/2023/");
+                .addResourceLocations("file:///D:/upload/2023/")
+                .setCacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES));    //캐싱을 10분동안 사용하겠다
     }
 
     /**

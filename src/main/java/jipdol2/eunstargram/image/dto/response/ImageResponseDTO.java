@@ -34,4 +34,5 @@ public class ImageResponseDTO {
         this.storedFileName = image.getStoredFileName();
         this.imageCode = image.getImageCode();
     }
+
 }

@@ -3,6 +3,7 @@ package jipdol2.eunstargram.member;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.ProfileImageNotFound;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
@@ -93,7 +94,26 @@ public class MemberService {
         return members;
     }
 
-    public ImageResponseDTO uploadProfileImage(ImageRequestDTO imageRequestDTO){
+    public ImageResponseDTO findByProfileImage(String nickname){
+
+        List<Member> findByMember = memberRepository.findByNickname(nickname);
+        if(findByMember.isEmpty()){
+            throw new ProfileImageNotFound();
+        }
+        List<Image> images = findByMember.get(0).getImage();
+
+        Image profileImage = images.stream()
+                .filter((image) -> image.getImageCode().equals(ImageCode.PROFILE))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException());
+
+        return new ImageResponseDTO(profileImage);
+    }
+
+    public ImageResponseDTO uploadProfileImage(Long id,ImageRequestDTO imageRequestDTO){
+
+        //기존 프로필 이미지 삭제
+        removeProfileImage(id);
 
         MultipartFile imageFile = imageRequestDTO.getImage();
 
@@ -101,7 +121,7 @@ public class MemberService {
 
         //TODO: Image Entity 에 save
         //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
-        Member findByMember = memberJpaRepository.findById(imageRequestDTO.getMemberId())
+        Member findByMember = memberJpaRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFound());
 
         Image image = Image.builder()
@@ -114,5 +134,22 @@ public class MemberService {
         imageJpaRepository.save(image);
 
         return new ImageResponseDTO(image);
+    }
+
+    private void removeProfileImage(Long id){
+
+        Member findByMember = memberRepository.findByOne(id)
+                .orElseThrow(()->new MemberNotFound());
+        List<Image> images = findByMember.getImage();
+
+        List<Image> profileImages = images.stream()
+                .filter(image -> image.getImageCode().equals(ImageCode.PROFILE))
+                .collect(Collectors.toList());
+
+        if(profileImages.isEmpty()){
+            return;
+        }
+
+        imageJpaRepository.deleteAll(profileImages);
     }
 }
