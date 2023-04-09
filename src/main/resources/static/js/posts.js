@@ -20,6 +20,37 @@ const addPostsEvent = () => {
 }
 
 /**
+ * 프로필 이미지 조회
+ */
+const getProfileImage = async (event) =>{
+
+    let nickname = null;
+    try{
+        const header = {
+            method: 'GET'
+        };
+        const response = await fetchData(`/api/member/findByMember`,header);
+        nickname = response.nickname;
+    }catch (error){
+        location.href = location.origin + "/";
+    }
+
+    document.getElementById("user_name").innerText = nickname;
+    document.getElementById("nick_name").innerText = nickname;
+
+    try{
+        const header = {
+            method: 'GET'
+        };
+        const response = await fetchData(`/api/member/profileImage/${nickname}`);
+        document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
+    }catch (e){
+        document.getElementById("profileImage").src = `/upload/fox.jpg`;
+        // location.href = location.origin + "/";
+    }
+}
+
+/**
  * 로그인 후 게시글 페이지 로딩
  * @param event
  * @returns {Promise<void>}
@@ -34,7 +65,7 @@ const getPosts = async(event) => {
         const response = await fetchData(`/api/member/findByMember`,header);
         nickname = response.nickname;
     }catch (error){
-        throw new Error("등록된 회원이 아닙니다");
+        location.href = location.origin + "/";
     }
 
     try{
@@ -91,7 +122,6 @@ const getPosts = async(event) => {
         }
     }catch (e){
         location.href = location.origin + "/";
-        throw new Error("잘못된 게시글 목록 요청입니다.");
     }
 }
 /**
@@ -131,7 +161,7 @@ const makeModal = async (postId) => {
 const uploadImage = async (event) => {
     event.preventDefault();
     const buttonId = event.target.id;
-    if(buttonId==="myFile"){
+    if(buttonId==="openImgUpload"){
         document.getElementById("myFile").click();
     }else{
         document.getElementById("contentFile").click();
@@ -165,7 +195,6 @@ const saveFile = async (event) =>{
     }catch(e){
 
     }
-    location.reload();
 }
 
 /**
@@ -323,5 +352,6 @@ const clickLogOutOperation = async (event) => {
     location.href = location.origin+"/";
 }
 
+getProfileImage();
 getPosts();
 addPostsEvent();

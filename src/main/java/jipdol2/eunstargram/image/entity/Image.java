@@ -23,6 +23,8 @@ public class Image extends BaseTimeEntity {
 
     private String storedFileName;
 
+    //enum type 은 항상 EnumType.STRING 으로 설정하자!
+    @Enumerated(EnumType.STRING)
     private ImageCode imageCode;
 
 //    @JsonIgnore : image entity를 직접 클라이언트에게 응답했었다. 그러나 무한순환참조로 인한 에러 발생
