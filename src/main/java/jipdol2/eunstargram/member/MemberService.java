@@ -53,6 +53,7 @@ public class MemberService {
         }
     }
 
+    @Transactional(readOnly = true)
     public MemberFindResponseDTO findByMember(Long id) {
         Member member = memberRepository.findByOne(id)
                 .orElseThrow(() -> new MemberNotFound());
@@ -83,6 +84,7 @@ public class MemberService {
         return new EmptyJSON();
     }
 
+    @Transactional(readOnly = true)
     public List<MemberFindResponseDTO> findByAll(){
         List<Member> findMembers = memberRepository.findByAll();
         List<MemberFindResponseDTO> members = findMembers.stream()

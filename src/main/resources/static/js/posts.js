@@ -90,6 +90,7 @@ const getPosts = async(event) => {
             root.prepend(divTag);
         }
     }catch (e){
+        location.href = location.origin + "/";
         throw new Error("잘못된 게시글 목록 요청입니다.");
     }
 }
@@ -314,7 +315,7 @@ const clickLogOutOperation = async (event) => {
     };
 
     try{
-        const response = await fetchData(`/api/auth/v0/logout`,header);
+        const response = await fetchData(`/api/auth/logout`,header);
         sessionStorage.clear();
     }catch(e){
         throw new Error("로그아웃 실패");

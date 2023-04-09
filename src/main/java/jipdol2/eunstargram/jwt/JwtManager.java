@@ -21,7 +21,7 @@ public class JwtManager {
     @Value("${jwt.secret}")
     private String KEY;
 
-    private static final int ACCESS_TOKEN = 60*5*1000;      //5분
+    private static final int ACCESS_TOKEN = 60*20*1000;      //20분
 
     private static final int REFRESH_TOKEN = 60*30*1000;    //30분
 
@@ -74,9 +74,6 @@ public class JwtManager {
              */
             log.error("token is expired");
             throw new ExpiredToken();
-        }catch(JwtException e){
-            log.error("token is invalid");
-            throw new InvalidToken();
         }
     }
 }

@@ -16,8 +16,8 @@ const loginOperation = async (event) =>{
             body : JSON.stringify(loginDTO)
         };
 
-        // const response = await fetchData("/api/auth/login",header);
-        const response = await fetchData("/api/auth/v0/login",header);
+        const response = await fetchData("/api/auth/login",header);
+        // const response = await fetchData("/api/auth/v0/login",header);
         location.href = location.origin+"/";
     }catch(e){
         const errorMessage = document.getElementById("error-message");

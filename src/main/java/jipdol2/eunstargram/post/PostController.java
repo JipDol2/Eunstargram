@@ -41,6 +41,7 @@ public class PostController {
     /** 2023/01/12 전체 게시글 조회 **/
     @GetMapping("/{nickname}")
     public ResponseEntity<ResultPosts<List<PostResponseDTO>>> findByAllPosts(
+            UserSession userSession,
             @PathVariable String nickname
     ){
         log.info("nickname={}",nickname);
