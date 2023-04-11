@@ -9,13 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class ImageRequestDTO {
 
-    private Long memberId;
-
     private MultipartFile image;
 
     @Builder
-    public ImageRequestDTO(Long memberId, MultipartFile image) {
-        this.memberId = memberId;
+    public ImageRequestDTO(MultipartFile image) {
         this.image = image;
     }
 }

@@ -7,6 +7,7 @@ import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -67,12 +68,17 @@ public class MemberController {
         log.info("id={}",seq);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
     }
+    /** 2023/04/09 회원 프로필 이미지 조회 API 생성**/
+    @GetMapping("/profileImage/{nickname}")
+    public ResponseEntity<ImageResponseDTO> findByProfileImage(@PathVariable("nickname") String nickname){
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByProfileImage(nickname));
+    }
 
     /** 2023/01/25 회원 프로필 이미지 업로드 API 생성 **/
     @PostMapping("/profileImage")
-    public ResponseEntity<ImageResponseDTO> uploadProfileImage(@ModelAttribute ImageRequestDTO imageRequestDTO){
+    public ResponseEntity<ImageResponseDTO> uploadProfileImage(UserSession userSession,@ModelAttribute ImageRequestDTO imageRequestDTO){
         log.info("image={}",imageRequestDTO.getImage().getOriginalFilename());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(imageRequestDTO));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(userSession.getId(),imageRequestDTO));
     }
 
 }

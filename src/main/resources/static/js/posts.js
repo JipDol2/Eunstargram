@@ -14,6 +14,40 @@ const addPostsEvent = () => {
 
     const uploadComment = document.getElementById("uploadComment");
     uploadComment.addEventListener("click",saveComment);
+
+    const logOutButton = document.getElementById("logout-button");
+    logOutButton.addEventListener("click",clickLogOutOperation);
+}
+
+/**
+ * 프로필 이미지 조회
+ */
+const getProfileImage = async (event) =>{
+
+    let nickname = null;
+    try{
+        const header = {
+            method: 'GET'
+        };
+        const response = await fetchData(`/api/member/findByMember`,header);
+        nickname = response.nickname;
+    }catch (error){
+        location.href = location.origin + "/";
+    }
+
+    document.getElementById("user_name").innerText = nickname;
+    document.getElementById("nick_name").innerText = nickname;
+
+    try{
+        const header = {
+            method: 'GET'
+        };
+        const response = await fetchData(`/api/member/profileImage/${nickname}`);
+        document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
+    }catch (e){
+        document.getElementById("profileImage").src = `/upload/fox.jpg`;
+        // location.href = location.origin + "/";
+    }
 }
 
 /**
@@ -30,8 +64,8 @@ const getPosts = async(event) => {
         }
         const response = await fetchData(`/api/member/findByMember`,header);
         nickname = response.nickname;
-    }catch (e){
-
+    }catch (error){
+        location.href = location.origin + "/";
     }
 
     try{
@@ -40,10 +74,12 @@ const getPosts = async(event) => {
         }
 
         const response = await fetchData(`/api/post/${nickname}`,header);
+        document.getElementById("postNumber").innerText = response.data.length;
+        // console.log(response.length);
 
         const root = document.querySelector('.mylist_contents');
 
-        for (const element of response) {
+        for (const element of response.data) {
             const divTag = document.createElement("div");
             divTag.className='pic';
 
@@ -85,7 +121,7 @@ const getPosts = async(event) => {
             root.prepend(divTag);
         }
     }catch (e){
-        throw new Error("잘못된 게시글 목록 요청입니다.");
+        location.href = location.origin + "/";
     }
 }
 /**
@@ -125,7 +161,7 @@ const makeModal = async (postId) => {
 const uploadImage = async (event) => {
     event.preventDefault();
     const buttonId = event.target.id;
-    if(buttonId==="myFile"){
+    if(buttonId==="openImgUpload"){
         document.getElementById("myFile").click();
     }else{
         document.getElementById("contentFile").click();
@@ -155,18 +191,10 @@ const saveFile = async (event) =>{
         response = await fetchFileData('/api/member/profileImage',header);
         // console.log(response.storedFileName);
         // console.log(response.originalFileName);
-
         document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
-
-        /**
-         * TODO: 이미지 업로드 이후 modal 창 닫기 그리고 프로필 사진 변경 적용
-         * TODO: fetch 를 사용해서 multipart-form server 로 전송 방법 블로그에 글 쓰기
-         * TODO: https://stackoverflow.com/questions/35192841/how-do-i-post-with-multipart-form-data-using-fetch
-         */
     }catch(e){
 
     }
-    location.reload();
 }
 
 /**
@@ -303,5 +331,27 @@ const saveComment = async (event)=>{
 
     }
 }
+
+/**
+ * 로그아웃
+ * @param event
+ * @returns {Promise<void>}
+ */
+const clickLogOutOperation = async (event) => {
+
+    const header={
+        method: 'POST'
+    };
+
+    try{
+        const response = await fetchData(`/api/auth/logout`,header);
+        sessionStorage.clear();
+    }catch(e){
+        throw new Error("로그아웃 실패");
+    }
+    location.href = location.origin+"/";
+}
+
+getProfileImage();
 getPosts();
 addPostsEvent();

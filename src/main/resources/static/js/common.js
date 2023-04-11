@@ -6,18 +6,22 @@ const fetchData = async (url, option) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': sessionStorage.getItem("Authorization"),
+                    // 'Authorization': sessionStorage.getItem("Authorization"),
                 },
                 ...option,
             });
-        const data = await res.json();
         if (res.status !== 200) {
             // alert(data.message);
-            throw new Error();
+            throw new Error(res);
         }
-        return data;
+        /*
+        if(url==='/api/auth/v0/login'){
+            sessionStorage.setItem("Authorization",res.headers.get("Authorization"));
+        }
+        */
+        return await res.json();
     } catch (error) {
-        throw new Error();
+        throw new Error(error);
     }
 }
 
@@ -26,7 +30,7 @@ const fetchFileData = async (url,option) => {
         const res = await fetch(REQUEST_URL + url,
             {
                 headers: {
-                    'Authorization': sessionStorage.getItem("Authorization"),
+                    // 'Authorization': sessionStorage.getItem("Authorization"),
                 },
                 ...option,
             });

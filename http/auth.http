@@ -1,6 +1,6 @@
 ### 로그인
 
-POST http://localhost:8080/api/auth/login
+POST http://localhost:8080/api/auth/v0/login
 Content-Type: application/json
 
 {
@@ -13,3 +13,16 @@ Content-Type: application/json
 GET http://localhost:8080/api/post/foo
 Content-Type: application/json
 Cookie: SESSION=de860f1b-1522-4a49-9e06-988aed139c1a
+
+### 회원가입
+
+POST http://localhost:8080/api/member/signUp
+Content-Type: application/json
+
+{
+  "memberEmail" : "jipdol2@gmail.com",
+  "password" : "1234",
+  "nickname" : "jipdol2",
+  "phoneNumber" : "010-1111-2222",
+  "birthDay" : "1994-07-15"
+}

@@ -17,25 +17,12 @@ const loginOperation = async (event) =>{
         };
 
         const response = await fetchData("/api/auth/login",header);
+        // const response = await fetchData("/api/auth/v0/login",header);
+        location.href = location.origin+"/";
     }catch(e){
         const errorMessage = document.getElementById("error-message");
         errorMessage.innerHTML = "아이디 혹은 비밀번호를 잘못 입력하셨습니다.";
     }
-
-    try{
-        const header={
-            method: 'GET',
-            body: null
-        };
-        const response = await fetchData("/api/member/findByMember",header);
-        sessionStorage.setItem("Id",response.id);
-        // console.log(response);
-        location.href = location.origin+"/";
-    }catch(e){
-
-    }
-
-
 };
 
 addLoginEvent();

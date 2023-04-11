@@ -1,8 +1,8 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.post.dto.response.ResultPosts;
 import jipdol2.eunstargram.config.data.UserSession;
-import jipdol2.eunstargram.exception.ImageFileArgumentNotValidation;
 import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
@@ -40,11 +40,12 @@ public class PostController {
 
     /** 2023/01/12 전체 게시글 조회 **/
     @GetMapping("/{nickname}")
-    public ResponseEntity<List<PostResponseDTO>> findByAllPosts(
+    public ResponseEntity<ResultPosts<List<PostResponseDTO>>> findByAllPosts(
             @PathVariable String nickname
     ){
         log.info("nickname={}",nickname);
-        return ResponseEntity.status(HttpStatus.OK).body(postService.findByAll(nickname));
+        List<PostResponseDTO> findByPosts = postService.findByAll(nickname);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResultPosts<>(findByPosts));
     }
     /** 2023/03/18 한건 게시글 조회 **/
     @GetMapping("/p/{postId}")

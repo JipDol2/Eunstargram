@@ -24,15 +24,8 @@ public class PostRepository {
 
     public List<Post> findByAll(Long id){
         return em.createQuery("SELECT p " +
-                        "FROM Post p INNER JOIN p.member m WHERE m.id = :id")
+                        "FROM Post p INNER JOIN p.member m INNER JOIN FETCH p.image WHERE m.id = :id")
                 .setParameter("id",id)
-                .getResultList();
-    }
-
-    public List<Post> findMemberIdByAll(Long memberId){
-        return em.createQuery("SELECT p " +
-                        "FROM Post p INNER JOIN p.member m WHERE m.id = :memberId")
-                .setParameter("memberId",memberId)
                 .getResultList();
     }
 

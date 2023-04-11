@@ -22,7 +22,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String memberEmail;
@@ -52,24 +53,17 @@ public class Member extends BaseTimeEntity {
      * cascade option
      * (https://www.baeldung.com/jpa-cascade-types)
      * - 문제 :  AuthControllerTest 에서 loginTest3 을 실행할때 AuthResolver 에서
-     *          session 을 찾지 못하는 문제가 발생했었음
+     * session 을 찾지 못하는 문제가 발생했었음
      * - 해결 :  cascade option 을 정의해 주지 않았더라면 session 객체도 persist
-     *          해줘야 하지만 addSession 에서 member 에만 session 을 추가해준 상태로
-     *          session 을 persist 해주지 않았음.
-     *          따라서 cascade option 을 추가해주어서 해결할 수 있음
+     * 해줘야 하지만 addSession 에서 member 에만 session 을 추가해준 상태로
+     * session 을 persist 해주지 않았음.
+     * 따라서 cascade option 을 추가해주어서 해결할 수 있음
      */
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions = new ArrayList<>();
 
     @Builder
-    public Member(
-            String memberEmail,
-            String password,
-            String nickname,
-            String phoneNumber,
-            String birthDay,
-            String intro
-    ) {
+    public Member(String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro) {
         this.memberEmail = memberEmail;
         this.password = password;
         this.nickname = nickname;
@@ -79,35 +73,34 @@ public class Member extends BaseTimeEntity {
         this.deleteYn = "N";
     }
 
-    public Session addSession(){
-        Session session = Session.builder()
-                .member(this)
-                .build();
-        sessions.add(session);
+    public Session addSession() {
+        Session session = Session.builder().member(this).build();
+        this.sessions.add(session);
         return session;
     }
 
-    public void changeDeleteYn(String deleteYn){
+    public void removeSession(String accessToken) {
+        Session session = this.sessions.stream()
+                .filter(s -> s.getAccessToken().equals(accessToken))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("일치하는 accessToken 이 존재하지 않습니다."));
+        this.sessions.remove(session);
+    }
+
+    public void changeDeleteYn(String deleteYn) {
         this.deleteYn = deleteYn;
     }
 
-    public void encryptPassword(){
+    public void encryptPassword() {
         PasswordEncoder encoder = new PasswordEncoder();
         this.password = encoder.encrypt(this.password);
     }
 
-    public static Member transferMember(MemberSaveRequestDTO memberSaveRequestDTO){
-        return Member.builder()
-                .memberEmail(memberSaveRequestDTO.getMemberEmail())
-                .password(memberSaveRequestDTO.getPassword())
-                .nickname(memberSaveRequestDTO.getNickname())
-                .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
-                .birthDay(memberSaveRequestDTO.getBirthDay())
-                .intro(memberSaveRequestDTO.getIntro())
-                .build();
+    public static Member transferMember(MemberSaveRequestDTO memberSaveRequestDTO) {
+        return Member.builder().memberEmail(memberSaveRequestDTO.getMemberEmail()).password(memberSaveRequestDTO.getPassword()).nickname(memberSaveRequestDTO.getNickname()).phoneNumber(memberSaveRequestDTO.getPhoneNumber()).birthDay(memberSaveRequestDTO.getBirthDay()).intro(memberSaveRequestDTO.getIntro()).build();
     }
 
-    public void updateMember(MemberUpdateRequestDTO updateRequestDTO){
+    public void updateMember(MemberUpdateRequestDTO updateRequestDTO) {
         this.password = updateRequestDTO.getPassword();
         this.nickname = updateRequestDTO.getNickName();
         this.phoneNumber = updateRequestDTO.getPhoneNumber();

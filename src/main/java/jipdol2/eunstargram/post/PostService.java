@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostService {
 
     //Service
@@ -38,7 +39,6 @@ public class PostService {
     private final MemberJpaRepository memberJpaRepository;
     private final ImageJpaRepository imageJpaRepository;
 
-    @Transactional
     public Long save(Long memberId,PostSaveRequestDTO postDto) {
 
         Member member = memberRepository.findByOne(memberId)
@@ -55,13 +55,16 @@ public class PostService {
                 .build());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PostResponseDTO> findByAll(String nickname){
 
         Member findByMember = memberJpaRepository.findByNickname(nickname)
                 .orElseThrow(() -> new MemberNotFound());
 
-        List<Post> findByPosts = postRepository.findMemberIdByAll(findByMember.getId());
+        /**
+         * fetch join 으로 post 와 image 조회 쿼리 개선
+         */
+        List<Post> findByPosts = postRepository.findByAll(findByMember.getId());
 
         return findByPosts.stream()
                 .filter(p-> "N".equals(p.getDeleteYn()))
@@ -69,7 +72,6 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public PostResponseDTO findByOne(Long postId){
 
         Post post = postRepository.findByOne(postId)
@@ -82,7 +84,6 @@ public class PostService {
         return new PostResponseDTO(p, new ImageResponseDTO(p.getImage()));
     }
 
-    @Transactional
     public Image uploadPostImage(Long id,MultipartFile imageDTO){
 
         String imageName = imageService.uploadImage(imageDTO);
@@ -102,7 +103,6 @@ public class PostService {
         return image;
     }
 
-    @Transactional
     public EmptyJSON edit(Long postId,PostEditRequestDTO postEditDto){
 
         Post findByPost = postRepository.findByOne(postId)
@@ -115,7 +115,6 @@ public class PostService {
         return new EmptyJSON();
     }
 
-    @Transactional
     public EmptyJSON deletePost(Long postId){
 
         Post findByPost = postRepository.findByOne(postId)

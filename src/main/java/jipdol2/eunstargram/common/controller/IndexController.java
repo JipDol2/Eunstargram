@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.common.controller;
 
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.post.PostService;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class IndexController {
 
     @GetMapping("/login")
     public String login(Model model){
-        model.addAttribute("id","1");
+//        model.addAttribute("id","1");
         return "/login";
     }
 
