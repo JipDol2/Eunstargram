@@ -105,7 +105,7 @@ public class MemberService {
         Image profileImage = images.stream()
                 .filter((image) -> image.getImageCode().equals(ImageCode.PROFILE))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException());
+                .orElseThrow(() -> new ProfileImageNotFound());
 
         return new ImageResponseDTO(profileImage);
     }
