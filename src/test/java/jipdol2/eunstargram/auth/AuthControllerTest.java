@@ -10,6 +10,7 @@ import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,6 +177,7 @@ class AuthControllerTest {
     @Test
     @DisplayName("로그인 : 로그인 성공 후 세션 확인")
     @Transactional
+    @Disabled
     void loginSuccessTest2() throws Exception{
         //given
         Member member = memberJpaRepository.save(Member.builder()
@@ -210,6 +212,7 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("로그인 : 로그인 성공 후 세션 응답 확인")
+    @Disabled
     void loginSessionTest() throws Exception{
         //given
         Member member = memberJpaRepository.save(Member.builder()

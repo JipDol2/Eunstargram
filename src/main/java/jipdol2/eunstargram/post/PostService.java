@@ -61,9 +61,7 @@ public class PostService {
         Member findByMember = memberJpaRepository.findByNickname(nickname)
                 .orElseThrow(() -> new MemberNotFound());
 
-        /**
-         * fetch join 으로 post 와 image 조회 쿼리 개선
-         */
+        //fetch join 으로 post 와 image 조회 쿼리 개선
         List<Post> findByPosts = postRepository.findByAll(findByMember.getId());
 
         return findByPosts.stream()

@@ -51,20 +51,18 @@ public class CommentService {
         return new EmptyJSON();
     }
 
+    //fetch join 사용
     @Transactional(readOnly = true)
-    public List<CommentFindResponseDTO> findByAllComments(String nickname,Long postId){
+    public List<CommentFindResponseDTO> findByAllComments(Long postId){
 
-        Post post = postRepository.findByOne(postId)
-                .orElseThrow(() -> new PostNotFound());
-
-        List<Comment> findByComments = post.getComments();
+        List<Comment> findByComments = commentRepository.findByAllComment(postId);
         List<CommentFindResponseDTO> comments = findByComments.stream()
                 .map((c) -> CommentFindResponseDTO.builder()
                         .id(c.getId())
                         .content(c.getContent())
                         .likeNumber(c.getLikeNumber())
                         .deleteYn(c.getDeleteYn())
-                        .nickname(nickname)
+                        .nickname(c.getMember().getNickname())
                         .build())
                 .collect(Collectors.toList());
         return comments;
