@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.AuthController;
 import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.jwt.JwtManager;
+import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.Cookie;
 import java.io.FileInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,6 +56,9 @@ class MemberControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtManager jwtManager;
 
     private static final String COMMON_URL="/api/member";
 
@@ -270,6 +276,15 @@ class MemberControllerTest {
                 "im Rabbit96!!");
         Member saveMember = memberJpaRepository.save(member);
 
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
+
         String originalFilename = "testImage.jpg";
         String filePath = "src/test/resources/img/" + originalFilename;
 
@@ -284,6 +299,7 @@ class MemberControllerTest {
 
         mockMvc.perform(multipart(COMMON_URL+"/profileImage")
                         .file(mockImage)
+                        .cookie(cookie)
                         .param("memberId",String.valueOf(saveMember.getId()))
                 )
                 .andExpect(status().isOk())

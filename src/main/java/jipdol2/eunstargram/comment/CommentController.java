@@ -2,6 +2,7 @@ package jipdol2.eunstargram.comment;
 
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.dto.response.CommentFindResponseDTO;
+import jipdol2.eunstargram.comment.dto.response.ResultComments;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,9 @@ public class CommentController {
 
     /** 2023/03/11 댓글 전체 조회 API 생성 **/
     @GetMapping("/{postId}")
-    public ResponseEntity<List<CommentFindResponseDTO>> findByComments(UserSession userSession, @PathVariable Long postId){
+    public ResponseEntity<ResultComments<List<CommentFindResponseDTO>>> findByComments(@PathVariable Long postId){
         log.info("postId={}",postId);
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.findByAllComments(userSession.getNickname(),postId));
+        List<CommentFindResponseDTO> findByAllComments = commentService.findByAllComments(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResultComments<>(findByAllComments));
     }
 }

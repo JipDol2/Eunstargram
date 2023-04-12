@@ -273,7 +273,7 @@ const findByComments = async (postId) =>{
     // console.log(response);
 
     const arr=[];
-    response.forEach(element=>{
+    response.data.forEach(element=>{
         const container = document.createElement("div");
         container.setAttribute("class","user_container-detail");
         container.setAttribute("id","user_container-detail")

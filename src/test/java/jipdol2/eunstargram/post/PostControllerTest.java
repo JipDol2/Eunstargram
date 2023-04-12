@@ -6,6 +6,8 @@ import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
+import jipdol2.eunstargram.jwt.JwtManager;
+import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
@@ -60,6 +62,9 @@ class PostControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JwtManager jwtManager;
+
     private static final String COMMON_URL = "/api/post";
 
 //    @BeforeEach
@@ -78,8 +83,14 @@ class PostControllerTest {
         Member member = createMember();
         memberRepository.save(member);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
 
@@ -105,8 +116,14 @@ class PostControllerTest {
         Member member = createMember();
         memberRepository.save(member);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
         postSaveRequestDTO.setImage(null);
@@ -221,8 +238,14 @@ class PostControllerTest {
         Post post = createPost("나의 삶의 찬란한 시간만 비추길", member,image);
         Long postId = postRepository.save(post);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         //when
         mockMvc.perform(post(COMMON_URL+"/p/delete/{postId}",postId)
