@@ -7,6 +7,8 @@ import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;
 import jipdol2.eunstargram.exception.PostNotFound;
+import jipdol2.eunstargram.jwt.JwtManager;
+import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import jipdol2.eunstargram.post.entity.Post;
@@ -49,6 +51,9 @@ class CommentControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JwtManager jwtManager;
+
     private final String COMMON_URL = "/api/comment";
 
     @Test
@@ -76,8 +81,14 @@ class CommentControllerTest {
                 .postId(postId)
                 .build();
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
 
@@ -124,8 +135,14 @@ class CommentControllerTest {
                 .postId(postId)
                 .build();
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
 
@@ -167,8 +184,14 @@ class CommentControllerTest {
                 .postId(null)
                 .build();
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
 
