@@ -1,0 +1,31 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 업로드 Modal 창!!</title>
+</head>
+<body>
+<!----------------------------------------- Modal ----------------------------------------->
+<div th:fragment="postUploadModal" class="modal fade bd-example-modal-lg" id="postUploadModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h5 class="modal-title" id="postsModalLabel">게시글 업로드</h5>
+                </div>
+                <div class="modal-body d-flex flex-column">
+                    <button type="button" class="btn btn-light _a0" id="openPostUpload">사진 업로드</button>
+                    <input type="file" id="contentFile" name="contentFile" style="display: none">
+                    <textarea id="content" rows="10"></textarea>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary" id="savePosts" data-bs-dismiss="modal">저장</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

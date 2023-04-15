@@ -344,3 +344,16 @@
     width: 10px;
     height: 10px;
 }
+/**********************************************************************/
+/* 모달 스타일 */
+.setting-modal {
+    display: none;
+    position: fixed;
+    /*z-index: 1;*/
+    left: 40%;
+    top: 30%;
+    width: 10%;
+    height: 100%;
+    /*overflow: auto;*/
+    /*background-color: rgba(0,0,0,0.4);*/
+}
