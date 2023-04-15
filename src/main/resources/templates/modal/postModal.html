@@ -9,7 +9,7 @@
 </head>
 <body>
 <!----------------------------------------- click post Modal ----------------------------------------->
-<div th:fragment="postModal(postId)" class="modal fade bd-example-modal-lg" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+<div th:fragment="postModal" class="modal fade bd-example-modal-lg" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="post-modal">
             <div class="contents cont01">
@@ -27,9 +27,12 @@
                                 <span class="user_id" id="user_id"></span>
                                 <span id="post_content" style="font-size: small"></span>
                             </div>
-                            <button type="button" class="btn" id="spriteMore-Button" data-bs-target="#postSettingModal" data-bs-toggle="modal">
+<!--                            <button type="button" class="btn" id="spriteMore-Button" data-bs-target="#postSettingModal" data-bs-toggle="modal">
                                 <div class="sprite_more_icon" data-name="more"></div>
-                            </button>
+                            </button>-->
+                            <a data-bs-toggle="modal" href="#postSettingModal" class="btn btn-primary">
+                                <div class="sprite_more_icon" data-name="more"></div>
+                            </a>
 <!--                            <div class="sprite_more_icon" data-name="more"></div>-->
                         </header>
                         <div id="commentBox">
