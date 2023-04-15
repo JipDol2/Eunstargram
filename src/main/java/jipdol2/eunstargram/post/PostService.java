@@ -119,7 +119,6 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFound());
 
         findByPost.changeDeleteYn("Y");
-        postRepository.save(findByPost);
 
         return new EmptyJSON();
     }

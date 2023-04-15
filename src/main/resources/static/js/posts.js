@@ -17,6 +17,9 @@ const addPostsEvent = () => {
 
     const logOutButton = document.getElementById("logout-button");
     logOutButton.addEventListener("click",clickLogOutOperation);
+
+    const postDeleteButton = document.getElementById("postDeleteButton");
+    postDeleteButton.addEventListener("click",clickPostDeleteOperation);
 }
 
 /**
@@ -91,7 +94,6 @@ const getPosts = async(event) => {
             img.src = `/upload/${element.imageResponseDTO.storedFileName}`;
             img.id = element.id;    //postId
 
-
             /**
              * Q. button click 시 event.target 이 왜 button 에 대한 정보가 아닌걸까?
              * A. 정답은 event bubbling (https://ko.javascript.info/bubbling-and-capturing) 때문이다.
@@ -130,27 +132,17 @@ const getPosts = async(event) => {
  * @returns {Promise<void>}
  */
 const makeModal = async (postId) => {
-    const sectionCheck = document.getElementById("scroll_section");
-    if(sectionCheck){
-        sectionCheck.remove();
-    }
 
     const box = document.getElementById("detail--right_box");
-
-    const section = document.createElement("section");
-    section.setAttribute("class","scroll_section");
-
-    section.setAttribute("id","scroll_section");
+    const section = document.getElementById("scroll_section");
     /**
      *  게시글 조회
      */
     const postContent = await findByPost(postId);
-    section.appendChild(postContent);
     /**
      * 댓글 조회
      */
     const arr = await findByComments(postId);
-    arr.forEach(element=>section.appendChild(element));
     box.prepend(section);
 }
 /**
@@ -224,7 +216,7 @@ const savePosts = async(event)=>{
 /**
  * 모달창 게시글 조회
  * @param postId
- * @returns {Promise<void>}
+ * @returns {Promise<HTMLElement>}
  */
 const findByPost = async (postId) => {
 
@@ -233,31 +225,14 @@ const findByPost = async (postId) => {
     };
     const response = await fetchData(`/api/post/p/${postId}`,header);
 
-    const top = document.createElement("header");
-    top.setAttribute("class","top");
+    const user_id = document.getElementById("user_id");
+    user_id.innerHTML = `${response.nickname}`;
 
-    const user_container = document.createElement("div");
-    user_container.setAttribute("class","user_container");
+    const content = document.getElementById("post_content");
+    content.innerHTML = `${response.content}`;
 
-    const user_id = document.createElement("span");
-    user_id.setAttribute("class","user_id");
-    user_id.innerText = `${response.nickname} `;
-
-    const content = document.createElement("span");
-    content.innerText = response.content;
-    content.style.fontSize = "lighter";
-    content.style.fontSize = "small";
-
-    const sprite_more_icon = document.createElement("div");
-    sprite_more_icon.className="sprite_more_icon";
-    sprite_more_icon.setAttribute("data-name","more");
-
-    user_container.appendChild(user_id);
-    user_container.appendChild(content);
-
-    top.appendChild(user_container);
-    top.appendChild(sprite_more_icon);
-    return top;
+    const deletePostTarget = document.getElementById("deleteTargetPostId");
+    deletePostTarget.data = postId;
 }
 
 /**
@@ -272,36 +247,27 @@ const findByComments = async (postId) =>{
     const response = await fetchData(`/api/comment/${postId}`,header);
     // console.log(response);
 
-    const arr=[];
+    const commentBox = document.getElementById("commentBox");
+    commentBox.innerHTML='';
+
+    // const arr=[];
     response.data.forEach(element=>{
         const container = document.createElement("div");
-        container.setAttribute("class","user_container-detail");
-        container.setAttribute("id","user_container-detail")
+        container.className="user_container-detail";
+        container.id="user_container-detail";
 
-        const comment = document.createElement("div");
-        comment.setAttribute("id","comment");
-        comment.setAttribute("class","comment");
-
-        const user_id = document.createElement("span");
-        user_id.setAttribute("class","user_id");
-        user_id.innerText = `${element.nickname} `
-
-        const content = document.createElement("span");
-        content.innerText = element.content;
-        content.style.fontSize = "lighter";
-        content.style.fontSize = "small";
-
-        const sprite_more_icon = document.createElement("div");
-        sprite_more_icon.className="sprite_more_icon";
-        sprite_more_icon.setAttribute("data-name","more");
-
-        comment.appendChild(user_id);
-        comment.appendChild(content);
-        container.appendChild(comment);
-        container.appendChild(sprite_more_icon);
-        arr.push(container);
+        const htmlCode = `            
+            <div class="comment" id="comment">
+                <span class="user_id">${element.nickname}</span>
+                <span style="font-size: small">${element.content}</span>
+            </div>
+            <div class="sprite_more_icon" data-name="more"></div>            
+        `;
+        container.innerHTML=htmlCode;
+        // arr.push(container);
+        commentBox.appendChild(container);
     });
-    return arr;
+
 }
 
 /**
@@ -351,6 +317,21 @@ const clickLogOutOperation = async (event) => {
     }
     location.href = location.origin+"/";
 }
+
+const clickPostDeleteOperation = async (event) => {
+    const header = {
+        method: 'DELETE'
+    };
+    const postId = document.getElementById("deleteTargetPostId").data;
+    console.log(postId);
+
+    try{
+        const response = await fetchData(`/api/post/p/delete/${postId}`,header);
+    }catch (e){
+
+    }
+}
+
 
 getProfileImage();
 getPosts();
