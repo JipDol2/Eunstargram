@@ -39,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional
 class PostControllerTest {
 
     @Autowired
@@ -76,7 +77,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 업로드 : 게시글 업로드시 200 status code 리턴")
-    @Transactional
     void uploadPostTest() throws Exception {
 
         //given
@@ -109,7 +109,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 업로드 : 게시글 업로드시 Image 파일은 필수입니다")
-    @Transactional
     void uploadPostImageTest() throws Exception {
 
         //given
@@ -142,7 +141,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 전체 조회 : 게시글 전체 조회 200 status code 리턴 + 게시글 리턴")
-    @Transactional
     void findByAllPosts() throws Exception{
 
         //given
@@ -173,7 +171,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 수정 : 게시글 수정시 200 status code 리턴")
-    @Transactional
     void editPost() throws Exception{
 
         //given
@@ -213,7 +210,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 삭제 : 게시글 삭제시 200 status code 리턴")
-    @Transactional
     void deletePost() throws Exception {
 
         //given
@@ -248,7 +244,7 @@ class PostControllerTest {
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         //when
-        mockMvc.perform(post(COMMON_URL+"/p/delete/{postId}",postId)
+        mockMvc.perform(delete(COMMON_URL+"/p/delete/{postId}",postId)
                         .cookie(cookie))
                 .andExpect(status().isOk())
                 .andDo(print());

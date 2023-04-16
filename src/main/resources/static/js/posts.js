@@ -20,6 +20,9 @@ const addPostsEvent = () => {
 
     const postDeleteButton = document.getElementById("postDeleteButton");
     postDeleteButton.addEventListener("click",clickPostDeleteOperation);
+
+    const searchButton = document.getElementById("search-button");
+    searchButton.addEventListener("click",clickSearchOperation);
 }
 
 /**
@@ -32,7 +35,7 @@ const getProfileImage = async (event) =>{
         const header = {
             method: 'GET'
         };
-        const response = await fetchData(`/api/member/findByMember`,header);
+        const response = await fetchData(`/api/member/findByMyInfo`,header);
         nickname = response.nickname;
     }catch (error){
         location.href = location.origin + "/";
@@ -58,15 +61,20 @@ const getProfileImage = async (event) =>{
  * @param event
  * @returns {Promise<void>}
  */
-const getPosts = async(event) => {
+const getPosts = async(searchNickname) => {
 
     let nickname = null;
     try{
         const header = {
             method: 'GET'
         }
-        const response = await fetchData(`/api/member/findByMember`,header);
-        nickname = response.nickname;
+        if(searchNickname == null) {
+            const response = await fetchData(`/api/member/findByMyInfo`, header);
+            nickname = response.nickname;
+        }else{
+            const response = await fetchData(`/api/member/findByMember/${searchNickname}`, header);
+            nickname = response.nickname;
+        }
     }catch (error){
         location.href = location.origin + "/";
     }
@@ -332,6 +340,21 @@ const clickPostDeleteOperation = async (event) => {
     }
 }
 
+const clickSearchOperation = async(event) => {
+    const header = {
+        method: 'GET'
+    };
+
+    const searchNickname = document.getElementById("search-nickname").value;
+
+    try{
+        const response = await fetchData(`/api/member/findByMember/${searchNickname}`);
+
+        getPosts(response.nickname);
+    }catch(e){
+
+    }
+}
 
 getProfileImage();
 getPosts();

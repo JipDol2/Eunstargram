@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Entity;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,8 +60,21 @@ public class MemberService {
         Member member = memberRepository.findByOne(id)
                 .orElseThrow(() -> new MemberNotFound());
 
-        MemberFindResponseDTO memberFindResponseDTO = MemberFindResponseDTO.createMemberFindResponseDTO(member);
-        return memberFindResponseDTO;
+        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member);
+        return memberDto;
+    }
+
+    @Transactional(readOnly = true)
+    public MemberFindResponseDTO findByMember(String nickname){
+        Member member = memberRepository.findByNickname(nickname)
+                .get(0);
+
+        if(member == null){
+            throw new MemberNotFound();
+        }
+
+        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member);
+        return memberDto;
     }
 
     public EmptyJSON update(Long seq,MemberUpdateRequestDTO memberUpdateRequestDTO){
