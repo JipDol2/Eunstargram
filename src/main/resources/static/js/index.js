@@ -38,7 +38,7 @@ const clickPostsOperation = async (event) => {
         method: 'GET'
     };
     try{
-        const response = await fetchData(`/api/member/findByMember`,header);
+        const response = await fetchData(`/api/member/findByMyInfo`,header);
         location.href = `${location.origin}/posts/${response.id}`;
     }catch (e){
         location.reload();

@@ -36,10 +36,16 @@ public class MemberController {
     }
 
     /** 2023/03/05 회원정보 조회 **/
-    @GetMapping("/findByMember")
-    public ResponseEntity<MemberFindResponseDTO> findByMember(UserSession userSession){
+    @GetMapping("/findByMyInfo")
+    public ResponseEntity<MemberFindResponseDTO> findByMyInfo(UserSession userSession){
         log.info("id={}",userSession.getId());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(userSession.getId()));
+    }
+
+    @GetMapping("/findByMember/{nickname}")
+    public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("nickname") String nickname){
+        log.info("nickname={}",nickname);
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(nickname));
     }
 
     /** 2023/01/15 회원정보수정 API 생성 **/

@@ -24,8 +24,12 @@
                 <div class="detail">
                     <div class="top">
                         <div class="user_name" id="user_name"></div>
-                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#postUploadModal">게시글 업로드</button>
-                        <button type="submit" id="logout-button" class="btn btn-outline-secondary">로그아웃</button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#postUploadModal">게시글 업로드</button>
+                        <button type="button" id="logout-button" class="btn btn-outline-secondary">로그아웃</button>
+                        <div class="search_field">
+                            <input type="text" class="form-control" id="search-nickname" placeholder="닉네임" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                            <button type="button" class="btn btn-outline-primary" id="search-button">검색</button>
+                        </div>
                         <!----------------------------------------- postUpload Modal ----------------------------------------->
                         <div th:replace="modal/postUploadModal.html :: postUploadModal"></div>
                     </div>
