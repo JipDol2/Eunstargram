@@ -66,14 +66,13 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberFindResponseDTO findByMember(String nickname){
-        Member member = memberRepository.findByNickname(nickname)
-                .get(0);
+        List<Member> member = memberRepository.findByNickname(nickname);
 
-        if(member == null){
+        if(member.size() <= 0){
             throw new MemberNotFound();
         }
 
-        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member);
+        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member.get(0));
         return memberDto;
     }
 
