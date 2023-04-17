@@ -7,10 +7,10 @@ const addIndexEvent = () =>{
     const logoutButtonOperation = document.getElementById("logout-button");
     logoutButtonOperation.addEventListener("click",clickLogOutOperation);
 }
-
+/**
+ * login 유효성 체크
+ */
 const validationLogin = async () => {
-    // const token = sessionStorage.getItem("Authorization");
-
     const header = {
         method: 'GET'
     };
@@ -31,21 +31,23 @@ const validationLogin = async () => {
     }
 
 }
-
+/**
+ * 추억 탐험하기 버튼 클릭 -> 게시글 조회 이동
+ */
 const clickPostsOperation = async (event) => {
-
     const header={
         method: 'GET'
     };
     try{
         const response = await fetchData(`/api/member/findByMyInfo`,header);
-        location.href = `${location.origin}/posts/${response.id}`;
+        location.href = location.origin + `/posts/${response.nickname}`;
     }catch (e){
         location.reload();
     }
-
 }
-
+/**
+ * 로그아웃
+ */
 const clickLogOutOperation = async (event) => {
 
     const header = {

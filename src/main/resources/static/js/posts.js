@@ -1,5 +1,10 @@
 const addPostsEvent = () => {
 
+    const imgModals = document.querySelectorAll(".img");
+    [].forEach.call(imgModals,function (imgModal){
+        imgModal.addEventListener("click",clickImgOperation);
+    })
+
     const openImgUpload = document.getElementById("openImgUpload");
     openImgUpload.addEventListener("click",uploadImage);
 
@@ -26,113 +31,30 @@ const addPostsEvent = () => {
 }
 
 /**
- * 프로필 이미지 조회
- */
-const getProfileImage = async (event) =>{
-
-    let nickname = null;
-    try{
-        const header = {
-            method: 'GET'
-        };
-        const response = await fetchData(`/api/member/findByMyInfo`,header);
-        nickname = response.nickname;
-    }catch (error){
-        location.href = location.origin + "/";
-    }
-
-    document.getElementById("user_name").innerText = nickname;
-    document.getElementById("nick_name").innerText = nickname;
-
-    try{
-        const header = {
-            method: 'GET'
-        };
-        const response = await fetchData(`/api/member/profileImage/${nickname}`);
-        document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
-    }catch (e){
-        document.getElementById("profileImage").src = `/upload/fox.jpg`;
-        // location.href = location.origin + "/";
-    }
-}
-
-/**
- * 로그인 후 게시글 페이지 로딩
+ * img 클릭시 modal 창 조회
+ * => 과거에는 getPosts 라는 메소드를 페이지가 로딩될때 바로 호출 되게끔 하였지만 다른 계정을 검색할 경우 유연하지 못하는 문제 발생
+ * => api 호출이 아닌 model 객체를 사용하여 랜더링 해주는 방식으로 변경
  * @param event
  * @returns {Promise<void>}
  */
-const getPosts = async(searchNickname) => {
+const clickImgOperation = async (event) => {
+    const imageContent = document.getElementById("modalImage");
+    /**
+     * hidden input 을 하나 두어서 거기에 postId 값을 담음
+     */
+    const hiddenInput = document.getElementsByName("postIdInput")[0];
+    const postId = event.target.id;
 
-    let nickname = null;
-    try{
-        const header = {
-            method: 'GET'
-        }
-        if(searchNickname == null) {
-            const response = await fetchData(`/api/member/findByMyInfo`, header);
-            nickname = response.nickname;
-        }else{
-            const response = await fetchData(`/api/member/findByMember/${searchNickname}`, header);
-            nickname = response.nickname;
-        }
-    }catch (error){
-        location.href = location.origin + "/";
-    }
+    imageContent.src = event.target.src;
+    hiddenInput.id = postId;   //postId
+    hiddenInput.value = postId;
 
-    try{
-        const header = {
-            method: 'GET',
-        }
-
-        const response = await fetchData(`/api/post/${nickname}`,header);
-        document.getElementById("postNumber").innerText = response.data.length;
-        // console.log(response.length);
-
-        const root = document.querySelector('.mylist_contents');
-
-        for (const element of response.data) {
-            const divTag = document.createElement("div");
-            divTag.className='pic';
-
-            const img = document.createElement("img");
-            // console.log(element.imageDTO.storedFileName)
-            img.setAttribute("class","img");
-            img.setAttribute("data-bs-toggle","modal");
-            img.setAttribute("data-bs-target","#imageModal");
-            img.src = `/upload/${element.imageResponseDTO.storedFileName}`;
-            img.id = element.id;    //postId
-
-            /**
-             * Q. button click 시 event.target 이 왜 button 에 대한 정보가 아닌걸까?
-             * A. 정답은 event bubbling (https://ko.javascript.info/bubbling-and-capturing) 때문이다.
-             *    클릭은 image 를 클릭한 것이 되고 click event 가 event bubbling 때문에 button 에게도 올라간다.
-             *    이때 button click 시 listener 를 등록해놓았기 때문데 event.target 에는 image 에 관한 정보가 담겨져있다.
-             */
-            img.addEventListener("click", async (event) => {
-                const imageContent = document.getElementById("modalImage");
-                /**
-                 * hidden input 을 하나 두어서 거기에 postId 값을 담음
-                 */
-                const hiddenInput = document.getElementsByName("postIdInput")[0];
-                const postId = event.target.id;
-
-                imageContent.src = event.target.src;
-                hiddenInput.id = postId;   //postId
-                hiddenInput.value = postId;
-
-                // console.log(hiddenInput.id);
-                /**
-                 * 게시글 및 댓글 조회
-                 * - 직접 html 코드들을 생성해서 append 시켜줌
-                 */
-                makeModal(postId);
-            });
-            divTag.appendChild(img);
-            root.prepend(divTag);
-        }
-    }catch (e){
-        location.href = location.origin + "/";
-    }
+    // console.log(hiddenInput.id);
+    /**
+     * 게시글 및 댓글 조회
+     * - 직접 html 코드들을 생성해서 append 시켜줌
+     */
+    makeModal(postId);
 }
 /**
  * 모달창 생성
@@ -196,7 +118,6 @@ const saveFile = async (event) =>{
 
     }
 }
-
 /**
  * 게시글 업로드
  * @param event
@@ -242,7 +163,6 @@ const findByPost = async (postId) => {
     const deletePostTarget = document.getElementById("deleteTargetPostId");
     deletePostTarget.data = postId;
 }
-
 /**
  * 모달창 댓글 조회
  * @param postId
@@ -275,9 +195,7 @@ const findByComments = async (postId) =>{
         // arr.push(container);
         commentBox.appendChild(container);
     });
-
 }
-
 /**
  * 댓글 저장
  * @param event
@@ -305,7 +223,6 @@ const saveComment = async (event)=>{
 
     }
 }
-
 /**
  * 로그아웃
  * @param event
@@ -325,7 +242,9 @@ const clickLogOutOperation = async (event) => {
     }
     location.href = location.origin+"/";
 }
-
+/**
+ * 게시글 삭제
+ */
 const clickPostDeleteOperation = async (event) => {
     const header = {
         method: 'DELETE'
@@ -339,7 +258,9 @@ const clickPostDeleteOperation = async (event) => {
 
     }
 }
-
+/**
+ * 다른 계정 검색
+ */
 const clickSearchOperation = async(event) => {
     const header = {
         method: 'GET'
@@ -348,14 +269,126 @@ const clickSearchOperation = async(event) => {
     const searchNickname = document.getElementById("search-nickname").value;
 
     try{
-        const response = await fetchData(`/api/member/findByMember/${searchNickname}`);
-
-        getPosts(response.nickname);
+        location.href = location.origin+`/posts/${searchNickname}`;
     }catch(e){
-
+        alert("존재하지 않는 회원입니다.");
+        history.back();
     }
 }
-
-getProfileImage();
-getPosts();
 addPostsEvent();
+
+// getProfileImage();
+/**
+ * 프로필 이미지 조회
+ */
+/*const getProfileImage = async (event) =>{
+
+    let nickname = null;
+    try{
+        const header = {
+            method: 'GET'
+        };
+        const response = await fetchData(`/api/member/findByMyInfo`,header);
+        nickname = response.nickname;
+    }catch (error){
+        location.href = location.origin + "/";
+    }
+
+    document.querySelector(".user_name").innerText = nickname;
+    const nicknames = document.querySelectorAll(".nick_name");
+    [].forEach.call(nicknames,function (name){
+        name.innerText=nickname;
+    })
+    // document.getElementById("nick_name").innerText = nickname;
+
+    try{
+        const header = {
+            method: 'GET'
+        };
+        const response = await fetchData(`/api/member/profileImage/${nickname}`);
+        document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
+    }catch (e){
+        document.getElementById("profileImage").src = `/upload/fox.jpg`;
+        // location.href = location.origin + "/";
+    }
+}*/
+
+//getPosts();
+/**
+ * 로그인 후 게시글 페이지 로딩
+ * @param event
+ * @returns {Promise<void>}
+ */
+/*const getPosts = async(searchNickname) => {
+
+    let nickname = null;
+    try{
+        const header = {
+            method: 'GET'
+        }
+        if(searchNickname == null) {
+            const response = await fetchData(`/api/member/findByMyInfo`, header);
+            nickname = response.nickname;
+        }else{
+            const response = await fetchData(`/api/member/findByMember/${searchNickname}`, header);
+            nickname = response.nickname;
+        }
+    }catch (error){
+        location.href = location.origin + "/";
+    }
+
+    try{
+        const header = {
+            method: 'GET',
+        }
+
+        const response = await fetchData(`/api/post/${nickname}`,header);
+        document.getElementById("postNumber").innerText = response.data.length;
+        // console.log(response.length);
+
+        const root = document.querySelector('.mylist_contents');
+
+        for (const element of response.data) {
+            const divTag = document.createElement("div");
+            divTag.className='pic';
+
+            const img = document.createElement("img");
+            // console.log(element.imageDTO.storedFileName)
+            img.setAttribute("class","img");
+            img.setAttribute("data-bs-toggle","modal");
+            img.setAttribute("data-bs-target","#imageModal");
+            img.src = `/upload/${element.imageResponseDTO.storedFileName}`;
+            img.id = element.id;    //postId
+
+            /!**
+             * Q. button click 시 event.target 이 왜 button 에 대한 정보가 아닌걸까?
+             * A. 정답은 event bubbling (https://ko.javascript.info/bubbling-and-capturing) 때문이다.
+             *    클릭은 image 를 클릭한 것이 되고 click event 가 event bubbling 때문에 button 에게도 올라간다.
+             *    이때 button click 시 listener 를 등록해놓았기 때문데 event.target 에는 image 에 관한 정보가 담겨져있다.
+             *!/
+            img.addEventListener("click", async (event) => {
+                const imageContent = document.getElementById("modalImage");
+                /!**
+                 * hidden input 을 하나 두어서 거기에 postId 값을 담음
+                 *!/
+                const hiddenInput = document.getElementsByName("postIdInput")[0];
+                const postId = event.target.id;
+
+                imageContent.src = event.target.src;
+                hiddenInput.id = postId;   //postId
+                hiddenInput.value = postId;
+
+                // console.log(hiddenInput.id);
+                /!**
+                 * 게시글 및 댓글 조회
+                 * - 직접 html 코드들을 생성해서 append 시켜줌
+                 *!/
+                makeModal(postId);
+            });
+            divTag.appendChild(img);
+            root.prepend(divTag);
+        }
+    }catch (e){
+        location.href = location.origin + "/";
+    }
+}*/

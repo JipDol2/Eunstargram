@@ -1,6 +1,9 @@
 package jipdol2.eunstargram.common.controller;
 
 import jipdol2.eunstargram.config.data.UserSession;
+import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
+import jipdol2.eunstargram.member.MemberService;
+import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.post.PostService;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IndexController {
 
+    private final MemberService memberService;
     private final PostService postService;
 
     @GetMapping
@@ -35,15 +39,17 @@ public class IndexController {
         return "/signUp";
     }
 
-    @GetMapping("/posts")
-    public String profile(){
-//        log.info("id={}",id);
-        return "/posts";
-    }
+    @GetMapping("/posts/{nickname}")
+    public String profile(@PathVariable("nickname") String nickname,Model model){
+        log.info("nickname={}",nickname);
+        MemberFindResponseDTO findByMember = memberService.findByMember(nickname);
+        model.addAttribute("member",findByMember);
 
-    @GetMapping("/posts/{memberId}")
-    public String profile(@PathVariable("memberId") Long id){
-        log.info("id={}",id);
+        ImageResponseDTO findByProfileImage = memberService.findByProfileImage(nickname);
+        model.addAttribute("profileImage",findByProfileImage);
+
+        List<PostResponseDTO> findByPosts = postService.findByAll(nickname);
+        model.addAttribute("posts",findByPosts);
         return "/posts";
     }
 }

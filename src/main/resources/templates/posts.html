@@ -14,7 +14,8 @@
                         <div class="profile_img">
                             <!-- Button trigger modal -->
                             <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                <img src="" alt="" id="profileImage">
+<!--                                <img src="" alt="" id="profileImage">-->
+                                <img th:src="@{/upload/} + ${profileImage.storedFileName}">
                             </button>
                             <!----------------------------------------- profileImage Upload Modal ----------------------------------------->
                             <div th:replace="modal/profileImageUploadModal.html :: profileModal"></div>
@@ -23,7 +24,7 @@
                 </form>
                 <div class="detail">
                     <div class="top">
-                        <div class="user_name" id="user_name"></div>
+                        <div class="user_name" th:text="${member.nickname}"></div>
                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#postUploadModal">게시글 업로드</button>
                         <button type="button" id="logout-button" class="btn btn-outline-secondary">로그아웃</button>
                         <div class="search_field">
@@ -40,12 +41,17 @@
                         </li>
                     </ul>
                     <p class="about">
-                        <span class="nick_name" id="nick_name"></span>
+                        <span class="nick_name" id="nick_name" th:text="${member.nickname}"></span>
                         <span class="book_mark">bookmark</span>
                     </p>
                 </div>
             </div>
             <div class="mylist_contents contents_container active">
+<!--                추가-->
+                <div class="pic" th:each="post : ${posts}">
+<!--                    https://blog.naver.com/PostView.nhn?blogId=qjawnswkd&logNo=222056127110-->
+                    <img th:src="@{/upload/} + ${post.imageResponseDTO.storedFileName}" th:id = "${post.id}" class="img" data-bs-toggle="modal" data-bs-target="#imageModal">
+                </div>
             </div>
             <!----------------------------------------- postClick Modal ----------------------------------------->
             <div th:replace="modal/postModal.html :: postModal"></div>
