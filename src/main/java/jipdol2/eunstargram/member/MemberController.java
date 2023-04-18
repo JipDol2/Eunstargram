@@ -32,59 +32,59 @@ public class MemberController {
     @PostMapping("/signUp")
     public ResponseEntity<EmptyJSON> joinMember(@Valid @RequestBody MemberSaveRequestDTO memberSaveRequestDTO){
         log.info("memberSaveRequestDTO = {}", memberSaveRequestDTO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.join(memberSaveRequestDTO));
+        return ResponseEntity.ok().body(memberService.join(memberSaveRequestDTO));
     }
 
     /** 2023/03/05 회원정보 조회 **/
     @GetMapping("/findByMyInfo")
     public ResponseEntity<MemberFindResponseDTO> findByMyInfo(UserSession userSession){
         log.info("id={}",userSession.getId());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(userSession.getId()));
+        return ResponseEntity.ok().body(memberService.findByMember(userSession.getId()));
     }
 
     @GetMapping("/findByMember/{nickname}")
     public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("nickname") String nickname){
         log.info("nickname={}",nickname);
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(nickname));
+        return ResponseEntity.ok().body(memberService.findByMember(nickname));
     }
 
     /** 2023/01/15 회원정보수정 API 생성 **/
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateMember(@PathVariable("id") Long seq,@RequestBody MemberUpdateRequestDTO memberUpdateRequestDTO){
         log.info("memberUpdateRequestDTO={}",memberUpdateRequestDTO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.update(seq,memberUpdateRequestDTO));
+        return ResponseEntity.ok().body(memberService.update(seq,memberUpdateRequestDTO));
     }
 
     /** 2023/01/18 회원탈퇴 API 생성 **/
     @PatchMapping("/delete/{id}")
     public ResponseEntity<EmptyJSON> deleteMember(@PathVariable("id") Long seq){
         log.info("id={}",seq);
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(seq));
+        return ResponseEntity.ok().body(memberService.delete(seq));
     }
 
     /** 2023/01/19 회원 전체조회 API 생성 **/
     @GetMapping("/")
     public ResponseEntity<List<MemberFindResponseDTO>> findByAllMembers(){
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByAll());
+        return ResponseEntity.ok().body(memberService.findByAll());
     }
 
     /** 2023/01/19 회원 조회 API 생성 **/
     @GetMapping("/{id}")
     public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("id") Long seq){
         log.info("id={}",seq);
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByMember(seq));
+        return ResponseEntity.ok().body(memberService.findByMember(seq));
     }
     /** 2023/04/09 회원 프로필 이미지 조회 API 생성**/
     @GetMapping("/profileImage/{nickname}")
     public ResponseEntity<ImageResponseDTO> findByProfileImage(@PathVariable("nickname") String nickname){
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.findByProfileImage(nickname));
+        return ResponseEntity.ok().body(memberService.findByProfileImage(nickname));
     }
 
     /** 2023/01/25 회원 프로필 이미지 업로드 API 생성 **/
     @PostMapping("/profileImage")
     public ResponseEntity<ImageResponseDTO> uploadProfileImage(UserSession userSession,@ModelAttribute ImageRequestDTO imageRequestDTO){
         log.info("image={}",imageRequestDTO.getImage().getOriginalFilename());
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.uploadProfileImage(userSession.getId(),imageRequestDTO));
+        return ResponseEntity.ok().body(memberService.uploadProfileImage(userSession.getId(),imageRequestDTO));
     }
 
 }

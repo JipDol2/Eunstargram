@@ -3,6 +3,8 @@ package jipdol2.eunstargram.post;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
+import jipdol2.eunstargram.jwt.JwtManager;
+import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import jipdol2.eunstargram.post.dto.request.PostSaveRequestDTO;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
 import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +42,9 @@ public class PostServiceTest {
 
     @Autowired
     private ImageJpaRepository imageJpaRepository;
+
+    @Autowired
+    private JwtManager jwtManager;
 
     @Test
     @DisplayName("게시글 저장 테스트")
@@ -86,9 +92,17 @@ public class PostServiceTest {
         Post post = createPost("1 번째 게시글",member,image);
 
         //when
+        memberRepository.save(member);
         Long postId = postRepository.save(post);
+
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+
         //then
-        postService.deletePost(postId);
+        postService.deletePost(sessionDTO.getId(),postId);
         Post findByPost = postRepository.findByOne(postId)
                 .get();
         assertThat(findByPost.getDeleteYn()).isEqualTo("Y");
