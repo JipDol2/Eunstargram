@@ -5,6 +5,9 @@ const addPostsEvent = () => {
         imgModal.addEventListener("click",clickImgOperation);
     })
 
+    const postUpload = document.getElementById("uploadPost");
+    postUpload.addEventListener("click",postUploadOperation);
+
     const openImgUpload = document.getElementById("openImgUpload");
     openImgUpload.addEventListener("click",uploadImage);
 
@@ -89,7 +92,22 @@ const uploadImage = async (event) => {
         document.getElementById("contentFile").click();
     }
 }
-
+/**
+ * 게시글 업로드 버튼 클릭시 권한 체크
+ * @returns {Promise<void>}
+ */
+const postUploadOperation = async () => {
+    const header={
+        method: 'GET'
+    };
+    const nickname = document.getElementById("user_name").textContent;
+    try{
+        const authResponse = await fetchData(`/api/auth/checkAuth?nickname=${nickname}`,header);
+    }catch (e){
+        alert("권한이 없습니다.");
+        return false;
+    }
+}
 /**
  * 이미지 파일 저장
  * @param event
@@ -252,10 +270,16 @@ const clickPostDeleteOperation = async (event) => {
     const postId = document.getElementById("deleteTargetPostId").data;
     console.log(postId);
 
+    const nickname = document.getElementById("user_name").textContent;
     try{
+        const authHeader={
+            method: 'GET'
+        };
+        const authResponse = await fetchData(`/api/auth/checkAuth?nickname=${nickname}`,authHeader);
         const response = await fetchData(`/api/post/p/delete/${postId}`,header);
+        location.reload();
     }catch (e){
-
+        alert("삭제할 권한이 없습니다.");
     }
 }
 /**
@@ -269,10 +293,11 @@ const clickSearchOperation = async(event) => {
     const searchNickname = document.getElementById("search-nickname").value;
 
     try{
+        const response = await fetchData(`/api/member/findByMember/${searchNickname}`);
         location.href = location.origin+`/posts/${searchNickname}`;
     }catch(e){
         alert("존재하지 않는 회원입니다.");
-        history.back();
+        document.getElementById("search-nickname").value='';
     }
 }
 addPostsEvent();

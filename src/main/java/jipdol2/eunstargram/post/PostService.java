@@ -1,7 +1,9 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.MissAuthorized;
 import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
@@ -113,13 +115,21 @@ public class PostService {
         return new EmptyJSON();
     }
 
-    public EmptyJSON deletePost(Long postId){
+    public EmptyJSON deletePost(Long memberId,Long postId){
+
+        Member member = memberRepository.findByOne(memberId)
+                .orElseThrow(() -> new MemberNotFound());
 
         Post findByPost = postRepository.findByOne(postId)
                 .orElseThrow(() -> new PostNotFound());
 
-        findByPost.changeDeleteYn("Y");
+        Member findByMember = findByPost.getMember();
 
+        if(member!=findByMember){
+            throw new MissAuthorized();
+        }
+
+        findByPost.changeDeleteYn("Y");
         return new EmptyJSON();
     }
 }

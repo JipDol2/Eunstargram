@@ -16,7 +16,7 @@ const validationLogin = async () => {
     };
 
     try {
-        const response = await fetchData("/api/auth/checkAuth", header);
+        const response = await fetchData("/api/auth/loginCheck", header);
 
         if(response.authState == true) {
             const logoutState = document.getElementById("logoutState");

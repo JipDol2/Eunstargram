@@ -27,7 +27,7 @@ public class CommentController {
     @PostMapping("/upload")
     public ResponseEntity<EmptyJSON> uploadComment(UserSession userSession,@Valid @RequestBody CommentSaveRequestDTO commentSaveRequestDTO){
         log.info("userSession={},comment={}",userSession.toString(),commentSaveRequestDTO.toString());
-        return ResponseEntity.status(HttpStatus.OK).body(commentService.join(userSession.getId(),commentSaveRequestDTO));
+        return ResponseEntity.ok().body(commentService.join(userSession.getId(),commentSaveRequestDTO));
     }
 
     /** 2023/03/11 댓글 전체 조회 API 생성 **/
@@ -35,6 +35,6 @@ public class CommentController {
     public ResponseEntity<ResultComments<List<CommentFindResponseDTO>>> findByComments(@PathVariable Long postId){
         log.info("postId={}",postId);
         List<CommentFindResponseDTO> findByAllComments = commentService.findByAllComments(postId);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResultComments<>(findByAllComments));
+        return ResponseEntity.ok().body(new ResultComments<>(findByAllComments));
     }
 }
