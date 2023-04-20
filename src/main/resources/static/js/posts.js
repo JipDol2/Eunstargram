@@ -34,6 +34,25 @@ const addPostsEvent = () => {
 }
 
 /**
+ * 페이지 로딩시 처음 로딩
+ * @returns {Promise<void>}
+ */
+const init = async() =>{
+    const header = {
+        method: 'GET'
+    };
+
+    const nickname = document.getElementById("user_name").textContent;
+
+    try{
+        const response = await fetchData(`/api/auth/checkAuth?nickname=${nickname}`,header);
+    }catch(e){
+        const uploadPostButton = document.getElementById("uploadPost");
+        uploadPostButton.style.display='none';
+    }
+}
+
+/**
  * img 클릭시 modal 창 조회
  * => 과거에는 getPosts 라는 메소드를 페이지가 로딩될때 바로 호출 되게끔 하였지만 다른 계정을 검색할 경우 유연하지 못하는 문제 발생
  * => api 호출이 아닌 model 객체를 사용하여 랜더링 해주는 방식으로 변경
@@ -97,16 +116,16 @@ const uploadImage = async (event) => {
  * @returns {Promise<void>}
  */
 const postUploadOperation = async () => {
-    const header={
-        method: 'GET'
-    };
-    const nickname = document.getElementById("user_name").textContent;
-    try{
-        const authResponse = await fetchData(`/api/auth/checkAuth?nickname=${nickname}`,header);
-    }catch (e){
-        alert("권한이 없습니다.");
-        return false;
-    }
+    // const header={
+    //     method: 'GET'
+    // };
+    // const nickname = document.getElementById("user_name").textContent;
+    // try{
+    //     const authResponse = await fetchData(`/api/auth/checkAuth?nickname=${nickname}`,header);
+    // }catch (e){
+    //     alert("권한이 없습니다.");
+    //     return false;
+    // }
 }
 /**
  * 이미지 파일 저장
@@ -300,6 +319,7 @@ const clickSearchOperation = async(event) => {
         document.getElementById("search-nickname").value='';
     }
 }
+init();
 addPostsEvent();
 
 // getProfileImage();
