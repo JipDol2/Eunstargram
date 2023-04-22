@@ -23,7 +23,8 @@ const singUpOperation = async (event) => {
         const response = await fetchData("/api/member/signUp",header);
         location.href = location.origin+"/";
     }catch(e){
-        alert("입력한 정보를 다시 확인해주세요");
+        // console.log(e.message,e.code);
+        alert(e.message);
     }
 }
 addSingUpEvent();
