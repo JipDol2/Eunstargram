@@ -42,6 +42,7 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.findByMember(userSession.getId()));
     }
 
+    /** 2023/04/22 닉네임으로 회원정보 조회 **/
     @GetMapping("/findByMember/{nickname}")
     public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("nickname") String nickname){
         log.info("nickname={}",nickname);

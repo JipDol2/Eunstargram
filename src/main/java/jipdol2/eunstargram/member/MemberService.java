@@ -1,9 +1,10 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.exception.ProfileImageNotFound;
+import jipdol2.eunstargram.exception.ValidationDuplicateMemberEmail;
+import jipdol2.eunstargram.exception.ValidationDuplicateMemberNickname;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
@@ -17,12 +18,10 @@ import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Entity;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,10 +47,12 @@ public class MemberService {
         return new EmptyJSON();
     }
 
-    //TODO: 중복 회원 exception 생성필요
     private void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
         if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberEmail()).isEmpty()){
-            throw new IllegalArgumentException("이미 존재하는 회원입니다");
+            throw new ValidationDuplicateMemberEmail();
+        }
+        if(!memberRepository.findByNickname(memberSaveRequestDTO.getNickname()).isEmpty()){
+            throw new ValidationDuplicateMemberNickname();
         }
     }
 
