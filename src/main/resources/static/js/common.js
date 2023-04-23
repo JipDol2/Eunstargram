@@ -11,8 +11,7 @@ const fetchData = async (url, option) => {
                 ...option,
             });
         if (res.status !== 200) {
-            // alert(data.message);
-            throw new Error(res);
+            throw await res.json();
         }
         /*
         if(url==='/api/auth/v0/login'){
@@ -21,7 +20,9 @@ const fetchData = async (url, option) => {
         */
         return await res.json();
     } catch (error) {
-        throw new Error(error);
+        console.log(error.message);
+        // throw new Error(error);
+        throw error;
     }
 }
 

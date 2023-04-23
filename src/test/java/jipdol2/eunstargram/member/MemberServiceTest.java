@@ -1,18 +1,37 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.ValidationDuplicateMemberEmail;
+import jipdol2.eunstargram.exception.ValidationDuplicateMemberNickname;
+import jipdol2.eunstargram.image.entity.Image;
+import jipdol2.eunstargram.image.entity.ImageCode;
+import jipdol2.eunstargram.image.entity.ImageJpaRepository;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
+import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
+import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import java.io.FileInputStream;
+import java.util.List;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -21,13 +40,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class MemberServiceTest {
 
     //Service
-    @Autowired
-    private MemberService memberService;
+    @Autowired private MemberService memberService;
     //Repository
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private MemberJpaRepository memberJpaRepository;
+    @Autowired private MemberRepository memberRepository;
+    @Autowired private MemberJpaRepository memberJpaRepository;
+    @Autowired private ImageJpaRepository imageJpaRepository;
+    //PasswordEncoder
+    @Autowired PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void clean() {
@@ -63,8 +82,8 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("회원 가입 테스트 - 중복체크")
-    void memberJoinDuplicateTest() {
+    @DisplayName("회원 가입 테스트 - 이메일 중복체크")
+    void memberJoinDuplicateMemberEmailTest() {
 
         //given
         Member memberRabbit = createMember(
@@ -82,22 +101,119 @@ class MemberServiceTest {
                 "010-3333-4444",
                 "1994-01-22",
                 "안녕하세요.거북이입니다"
-        )
+        );
 
-                ;MemberSaveRequestDTO.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("Turtle")
-                .phoneNumber("010-3333-4444")
-                .birthDay("1994-01-22")
-                .intro("안녕하세요.거북이입니다")
-                .build();
+        //when
+        memberRepository.save(memberRabbit);
+
+        //then
+        assertThatThrownBy(() -> memberService.join(memberTurtle))
+                .isInstanceOf(ValidationDuplicateMemberEmail.class)
+                .hasMessage("중복된 이메일이 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("회원 가입 테스트 - 닉네임 중복체크")
+    void memberJoinDuplicateMemberNicknameTest() {
+
+        //given
+        Member memberRabbit = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit",
+                "010-1111-2222",
+                "1994-07-15",
+                "안녕하세요.토끼입니다");
+
+        MemberSaveRequestDTO memberTurtle = createMemberSaveRequestDTO(
+                "eunseo@gmail.com",
+                "1234",
+                "Rabbit",
+                "010-3333-4444",
+                "1994-01-22",
+                "안녕하세요.거북이입니다"
+        );
+
+        //when
+        Long save = memberRepository.save(memberRabbit);
+        //then
+        assertThatThrownBy(() -> memberService.join(memberTurtle))
+                .isInstanceOf(ValidationDuplicateMemberNickname.class)
+                .hasMessage("중복된 닉네임이 존재합니다.");
+    }
+
+    @Test
+    @DisplayName("회원 조회 테스트 - 이메일")
+    void findByMemberEmail() throws Exception{
+        //given
+        Member memberRabbit = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit",
+                "010-1111-2222",
+                "1994-07-15",
+                "안녕하세요.토끼입니다");
+
         //when
         memberRepository.save(memberRabbit);
         //then
-        assertThatThrownBy(() -> memberService.join(memberTurtle))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 존재하는 회원입니다");
+        MemberFindResponseDTO findByRabbit = memberService.findByMemberEmail(memberRabbit.getMemberEmail());
+        assertThat(memberRabbit.getMemberEmail()).isEqualTo(findByRabbit.getMemberEmail());
+        assertThat(memberRabbit.getNickname()).isEqualTo(findByRabbit.getNickname());
+        assertThat(memberRabbit.getPhoneNumber()).isEqualTo(findByRabbit.getPhoneNumber());
+        assertThat(memberRabbit.getBirthDay()).isEqualTo(findByRabbit.getBirthDay());
+        assertThat(memberRabbit.getIntro()).isEqualTo(findByRabbit.getIntro());
+    }
+
+    @Test
+    @DisplayName("회원 조회 테스트 - 닉네임")
+    void findByMemberNickname() throws Exception{
+        //given
+        Member memberRabbit = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit",
+                "010-1111-2222",
+                "1994-07-15",
+                "안녕하세요.토끼입니다");
+
+        //when
+        memberRepository.save(memberRabbit);
+        //then
+        MemberFindResponseDTO findByRabbit = memberService.findByMemberNickname("Rabbit");
+        assertThat(memberRabbit.getMemberEmail()).isEqualTo(findByRabbit.getMemberEmail());
+        assertThat(memberRabbit.getNickname()).isEqualTo(findByRabbit.getNickname());
+        assertThat(memberRabbit.getPhoneNumber()).isEqualTo(findByRabbit.getPhoneNumber());
+        assertThat(memberRabbit.getBirthDay()).isEqualTo(findByRabbit.getBirthDay());
+        assertThat(memberRabbit.getIntro()).isEqualTo(findByRabbit.getIntro());
+    }
+
+    @Test
+    @DisplayName("회원 수정 테스트 - 비밀번호(암호화)")
+    void updateMember() throws Exception{
+        //given
+        Member memberRabbit = createMember(
+                "jipdol2@gmail.com",
+                "1234",
+                "Rabbit",
+                "010-1111-2222",
+                "1994-07-15",
+                "안녕하세요.토끼입니다");
+
+        Long id = memberRepository.save(memberRabbit);
+        //when
+        MemberUpdateRequestDTO memberUpdateRequestDTO = createMemberUpdateRequestDTO(
+                "4321",
+                "010-1111-222",
+                "1994-07-15",
+                "안녕하세요. 수정된 토끼입니다.");
+        memberService.update(id,memberUpdateRequestDTO);
+        //then
+        Member member = memberRepository.findByOne(id)
+                .orElseThrow(() -> new MemberNotFound());
+
+        boolean matcher = passwordEncoder.matcher("4321", member.getPassword());
+        assertThat(matcher).isTrue();
     }
 
     private Member createMember(
@@ -143,4 +259,36 @@ class MemberServiceTest {
                 .build();
         return memberSaveRequestDTO;
     }
+
+    private MemberUpdateRequestDTO createMemberUpdateRequestDTO(
+            String password,
+            String phoneNumber,
+            String birthDay,
+            String intro
+    ){
+        MemberUpdateRequestDTO memberUpdateRequestDTO = MemberUpdateRequestDTO.builder()
+                .password(password)
+                .phoneNumber(phoneNumber)
+                .birthDay(birthDay)
+                .intro(intro)
+                .build();
+        return memberUpdateRequestDTO;
+    }
+
+    private Image createImage(Member member){
+
+        String originalFileName = "testImage.jpg";
+
+        String uuid = UUID.randomUUID().toString();
+        String imageName = uuid + "_" + originalFileName;
+
+        Image image = Image.builder()
+                .originalFileName(originalFileName)
+                .storedFileName(imageName)
+                .member(member)
+                .imageCode(ImageCode.PROFILE)
+                .build();
+        return image;
+    }
+
 }

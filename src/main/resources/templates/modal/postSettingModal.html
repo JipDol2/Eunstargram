@@ -1,0 +1,30 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 설정 Modal 창!!</title>
+    <th:block th:replace="fragments/header.html :: header-fragment"></th:block>
+    <link rel="stylesheet" href="/css/posts.css">
+</head>
+<body>
+<!----------------------------------------- click setting icon Modal ----------------------------------------->
+<div th:fragment="postSettingModal" class="modal fade" id="postSettingModal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="postSettingModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="width: auto">
+            <div class="modal-body">
+                <div>
+                    <button type="button" class="btn" id="postDeleteButton" data-bs-dismiss="modal">게시글 삭제</button>
+                    <input type="hidden" id="deleteTargetPostId" data=""/>
+                </div>
+                <div>
+                    <button type="button" class="btn  btn-primary" data-bs-dismiss="modal" aria-label="Close">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<th:block th:replace="fragments/footer.html :: footer-fragment"></th:block>-->
+<!--<script src="/js/posts.js"></script>-->
+</body>
+</html>

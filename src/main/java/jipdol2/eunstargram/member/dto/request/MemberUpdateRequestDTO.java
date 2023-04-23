@@ -14,8 +14,6 @@ public class MemberUpdateRequestDTO {
 
     private String password;
 
-    private String nickName;
-
     private String phoneNumber;
 
     private String birthDay;
@@ -27,10 +25,9 @@ public class MemberUpdateRequestDTO {
     private String deleteYn;
 
     @Builder
-    public MemberUpdateRequestDTO(Long id, String password, String nickName, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
+    public MemberUpdateRequestDTO(Long id, String password, String phoneNumber, String birthDay, String intro, String imagePath, String deleteYn) {
         this.id = id;
         this.password = password;
-        this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.birthDay = birthDay;
         this.intro = intro;

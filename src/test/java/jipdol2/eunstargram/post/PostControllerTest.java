@@ -6,6 +6,8 @@ import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
+import jipdol2.eunstargram.jwt.JwtManager;
+import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
@@ -37,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@Transactional
 class PostControllerTest {
 
     @Autowired
@@ -60,6 +63,9 @@ class PostControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JwtManager jwtManager;
+
     private static final String COMMON_URL = "/api/post";
 
 //    @BeforeEach
@@ -71,15 +77,20 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 업로드 : 게시글 업로드시 200 status code 리턴")
-    @Transactional
     void uploadPostTest() throws Exception {
 
         //given
         Member member = createMember();
         memberRepository.save(member);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
 
@@ -98,15 +109,20 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 업로드 : 게시글 업로드시 Image 파일은 필수입니다")
-    @Transactional
     void uploadPostImageTest() throws Exception {
 
         //given
         Member member = createMember();
         memberRepository.save(member);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
         postSaveRequestDTO.setImage(null);
@@ -125,7 +141,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 전체 조회 : 게시글 전체 조회 200 status code 리턴 + 게시글 리턴")
-    @Transactional
     void findByAllPosts() throws Exception{
 
         //given
@@ -156,7 +171,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 수정 : 게시글 수정시 200 status code 리턴")
-    @Transactional
     void editPost() throws Exception{
 
         //given
@@ -196,7 +210,6 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 삭제 : 게시글 삭제시 200 status code 리턴")
-    @Transactional
     void deletePost() throws Exception {
 
         //given
@@ -221,11 +234,17 @@ class PostControllerTest {
         Post post = createPost("나의 삶의 찬란한 시간만 비추길", member,image);
         Long postId = postRepository.save(post);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        Cookie cookie = new Cookie("SESSION",accessToken);
 
         //when
-        mockMvc.perform(post(COMMON_URL+"/p/delete/{postId}",postId)
+        mockMvc.perform(delete(COMMON_URL+"/p/delete/{postId}",postId)
                         .cookie(cookie))
                 .andExpect(status().isOk())
                 .andDo(print());

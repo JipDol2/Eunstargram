@@ -1,7 +1,9 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.MissAuthorized;
 import jipdol2.eunstargram.exception.PostNotFound;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
@@ -61,9 +63,7 @@ public class PostService {
         Member findByMember = memberJpaRepository.findByNickname(nickname)
                 .orElseThrow(() -> new MemberNotFound());
 
-        /**
-         * fetch join 으로 post 와 image 조회 쿼리 개선
-         */
+        //fetch join 으로 post 와 image 조회 쿼리 개선
         List<Post> findByPosts = postRepository.findByAll(findByMember.getId());
 
         return findByPosts.stream()
@@ -115,14 +115,21 @@ public class PostService {
         return new EmptyJSON();
     }
 
-    public EmptyJSON deletePost(Long postId){
+    public EmptyJSON deletePost(Long memberId,Long postId){
+
+        Member member = memberRepository.findByOne(memberId)
+                .orElseThrow(() -> new MemberNotFound());
 
         Post findByPost = postRepository.findByOne(postId)
                 .orElseThrow(() -> new PostNotFound());
 
-        findByPost.changeDeleteYn("Y");
-        postRepository.save(findByPost);
+        Member findByMember = findByPost.getMember();
 
+        if(member!=findByMember){
+            throw new MissAuthorized();
+        }
+
+        findByPost.changeDeleteYn("Y");
         return new EmptyJSON();
     }
 }

@@ -22,9 +22,14 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class,id));
     }
 
+    /**
+     * Fetch Join 최적화
+     */
     public List<Post> findByAll(Long id){
-        return em.createQuery("SELECT p " +
-                        "FROM Post p INNER JOIN p.member m INNER JOIN FETCH p.image WHERE m.id = :id")
+        return em.createQuery("SELECT p FROM Post p " +
+                        "INNER JOIN p.member m INNER JOIN FETCH p.image " +
+                        "WHERE m.id = :id"+
+                        " AND m.deleteYn = 'N'")
                 .setParameter("id",id)
                 .getResultList();
     }

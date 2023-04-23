@@ -317,12 +317,14 @@
     display: flex;
 }
 .search_field input {
-    width: 185px;
-    height: 28px;
+    width: 150px;
+    height: 40px;
     background: #fafafa;
     border: solid 1px #dbdbdb;
     border-radius: 3px;
-    padding: 3px 30px 3px 30px;
+    padding: 3px 10px 3px 10px;
+    margin-left: 5px;
+    margin-right: 5px;
     color: #999;
     font-weight: 400;
     text-align: left;
@@ -330,13 +332,13 @@
     outline: none;
 }
 .search_field input::placeholder {
-    font-size: 0;
+    /*font-size: 0;*/
     color: gray;
     text-indent: 10px;
 }
-.search_field input:focus::placeholder {
+/*.search_field input:focus::placeholder {
     font-size: 15px;
-}
+}*/
 
 .sprite_small_search_icon {
     display: inline-block;
@@ -344,3 +346,4 @@
     width: 10px;
     height: 10px;
 }
+/**********************************************************************/

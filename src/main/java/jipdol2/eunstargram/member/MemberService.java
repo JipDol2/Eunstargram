@@ -1,9 +1,10 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.exception.ProfileImageNotFound;
+import jipdol2.eunstargram.exception.ValidationDuplicateMemberEmail;
+import jipdol2.eunstargram.exception.ValidationDuplicateMemberNickname;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
@@ -17,7 +18,6 @@ import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,10 +47,12 @@ public class MemberService {
         return new EmptyJSON();
     }
 
-    //TODO: 중복 회원 exception 생성필요
     private void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
-        if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberEmail()).isEmpty()){
-            throw new IllegalArgumentException("이미 존재하는 회원입니다");
+        if(!memberRepository.findByMemberEmail(memberSaveRequestDTO.getMemberEmail()).isEmpty()){
+            throw new ValidationDuplicateMemberEmail();
+        }
+        if(!memberRepository.findByMemberNickname(memberSaveRequestDTO.getNickname()).isEmpty()){
+            throw new ValidationDuplicateMemberNickname();
         }
     }
 
@@ -59,8 +61,32 @@ public class MemberService {
         Member member = memberRepository.findByOne(id)
                 .orElseThrow(() -> new MemberNotFound());
 
-        MemberFindResponseDTO memberFindResponseDTO = MemberFindResponseDTO.createMemberFindResponseDTO(member);
-        return memberFindResponseDTO;
+        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member);
+        return memberDto;
+    }
+
+    @Transactional(readOnly = true)
+    public MemberFindResponseDTO findByMemberEmail(String email){
+        List<Member> member = memberRepository.findByMemberEmail(email);
+
+        if(member.size() <= 0){
+            throw new MemberNotFound();
+        }
+
+        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member.get(0));
+        return memberDto;
+    }
+
+    @Transactional(readOnly = true)
+    public MemberFindResponseDTO findByMemberNickname(String nickname){
+        List<Member> member = memberRepository.findByMemberNickname(nickname);
+
+        if(member.size() <= 0){
+            throw new MemberNotFound();
+        }
+
+        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member.get(0));
+        return memberDto;
     }
 
     public EmptyJSON update(Long seq,MemberUpdateRequestDTO memberUpdateRequestDTO){
@@ -68,6 +94,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         findMember.updateMember(memberUpdateRequestDTO);
+        findMember.encryptPassword();
         /**
          * save 를 할 필요가 없다. dirty checking 이 일어나기 때문
          */
@@ -96,7 +123,7 @@ public class MemberService {
 
     public ImageResponseDTO findByProfileImage(String nickname){
 
-        List<Member> findByMember = memberRepository.findByNickname(nickname);
+        List<Member> findByMember = memberRepository.findByMemberNickname(nickname);
         if(findByMember.isEmpty()){
             throw new ProfileImageNotFound();
         }
@@ -119,8 +146,6 @@ public class MemberService {
 
         String imageName = imageService.uploadImage(imageFile);
 
-        //TODO: Image Entity 에 save
-        //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
         Member findByMember = memberJpaRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFound());
 

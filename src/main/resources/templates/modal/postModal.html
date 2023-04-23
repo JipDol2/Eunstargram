@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/css/posts.css">
 </head>
 <body>
-<!----------------------------------------- Modal ----------------------------------------->
-<div th:fragment="postModal(postId)" class="modal fade bd-example-modal-lg" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+<!----------------------------------------- click post Modal ----------------------------------------->
+<div th:fragment="postModal" class="modal fade bd-example-modal-lg" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="post-modal">
             <div class="contents cont01">
@@ -20,6 +20,24 @@
                     </div>
                 </div>
                 <div class="detail--right_box" id="detail--right_box">
+                    <!--게시글 내용과 댓글 삽입 : header class="top"-->
+                    <section class="scroll_section" id="scroll_section">
+                        <header class="top">
+                            <div class="user_container">
+                                <span class="user_id" id="user_id"></span>
+                                <span id="post_content" style="font-size: small"></span>
+                            </div>
+                            <button type="button" class="btn" data-bs-target="#postSettingModal" data-bs-toggle="modal">
+                                <div class="sprite_more_icon" data-name="more"></div>
+                            </button>
+     <!--                       <a data-bs-toggle="modal" href="#postSettingModal" class="btn btn-primary">
+                                <div class="sprite_more_icon" data-name="more"></div>
+                            </a>-->
+<!--                            <div class="sprite_more_icon" data-name="more"></div>-->
+                        </header>
+                        <div id="commentBox">
+                        </div>
+                    </section>
                     <div class="commit_field">
                         <input type="text" id="inputComment" placeholder="댓글달기.." style="width: 90%">
                         <button type="button" class="upload_btn" id="uploadComment" data-dismiss="modal" style="width: 15%">게시</button>
@@ -29,7 +47,7 @@
         </div>
     </div>
 </div>
-<th:block th:replace="fragments/footer.html :: footer-fragment"></th:block>
-<script src="/js/posts.js"></script>
+<!--<th:block th:replace="fragments/footer.html :: footer-fragment"></th:block>-->
+<!--<script src="/js/posts.js"></script>-->
 </body>
 </html>

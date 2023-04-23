@@ -22,15 +22,13 @@ public class MemberRepository {
         return Optional.ofNullable(em.find(Member.class,id));
     }
 
-    public List<Member> findByNickname(String nickname){
-        return em.createQuery("SELECT m FROM Member m " +
-                        "INNER JOIN FETCH m.image " +
-                        "WHERE m.nickname = :nickname",Member.class)
+    public List<Member> findByMemberNickname(String nickname){
+        return em.createQuery("SELECT m FROM Member m WHERE m.nickname = :nickname",Member.class)
                 .setParameter("nickname",nickname)
                 .getResultList();
     }
 
-    public List<Member> findByMemberId(String memberEmail){
+    public List<Member> findByMemberEmail(String memberEmail){
         return em.createQuery("SELECT m FROM Member m WHERE m.memberEmail = :memberEmail",Member.class)
                 .setParameter("memberEmail",memberEmail)
                 .getResultList();

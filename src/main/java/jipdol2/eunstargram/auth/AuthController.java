@@ -4,6 +4,7 @@ import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.dto.response.LoginCheckDTO;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
+import jipdol2.eunstargram.exception.MissAuthorized;
 import jipdol2.eunstargram.exception.Unauthorized;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
@@ -30,6 +31,8 @@ public class AuthController {
     private final AuthService authService;
 
     private final JwtManager jwtManager;
+
+
 
 //    @Value("${jwt.secret}")
 //    private String KEY;
@@ -138,8 +141,8 @@ public class AuthController {
                 .body(new EmptyJSON());
     }
 
-    @GetMapping("/checkAuth")
-    public ResponseEntity<LoginCheckDTO> authenticate(HttpServletRequest request) {
+    @GetMapping("/loginCheck")
+    public ResponseEntity<LoginCheckDTO> loginCheck(HttpServletRequest request) {
 
         if (request == null) {
             throw new Unauthorized();
@@ -163,23 +166,14 @@ public class AuthController {
         return null;
     }
 
-    @GetMapping("/token/refresh")
-    public ResponseEntity<EmptyJSON> refreshToken(UserSessionDTO sessionDTO) {
+    @GetMapping("/checkAuth")
+    public ResponseEntity<EmptyJSON> checkAuth(UserSession userSession,@RequestParam("nickname") String nickname){
 
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
-
-        ResponseCookie cookie = ResponseCookie.from("SESSION", accessToken)
-                .domain("localhost")
-                .path("/")
-                .httpOnly(true)
-                .secure(false)
-                .maxAge(Duration.ofDays(30))
-                .sameSite("Strict")
-                .build();
-
+        if(!userSession.getNickname().equals(nickname)){
+            log.info("권한이 존재하지 않습니다.");
+            throw new MissAuthorized();
+        }
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new EmptyJSON());
     }
-
 }
