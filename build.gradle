@@ -46,6 +46,9 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+//plain jar 파일 생성 제외
+//- plain archive 라고도 하며, 모든 의존성을 포함하지 않고 작성소스의 클래스파일과 리소스 파일만 포함
+//참고 : https://dev-j.tistory.com/22
 jar{
     enabled = false
 }

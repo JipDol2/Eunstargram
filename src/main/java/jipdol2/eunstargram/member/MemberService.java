@@ -48,10 +48,10 @@ public class MemberService {
     }
 
     private void validationDuplicateMember(MemberSaveRequestDTO memberSaveRequestDTO){
-        if(!memberRepository.findByMemberId(memberSaveRequestDTO.getMemberEmail()).isEmpty()){
+        if(!memberRepository.findByMemberEmail(memberSaveRequestDTO.getMemberEmail()).isEmpty()){
             throw new ValidationDuplicateMemberEmail();
         }
-        if(!memberRepository.findByNickname(memberSaveRequestDTO.getNickname()).isEmpty()){
+        if(!memberRepository.findByMemberNickname(memberSaveRequestDTO.getNickname()).isEmpty()){
             throw new ValidationDuplicateMemberNickname();
         }
     }
@@ -66,8 +66,20 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberFindResponseDTO findByMember(String nickname){
-        List<Member> member = memberRepository.findByNickname(nickname);
+    public MemberFindResponseDTO findByMemberEmail(String email){
+        List<Member> member = memberRepository.findByMemberEmail(email);
+
+        if(member.size() <= 0){
+            throw new MemberNotFound();
+        }
+
+        MemberFindResponseDTO memberDto = MemberFindResponseDTO.createMemberFindResponseDTO(member.get(0));
+        return memberDto;
+    }
+
+    @Transactional(readOnly = true)
+    public MemberFindResponseDTO findByMemberNickname(String nickname){
+        List<Member> member = memberRepository.findByMemberNickname(nickname);
 
         if(member.size() <= 0){
             throw new MemberNotFound();
@@ -82,6 +94,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         findMember.updateMember(memberUpdateRequestDTO);
+        findMember.encryptPassword();
         /**
          * save 를 할 필요가 없다. dirty checking 이 일어나기 때문
          */
@@ -110,7 +123,7 @@ public class MemberService {
 
     public ImageResponseDTO findByProfileImage(String nickname){
 
-        List<Member> findByMember = memberRepository.findByNickname(nickname);
+        List<Member> findByMember = memberRepository.findByMemberNickname(nickname);
         if(findByMember.isEmpty()){
             throw new ProfileImageNotFound();
         }
@@ -133,8 +146,6 @@ public class MemberService {
 
         String imageName = imageService.uploadImage(imageFile);
 
-        //TODO: Image Entity 에 save
-        //TODO: 후에 memberId 를 session 에서 가져온 값으로 변경 필요
         Member findByMember = memberJpaRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFound());
 

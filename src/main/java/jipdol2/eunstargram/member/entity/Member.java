@@ -97,12 +97,18 @@ public class Member extends BaseTimeEntity {
     }
 
     public static Member transferMember(MemberSaveRequestDTO memberSaveRequestDTO) {
-        return Member.builder().memberEmail(memberSaveRequestDTO.getMemberEmail()).password(memberSaveRequestDTO.getPassword()).nickname(memberSaveRequestDTO.getNickname()).phoneNumber(memberSaveRequestDTO.getPhoneNumber()).birthDay(memberSaveRequestDTO.getBirthDay()).intro(memberSaveRequestDTO.getIntro()).build();
+        return Member.builder()
+                .memberEmail(memberSaveRequestDTO.getMemberEmail())
+                .password(memberSaveRequestDTO.getPassword())
+                .nickname(memberSaveRequestDTO.getNickname())
+                .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
+                .birthDay(memberSaveRequestDTO.getBirthDay())
+                .intro(memberSaveRequestDTO.getIntro())
+                .build();
     }
 
     public void updateMember(MemberUpdateRequestDTO updateRequestDTO) {
         this.password = updateRequestDTO.getPassword();
-        this.nickname = updateRequestDTO.getNickName();
         this.phoneNumber = updateRequestDTO.getPhoneNumber();
         this.birthDay = updateRequestDTO.getBirthDay();
         this.intro = updateRequestDTO.getIntro();

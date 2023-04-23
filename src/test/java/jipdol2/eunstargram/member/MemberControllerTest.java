@@ -1,7 +1,6 @@
 package jipdol2.eunstargram.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jipdol2.eunstargram.auth.AuthController;
 import jipdol2.eunstargram.crypto.PasswordEncoder;
 import jipdol2.eunstargram.exception.MemberNotFound;
 import jipdol2.eunstargram.jwt.JwtManager;
@@ -19,11 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.Cookie;
 import java.io.FileInputStream;
 
@@ -39,27 +35,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class MemberControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private MemberJpaRepository memberJpaRepository;
-
-    @Autowired
-    private AuthController authController;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private JwtManager jwtManager;
-
+    //Repository
+    @Autowired private MemberJpaRepository memberJpaRepository;
+    //MockMvc
+    @Autowired private MockMvc mockMvc;
+    //ObjectMapper
+    @Autowired private ObjectMapper objectMapper;
+    //JwtManager
+    @Autowired private JwtManager jwtManager;
+    //PasswordEncoder
+    @Autowired private PasswordEncoder passwordEncoder;
+    //URL
     private static final String COMMON_URL="/api/member";
 
     @BeforeEach
@@ -187,7 +173,6 @@ class MemberControllerTest {
         Long id = saveMember.getId();
         MemberUpdateRequestDTO memberB = MemberUpdateRequestDTO.builder()
                         .password("4321")
-                        .nickName("Rabbit99")
                         .build();
 
         //when
@@ -201,7 +186,8 @@ class MemberControllerTest {
         //then
         Member findMember = memberJpaRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFound());
-        assertThat(findMember.getPassword()).isEqualTo(memberB.getPassword());
+        boolean matcher = passwordEncoder.matcher(memberB.getPassword(), findMember.getPassword());
+        assertThat(matcher).isTrue();
     }
 
     @Test
