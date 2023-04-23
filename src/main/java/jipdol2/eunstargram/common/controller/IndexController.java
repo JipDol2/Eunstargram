@@ -42,7 +42,7 @@ public class IndexController {
     @GetMapping("/posts/{nickname}")
     public String profile(@PathVariable("nickname") String nickname,Model model){
         log.info("nickname={}",nickname);
-        MemberFindResponseDTO findByMember = memberService.findByMember(nickname);
+        MemberFindResponseDTO findByMember = memberService.findByMemberNickname(nickname);
         model.addAttribute("member",findByMember);
 
         ImageResponseDTO findByProfileImage = memberService.findByProfileImage(nickname);
