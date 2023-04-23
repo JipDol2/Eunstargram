@@ -12,15 +12,13 @@
 
 프로젝트 구조
 ---
-
-DB ERD 구조
----
-
-Git Branch 전략
----
-
-테스트
----
+![image](https://user-images.githubusercontent.com/55746374/233839181-33f83291-8963-47e0-962d-65ed36a7d804.png)
 
 사용 기술 및 환경
 ---
+- Java 17
+- Database : mySql 8.0 , h2 database
+- Framwork : Spring Boot 2.7.2
+- ORM : JPA
+- IDE : Intellij
+- Junit 5
