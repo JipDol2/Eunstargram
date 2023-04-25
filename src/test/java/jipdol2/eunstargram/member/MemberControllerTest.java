@@ -2,7 +2,7 @@ package jipdol2.eunstargram.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.crypto.PasswordEncoder;
-import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;

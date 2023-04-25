@@ -1,6 +1,8 @@
-package jipdol2.eunstargram.exception;
+package jipdol2.eunstargram.exception.member;
 
-public class InvalidSignInInformation extends JipDol2Exception{
+import jipdol2.eunstargram.exception.JipDol2Exception;
+
+public class InvalidSignInInformation extends JipDol2Exception {
 
     private static final String MESSAGE = "Bad Request";
 

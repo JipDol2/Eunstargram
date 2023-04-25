@@ -1,9 +1,9 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.crypto.PasswordEncoder;
-import jipdol2.eunstargram.exception.MemberNotFound;
-import jipdol2.eunstargram.exception.ValidationDuplicateMemberEmail;
-import jipdol2.eunstargram.exception.ValidationDuplicateMemberNickname;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
+import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberEmail;
+import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberNickname;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
 import jipdol2.eunstargram.image.entity.ImageJpaRepository;
@@ -13,25 +13,15 @@ import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import jipdol2.eunstargram.member.entity.MemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.io.FileInputStream;
-import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

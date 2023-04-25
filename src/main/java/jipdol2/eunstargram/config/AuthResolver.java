@@ -1,13 +1,11 @@
 package jipdol2.eunstargram.config;
 
-import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.config.data.UserSession;
-import jipdol2.eunstargram.exception.Unauthorized;
+import jipdol2.eunstargram.exception.auth.Unauthorized;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -30,10 +28,10 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
 
     private final JwtManager jwtManager;
 
-    private final SessionJpaRepository sessionJpaRepository;
+//    private final SessionJpaRepository sessionJpaRepository;
 
-    @Value("${jwt.secret}")
-    private String KEY;
+//    @Value("${jwt.secret}")
+//    private String KEY;
 
     /**
      * parameter 에는 UserSesseion 클래스가 넘어온다.

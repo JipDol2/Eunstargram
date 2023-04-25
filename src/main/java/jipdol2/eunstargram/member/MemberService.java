@@ -1,10 +1,10 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.exception.MemberNotFound;
-import jipdol2.eunstargram.exception.ProfileImageNotFound;
-import jipdol2.eunstargram.exception.ValidationDuplicateMemberEmail;
-import jipdol2.eunstargram.exception.ValidationDuplicateMemberNickname;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
+import jipdol2.eunstargram.exception.image.ProfileImageNotFound;
+import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberEmail;
+import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberNickname;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;

@@ -1,10 +1,9 @@
 package jipdol2.eunstargram.post;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.config.data.UserSession;
-import jipdol2.eunstargram.exception.MemberNotFound;
-import jipdol2.eunstargram.exception.MissAuthorized;
-import jipdol2.eunstargram.exception.PostNotFound;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
+import jipdol2.eunstargram.exception.auth.MissAuthorized;
+import jipdol2.eunstargram.exception.post.PostNotFound;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.image.entity.Image;

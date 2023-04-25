@@ -2,9 +2,8 @@ package jipdol2.eunstargram.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
-import jipdol2.eunstargram.exception.ExpiredToken;
-import jipdol2.eunstargram.exception.InvalidToken;
+import jipdol2.eunstargram.exception.token.ExpiredToken;
+import jipdol2.eunstargram.exception.token.InvalidToken;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,6 +73,9 @@ public class JwtManager {
              */
             log.error("token is expired");
             throw new ExpiredToken();
+        }catch(NullPointerException | JwtException | IllegalStateException e){
+            log.error("token is not valid");
+            throw new InvalidToken();
         }
     }
 }

@@ -2,11 +2,10 @@ package jipdol2.eunstargram.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.entity.Session;
-import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;
-import jipdol2.eunstargram.exception.PostNotFound;
+import jipdol2.eunstargram.exception.post.PostNotFound;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
