@@ -1,6 +1,8 @@
-package jipdol2.eunstargram.exception;
+package jipdol2.eunstargram.exception.token;
 
-public class ExpiredToken extends JipDol2Exception{
+import jipdol2.eunstargram.exception.BaseException;
+
+public class ExpiredToken extends BaseException {
 
     private static final String MESSAGE = "토큰이 만료되었습니다.";
 
@@ -10,6 +12,6 @@ public class ExpiredToken extends JipDol2Exception{
 
     @Override
     public int getStatusCode() {
-        return 400;
+        return 401;
     }
 }

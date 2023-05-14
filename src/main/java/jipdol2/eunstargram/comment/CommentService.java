@@ -1,8 +1,8 @@
 package jipdol2.eunstargram.comment;
 
 import jipdol2.eunstargram.comment.dto.response.CommentFindResponseDTO;
-import jipdol2.eunstargram.exception.MemberNotFound;
-import jipdol2.eunstargram.exception.PostNotFound;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
+import jipdol2.eunstargram.exception.post.PostNotFound;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.post.entity.PostRepository;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;

@@ -6,18 +6,17 @@ const fetchData = async (url, option) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': sessionStorage.getItem("Authorization"),
+                    'Authorization': sessionStorage.getItem("Authorization"),
                 },
                 ...option,
             });
         if (res.status !== 200) {
-            throw await res.json();
+            const response = await res.json();
+            if(response.message.includes("만료")){
+
+            }
+            throw response;
         }
-        /*
-        if(url==='/api/auth/v0/login'){
-            sessionStorage.setItem("Authorization",res.headers.get("Authorization"));
-        }
-        */
         return await res.json();
     } catch (error) {
         console.log(error.message);
@@ -31,18 +30,18 @@ const fetchFileData = async (url,option) => {
         const res = await fetch(REQUEST_URL + url,
             {
                 headers: {
-                    // 'Authorization': sessionStorage.getItem("Authorization"),
+                    'Authorization': sessionStorage.getItem("Authorization"),
                 },
                 ...option,
             });
         const data = await res.json();
         if (res.status !== 200) {
             // alert(data.message);
-            throw new Error();
+            throw await res.json();
         }
         return data;
     }catch (error){
-        throw new Error();
+        throw error;
     }
 }
 

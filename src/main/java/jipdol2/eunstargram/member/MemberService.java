@@ -1,10 +1,10 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.exception.MemberNotFound;
-import jipdol2.eunstargram.exception.ProfileImageNotFound;
-import jipdol2.eunstargram.exception.ValidationDuplicateMemberEmail;
-import jipdol2.eunstargram.exception.ValidationDuplicateMemberNickname;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
+import jipdol2.eunstargram.exception.image.ProfileImageNotFound;
+import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberEmail;
+import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberNickname;
 import jipdol2.eunstargram.image.ImageService;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +35,7 @@ public class MemberService {
     private final ImageService imageService;
     //Respository
     private final MemberRepository memberRepository;
-    private final MemberJpaRepository memberJpaRepository;
+//    private final MemberJpaRepository memberJpaRepository;
     private final ImageJpaRepository imageJpaRepository;
 
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
@@ -123,18 +124,13 @@ public class MemberService {
 
     public ImageResponseDTO findByProfileImage(String nickname){
 
-        List<Member> findByMember = memberRepository.findByMemberNickname(nickname);
-        if(findByMember.isEmpty()){
+        Member findByMember = memberRepository.findByMemberNickname(nickname).get(0);
+
+        if(findByMember == null){
             throw new ProfileImageNotFound();
         }
-        List<Image> images = findByMember.get(0).getImage();
 
-        Image profileImage = images.stream()
-                .filter((image) -> image.getImageCode().equals(ImageCode.PROFILE))
-                .findAny()
-                .orElseThrow(() -> new ProfileImageNotFound());
-
-        return new ImageResponseDTO(profileImage);
+        return ImageResponseDTO.transfer(findByMember.getOriginalFileName(),findByMember.getStoredFileName());
     }
 
     public ImageResponseDTO uploadProfileImage(Long id,ImageRequestDTO imageRequestDTO){
@@ -146,8 +142,10 @@ public class MemberService {
 
         String imageName = imageService.uploadImage(imageFile);
 
-        Member findByMember = memberJpaRepository.findById(id)
+        Member findByMember = memberRepository.findByOne(id)
                 .orElseThrow(() -> new MemberNotFound());
+
+        findByMember.updateProfileImage(imageFile.getOriginalFilename(),imageName);
 
         Image image = Image.builder()
                 .originalFileName(imageFile.getOriginalFilename())
@@ -165,16 +163,14 @@ public class MemberService {
 
         Member findByMember = memberRepository.findByOne(id)
                 .orElseThrow(()->new MemberNotFound());
-        List<Image> images = findByMember.getImage();
 
-        List<Image> profileImages = images.stream()
-                .filter(image -> image.getImageCode().equals(ImageCode.PROFILE))
-                .collect(Collectors.toList());
+        Image profileImage = imageJpaRepository.findImageByStoredFileName(findByMember.getStoredFileName(), ImageCode.PROFILE)
+                .orElse(null);
 
-        if(profileImages.isEmpty()){
+        if(Objects.isNull(profileImage)){
             return;
         }
 
-        imageJpaRepository.deleteAll(profileImages);
+        imageJpaRepository.delete(profileImage);
     }
 }

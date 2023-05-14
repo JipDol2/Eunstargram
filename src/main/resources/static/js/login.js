@@ -18,6 +18,7 @@ const loginOperation = async (event) =>{
 
         const response = await fetchData("/api/auth/login",header);
         // const response = await fetchData("/api/auth/v0/login",header);
+        sessionStorage.setItem("Authorization",response.accessToken);
         location.href = location.origin+"/";
     }catch(e){
         const errorMessage = document.getElementById("error-message");

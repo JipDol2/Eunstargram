@@ -1,8 +1,10 @@
-package jipdol2.eunstargram.exception;
+package jipdol2.eunstargram.exception.image;
 
-public class ImageFileArgumentNotValidation extends JipDol2Exception{
+import jipdol2.eunstargram.exception.BaseException;
 
-    private static final String MESSAGE = "Bad Request";
+public class ImageFileArgumentNotValidation extends BaseException {
+
+    private static final String MESSAGE = "이미지 파일이 존재하지 않습니다";
 
     public ImageFileArgumentNotValidation() {
         super(MESSAGE);

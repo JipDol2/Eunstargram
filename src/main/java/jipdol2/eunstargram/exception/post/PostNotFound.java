@@ -1,9 +1,11 @@
-package jipdol2.eunstargram.exception;
+package jipdol2.eunstargram.exception.post;
+
+import jipdol2.eunstargram.exception.BaseException;
 
 /**
  * status -> 404
  */
-public class PostNotFound extends JipDol2Exception{
+public class PostNotFound extends BaseException {
 
     private static final String MESSAGE = "게시글이 존재하지 않습니다";
 

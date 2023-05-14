@@ -1,10 +1,14 @@
 package jipdol2.eunstargram.auth;
 
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
+import jipdol2.eunstargram.auth.entity.RefreshToken;
+import jipdol2.eunstargram.auth.entity.RefreshTokenRepository;
 import jipdol2.eunstargram.auth.entity.Session;
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.crypto.PasswordEncoder;
-import jipdol2.eunstargram.exception.InvalidSignInInformation;
-import jipdol2.eunstargram.exception.MemberNotFound;
+import jipdol2.eunstargram.exception.member.InvalidSignInInformation;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
+import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AuthService {
 
-    private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final MemberJpaRepository memberJpaRepository;
-//    private final TokenJpaRepository tokenJpaRepository;
 
-    public String signInSession(LoginRequestDTO login) {
+    private final PasswordEncoder passwordEncoder;
+    private final JwtManager jwtManager;
+
+/*    public String signInSession(LoginRequestDTO login) {
 
         Member findByMember = memberJpaRepository.findByMemberEmail(login.getMemberEmail())
                 .orElseThrow(() -> new InvalidSignInInformation("id/password", "아이디/비밀번호가 올바르지 않습니다"));
@@ -43,7 +49,7 @@ public class AuthService {
                 .orElseThrow(() -> new MemberNotFound());
 
         findByMember.removeSession(accessToken);
-    }
+    }*/
 
     public Member signInJwt(LoginRequestDTO login) {
 
@@ -59,4 +65,38 @@ public class AuthService {
         return findByMember;
     }
 
+    public String createAccessToken(Long id){
+        return jwtManager.makeAccessToken(id);
+    }
+
+    public String createRefreshToken(Long id){
+        String refreshToken = jwtManager.makeRefreshToken(id);
+        refreshTokenRepository.save(new RefreshToken(refreshToken));
+        return refreshToken;
+    }
+
+    public void removeRefreshToken(String refreshToken){
+        RefreshToken findByRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException());
+        refreshTokenRepository.deleteById(findByRefreshToken.getId());
+    }
+
+    public void validateAccessToken(String accessToken){
+        jwtManager.validateToken(accessToken);
+    }
+
+    public void validateRefreshToken(String refreshToken){
+        jwtManager.validateToken(refreshToken);
+    }
+
+    public Long extractMemberIdFromToken(String accessToken){
+        return jwtManager.getMemberIdFromToken(accessToken);
+    }
+
+    public UserSession findUserSessionByToken(String accessToken){
+        Long id = extractMemberIdFromToken(accessToken);
+        return UserSession.builder()
+                .id(id)
+                .build();
+    }
 }

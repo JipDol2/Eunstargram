@@ -10,18 +10,18 @@ import java.util.Map;
  * 그때마다 새로운 exception 을 추가하게 된다면 너무나도 반복적이고 어마어마하게 코드양이
  * 늘어나게 된다.
  * 그래서 최상위 exception 추상 클래스를 선언하여 해결해 준다.
- * ExceptionController 에서 @ExceptionHandler 의 class 명을 JipDol2Exception 으로 변경
+ * ExceptionController 에서 @ExceptionHandler 의 class 명을 BaseException 으로 변경
  */
 @Getter
-public abstract class JipDol2Exception extends RuntimeException{
+public abstract class BaseException extends RuntimeException{
 
     public final Map<String,String> validation = new HashMap<>();
 
-    public JipDol2Exception(String message){
+    public BaseException(String message){
         super(message);
     }
 
-    public JipDol2Exception(String message,Throwable cause){
+    public BaseException(String message, Throwable cause){
         super(message,cause);
     }
 

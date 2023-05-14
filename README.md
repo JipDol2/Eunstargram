@@ -6,6 +6,25 @@
 
 개발하면서 마주했던 이슈들
 ---
+- fetch API 로 서버와 어떻게 데이터를 송수신 할까?
+- @Value 어노테이션 값이 자꾸 null 이 나와요!
+- auto_increment 값은 rollback 이 되지 않는다고요?!
+
+프로젝트 구조
+---
+
+DB ERD 구조
+---
+
+Git Branch 전략
+---
+
+테스트
+---
+
+사용 기술 및 환경
+---
+=======
 - [fetch API 로 서버와 어떻게 데이터를 송수신 할까?](https://boomrabbit.tistory.com/245)
 - [@Value 어노테이션 값이 자꾸 null 이 나와요!](https://boomrabbit.tistory.com/247)
 - [auto_increment 값은 rollback 이 되지 않는다고요?!](https://boomrabbit.tistory.com/246)

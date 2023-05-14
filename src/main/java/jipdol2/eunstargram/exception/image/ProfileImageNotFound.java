@@ -1,8 +1,8 @@
-package jipdol2.eunstargram.exception;
+package jipdol2.eunstargram.exception.image;
 
-import java.util.Map;
+import jipdol2.eunstargram.exception.BaseException;
 
-public class ProfileImageNotFound extends JipDol2Exception{
+public class ProfileImageNotFound extends BaseException {
 
     private final static String MESSAGE = "프로필 이미지를 찾을 수 없습니다.";
 

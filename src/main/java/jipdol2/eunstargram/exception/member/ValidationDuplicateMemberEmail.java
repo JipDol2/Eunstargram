@@ -1,6 +1,8 @@
-package jipdol2.eunstargram.exception;
+package jipdol2.eunstargram.exception.member;
 
-public class ValidationDuplicateMemberEmail extends JipDol2Exception{
+import jipdol2.eunstargram.exception.BaseException;
+
+public class ValidationDuplicateMemberEmail extends BaseException {
 
     private static final String MESSAGE = "중복된 이메일이 존재합니다.";
 

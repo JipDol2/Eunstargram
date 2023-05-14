@@ -1,8 +1,8 @@
-package jipdol2.eunstargram.exception;
+package jipdol2.eunstargram.exception.auth;
 
-import java.util.Map;
+import jipdol2.eunstargram.exception.BaseException;
 
-public class MissAuthorized extends JipDol2Exception{
+public class MissAuthorized extends BaseException {
 
     private static final String MESSAGE = "권한이 일치하지 않습니다.";
 

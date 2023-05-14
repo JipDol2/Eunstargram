@@ -2,11 +2,10 @@ package jipdol2.eunstargram.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.entity.Session;
-import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;
-import jipdol2.eunstargram.exception.PostNotFound;
+import jipdol2.eunstargram.exception.post.PostNotFound;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
@@ -87,7 +86,7 @@ class CommentControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
@@ -141,7 +140,7 @@ class CommentControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
@@ -190,7 +189,7 @@ class CommentControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
@@ -233,12 +232,11 @@ class CommentControllerTest {
         commentRepository.save(comment1);
         commentRepository.save(comment2);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+//        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
 
         //when
-        mockMvc.perform(get(COMMON_URL+"/{postId}",postId)
-                        .cookie(cookie))
+        mockMvc.perform(get(COMMON_URL+"/{postId}",postId))
                 .andExpect(status().isOk())
                 .andDo(print());
 
