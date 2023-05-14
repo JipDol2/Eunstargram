@@ -175,42 +175,6 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("로그인 : 로그인 성공 후 세션 확인")
-    @Transactional
-    @Disabled
-    void loginSuccessTest2() throws Exception{
-        //given
-        Member member = memberJpaRepository.save(Member.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("jipdol2")
-                .phoneNumber("010-1111-2222")
-                .birthDay("1999-01-01")
-                .intro("im jipdol2")
-                .build());
-
-        LoginRequestDTO login = LoginRequestDTO.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .build();
-
-        String json = objectMapper.writeValueAsString(login);
-        //expected
-        mockMvc.perform(post(COMMON_URL+"/v0/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andDo(print());
-
-        Member loggedInMember = memberJpaRepository.findById(member.getId())
-                .orElseThrow(RuntimeException::new);
-
-        List<Session> sessions = loggedInMember.getSessions();
-
-        Assertions.assertThat(loggedInMember.getSessions().size()).isEqualTo(1L);
-    }
-
-    @Test
     @DisplayName("로그인 : 로그인 성공 후 세션 응답 확인")
     @Disabled
     void loginSessionTest() throws Exception{
@@ -240,30 +204,4 @@ class AuthControllerTest {
                 .andDo(print());
     }
 
-//    @Test
-    @DisplayName("Session : 권한 체크를 하는 API 에 접근")
-    @Deprecated
-    @Transactional
-    void loginAdminTest() throws Exception{
-        //given
-        Member member = Member.builder()
-                .memberEmail("jipdol2@gmail.com")
-                .password("1234")
-                .nickname("jipdol2")
-                .phoneNumber("010-1111-2222")
-                .birthDay("1999-01-01")
-                .intro("im jipdol2")
-                .build();
-
-        Session session = member.addSession();
-        memberJpaRepository.save(member);
-
-        //expected
-        mockMvc.perform(get("/api/post/foo")
-                        .header("Authorization",session.getAccessToken())
-                        .cookie(new Cookie("SESSION", session.getAccessToken()))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
 }

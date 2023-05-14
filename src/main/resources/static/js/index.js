@@ -16,16 +16,17 @@ const validationLogin = async () => {
     };
 
     try {
+        //TODO: accessToken 을 session storage 에서 빼오기
         const response = await fetchData("/api/auth/loginCheck", header);
+        // const token = sessionStorage.getItem("Authorization");
 
-        if(response.authState == true) {
+        if(response.authState){
             const logoutState = document.getElementById("logoutState");
             logoutState.classList.toggle("d-none");
 
             const loginState = document.getElementById("loginState");
             loginState.classList.toggle("d-none");
         }
-
     }catch (e){
 
     }
@@ -39,7 +40,7 @@ const clickPostsOperation = async (event) => {
         method: 'GET'
     };
     try{
-        const response = await fetchData(`/api/member/findByMyInfo`,header);
+        const response = await fetchData(`/api/member/me`,header);
         location.href = location.origin + `/posts/${response.nickname}`;
     }catch (e){
         location.reload();
@@ -55,6 +56,7 @@ const clickLogOutOperation = async (event) => {
     };
 
     const response = await fetchData(`/api/auth/logout`,header);
+    sessionStorage.clear();
     location.href = location.origin+"/";
 }
 addIndexEvent();

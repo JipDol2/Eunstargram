@@ -6,7 +6,7 @@ const fetchData = async (url, option) => {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'Authorization': sessionStorage.getItem("Authorization"),
+                    'Authorization': sessionStorage.getItem("Authorization"),
                 },
                 ...option,
             });
@@ -30,7 +30,7 @@ const fetchFileData = async (url,option) => {
         const res = await fetch(REQUEST_URL + url,
             {
                 headers: {
-                    // 'Authorization': sessionStorage.getItem("Authorization"),
+                    'Authorization': sessionStorage.getItem("Authorization"),
                 },
                 ...option,
             });

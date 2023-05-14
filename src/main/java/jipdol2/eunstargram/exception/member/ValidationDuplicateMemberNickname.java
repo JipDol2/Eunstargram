@@ -1,8 +1,8 @@
 package jipdol2.eunstargram.exception.member;
 
-import jipdol2.eunstargram.exception.JipDol2Exception;
+import jipdol2.eunstargram.exception.BaseException;
 
-public class ValidationDuplicateMemberNickname extends JipDol2Exception {
+public class ValidationDuplicateMemberNickname extends BaseException {
 
     private static final String MESSAGE = "중복된 닉네임이 존재합니다.";
 

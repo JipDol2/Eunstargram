@@ -47,8 +47,14 @@ const init = async() =>{
     try{
         const response = await fetchData(`/api/auth/checkAuth?nickname=${nickname}`,header);
     }catch(e){
+        const profileImageButton = document.getElementById("profileImage");
+        profileImageButton.disabled = true;
+
         const uploadPostButton = document.getElementById("uploadPost");
         uploadPostButton.style.display='none';
+
+        const logoutButton = document.getElementById("logout-button");
+        logoutButton.style.display='none';
     }
 }
 
@@ -151,9 +157,11 @@ const saveFile = async (event) =>{
         // console.log(response.storedFileName);
         // console.log(response.originalFileName);
         document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
+
     }catch(e){
 
     }
+    location.reload();
 }
 /**
  * 게시글 업로드
@@ -321,119 +329,3 @@ const clickSearchOperation = async(event) => {
 }
 init();
 addPostsEvent();
-
-// getProfileImage();
-/**
- * 프로필 이미지 조회
- */
-/*const getProfileImage = async (event) =>{
-
-    let nickname = null;
-    try{
-        const header = {
-            method: 'GET'
-        };
-        const response = await fetchData(`/api/member/findByMyInfo`,header);
-        nickname = response.nickname;
-    }catch (error){
-        location.href = location.origin + "/";
-    }
-
-    document.querySelector(".user_name").innerText = nickname;
-    const nicknames = document.querySelectorAll(".nick_name");
-    [].forEach.call(nicknames,function (name){
-        name.innerText=nickname;
-    })
-    // document.getElementById("nick_name").innerText = nickname;
-
-    try{
-        const header = {
-            method: 'GET'
-        };
-        const response = await fetchData(`/api/member/profileImage/${nickname}`);
-        document.getElementById("profileImage").src = `/upload/${response.storedFileName}`;
-    }catch (e){
-        document.getElementById("profileImage").src = `/upload/fox.jpg`;
-        // location.href = location.origin + "/";
-    }
-}*/
-
-//getPosts();
-/**
- * 로그인 후 게시글 페이지 로딩
- * @param event
- * @returns {Promise<void>}
- */
-/*const getPosts = async(searchNickname) => {
-
-    let nickname = null;
-    try{
-        const header = {
-            method: 'GET'
-        }
-        if(searchNickname == null) {
-            const response = await fetchData(`/api/member/findByMyInfo`, header);
-            nickname = response.nickname;
-        }else{
-            const response = await fetchData(`/api/member/findByMember/${searchNickname}`, header);
-            nickname = response.nickname;
-        }
-    }catch (error){
-        location.href = location.origin + "/";
-    }
-
-    try{
-        const header = {
-            method: 'GET',
-        }
-
-        const response = await fetchData(`/api/post/${nickname}`,header);
-        document.getElementById("postNumber").innerText = response.data.length;
-        // console.log(response.length);
-
-        const root = document.querySelector('.mylist_contents');
-
-        for (const element of response.data) {
-            const divTag = document.createElement("div");
-            divTag.className='pic';
-
-            const img = document.createElement("img");
-            // console.log(element.imageDTO.storedFileName)
-            img.setAttribute("class","img");
-            img.setAttribute("data-bs-toggle","modal");
-            img.setAttribute("data-bs-target","#imageModal");
-            img.src = `/upload/${element.imageResponseDTO.storedFileName}`;
-            img.id = element.id;    //postId
-
-            /!**
-             * Q. button click 시 event.target 이 왜 button 에 대한 정보가 아닌걸까?
-             * A. 정답은 event bubbling (https://ko.javascript.info/bubbling-and-capturing) 때문이다.
-             *    클릭은 image 를 클릭한 것이 되고 click event 가 event bubbling 때문에 button 에게도 올라간다.
-             *    이때 button click 시 listener 를 등록해놓았기 때문데 event.target 에는 image 에 관한 정보가 담겨져있다.
-             *!/
-            img.addEventListener("click", async (event) => {
-                const imageContent = document.getElementById("modalImage");
-                /!**
-                 * hidden input 을 하나 두어서 거기에 postId 값을 담음
-                 *!/
-                const hiddenInput = document.getElementsByName("postIdInput")[0];
-                const postId = event.target.id;
-
-                imageContent.src = event.target.src;
-                hiddenInput.id = postId;   //postId
-                hiddenInput.value = postId;
-
-                // console.log(hiddenInput.id);
-                /!**
-                 * 게시글 및 댓글 조회
-                 * - 직접 html 코드들을 생성해서 append 시켜줌
-                 *!/
-                makeModal(postId);
-            });
-            divTag.appendChild(img);
-            root.prepend(divTag);
-        }
-    }catch (e){
-        location.href = location.origin + "/";
-    }
-}*/

@@ -89,7 +89,7 @@ class PostControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
@@ -121,7 +121,7 @@ class PostControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
@@ -188,16 +188,15 @@ class PostControllerTest {
                 .content("너는 나의 봄이었다")
                 .build();
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+//        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
 
         String json = objectMapper.writeValueAsString(postEditRequestDTO);
 
         //when
         mockMvc.perform(put(COMMON_URL+"/p/{postId}",post.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json)
-                        .cookie(cookie))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -240,7 +239,7 @@ class PostControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         //when

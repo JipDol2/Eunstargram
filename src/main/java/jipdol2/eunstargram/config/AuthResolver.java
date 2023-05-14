@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.config;
 
+import jipdol2.eunstargram.auth.AuthService;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.auth.Unauthorized;
 import jipdol2.eunstargram.jwt.JwtManager;
@@ -7,6 +8,7 @@ import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -26,12 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class AuthResolver implements HandlerMethodArgumentResolver {
 
-    private final JwtManager jwtManager;
-
-//    private final SessionJpaRepository sessionJpaRepository;
-
-//    @Value("${jwt.secret}")
-//    private String KEY;
+    private final AuthService authService;
 
     /**
      * parameter 에는 UserSesseion 클래스가 넘어온다.
@@ -50,73 +47,14 @@ public class AuthResolver implements HandlerMethodArgumentResolver {
     }
 
     /**
-     * UUID Token 값을 DB 에 저장 후에 조회한 후 인증 절차 진행
-     */
-/*
-    @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        if(request == null){
-            log.error("servletRequest null");
-            throw new Unauthorized();
-        }
-        Cookie[] cookies = request.getCookies();
-        if(cookies == null){
-            log.error("cookie is null");
-            throw new Unauthorized();
-        }
-
-        String accessToken = cookies[0].getValue();
-
-        Session session = sessionJpaRepository.findByAccessToken(accessToken)
-                .orElseThrow(Unauthorized::new);
-
-        return UserSession.builder()
-                .id(session.getMember().getId())
-                .email(session.getMember().getMemberEmail())
-                .nickname(session.getMember().getNickname())
-                .build();
-    }
-*/
-
-    /**
      * Jwt Token 사용
      */
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(request == null){
-            log.error("servletRequest null");
-            throw new Unauthorized();
-        }
-
-        Cookie[] cookies = request.getCookies();
-
-        if(cookies == null){
-            log.error("cookie is null");
-            throw new Unauthorized();
-        }
-
-        //AccessToken 추출
-        String accessToken = cookies[0].getValue();
-
-        if(accessToken == null || accessToken.equals("")){
-            log.error("servletRequest null");
-            throw new Unauthorized();
-        }
-
-        //jwt token 유효성 검사
-        if(jwtManager.validateToken(accessToken)){
-            UserSessionDTO sessionDTO = jwtManager.getMemberIdFromToken(accessToken);
-
-            return UserSession.builder()
-                    .id(sessionDTO.getId())
-                    .email(sessionDTO.getEmail())
-                    .nickname(sessionDTO.getNickname())
-                    .build();
-        }
-        return null;
+        return authService.findUserSessionByToken(accessToken);
     }
 }

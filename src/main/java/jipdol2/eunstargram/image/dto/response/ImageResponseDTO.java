@@ -18,21 +18,24 @@ public class ImageResponseDTO {
 
     private String storedFileName;
 
-    private ImageCode imageCode;
-
     @Builder
-    public ImageResponseDTO(Long id, String originalFileName, String storedFileName, ImageCode imageCode) {
+    public ImageResponseDTO(Long id, String originalFileName, String storedFileName) {
         this.id = id;
         this.originalFileName = originalFileName;
         this.storedFileName = storedFileName;
-        this.imageCode = imageCode;
     }
 
     public ImageResponseDTO(Image image){
         this.id = image.getId();
         this.originalFileName = image.getOriginalFileName();
         this.storedFileName = image.getStoredFileName();
-        this.imageCode = image.getImageCode();
+    }
+
+    public static ImageResponseDTO transfer(String originalFileName,String storedFileName){
+        return ImageResponseDTO.builder()
+                .originalFileName(originalFileName)
+                .storedFileName(storedFileName)
+                .build();
     }
 
 }

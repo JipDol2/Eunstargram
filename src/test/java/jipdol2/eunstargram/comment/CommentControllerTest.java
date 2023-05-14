@@ -86,7 +86,7 @@ class CommentControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
@@ -140,7 +140,7 @@ class CommentControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
@@ -189,7 +189,7 @@ class CommentControllerTest {
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
         Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
@@ -232,12 +232,11 @@ class CommentControllerTest {
         commentRepository.save(comment1);
         commentRepository.save(comment2);
 
-        Session session = member.addSession();
-        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
+//        Session session = member.addSession();
+//        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
 
         //when
-        mockMvc.perform(get(COMMON_URL+"/{postId}",postId)
-                        .cookie(cookie))
+        mockMvc.perform(get(COMMON_URL+"/{postId}",postId))
                 .andExpect(status().isOk())
                 .andDo(print());
 

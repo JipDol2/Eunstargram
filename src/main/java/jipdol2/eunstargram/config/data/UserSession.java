@@ -10,14 +10,8 @@ public class UserSession {
 
     public Long id;
 
-    public String email;
-
-    public String nickname;
-
     @Builder
-    public UserSession(Long id,String email,String nickname){
+    public UserSession(Long id){
         this.id = id;
-        this.email = email;
-        this.nickname = nickname;
     }
 }

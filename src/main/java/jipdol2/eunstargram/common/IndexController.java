@@ -1,5 +1,6 @@
-package jipdol2.eunstargram.common.controller;
+package jipdol2.eunstargram.common;
 
+import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.member.MemberService;
@@ -18,6 +19,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@NoAuth
 public class IndexController {
 
     private final MemberService memberService;

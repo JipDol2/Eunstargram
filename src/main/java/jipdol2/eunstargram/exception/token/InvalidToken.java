@@ -1,10 +1,8 @@
 package jipdol2.eunstargram.exception.token;
 
-import jipdol2.eunstargram.exception.JipDol2Exception;
+import jipdol2.eunstargram.exception.BaseException;
 
-import java.util.Map;
-
-public class InvalidToken extends JipDol2Exception {
+public class InvalidToken extends BaseException {
 
     private static final String MESSAGE = "Token 이 유효하지 않습니다.";
 

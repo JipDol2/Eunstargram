@@ -10,8 +10,11 @@ public class LoginCheckDTO {
 
     private boolean authState;
 
-    @Builder
     public LoginCheckDTO(boolean authState) {
         this.authState = authState;
+    }
+
+    public static LoginCheckDTO of(Boolean authState){
+        return new LoginCheckDTO(authState);
     }
 }

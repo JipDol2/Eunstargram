@@ -174,10 +174,11 @@ class MemberControllerTest {
         MemberUpdateRequestDTO memberB = MemberUpdateRequestDTO.builder()
                         .password("4321")
                         .build();
-
+        String accessToken = jwtManager.makeAccessToken(id);
         //when
         mockMvc.perform(patch(COMMON_URL + "/update/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",accessToken)
                         .content(objectMapper.writeValueAsString(memberB))
                 )
                 .andExpect(status().isOk())
@@ -202,10 +203,12 @@ class MemberControllerTest {
                 "19940715",
                 "im Rabbit96!!");
         Member saveMember = memberJpaRepository.save(member);
-        //when
         Long id=saveMember.getId();
+        String accessToken = jwtManager.makeAccessToken(id);
+        //when
         mockMvc.perform(patch(COMMON_URL+"/delete/{id}",id)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization",accessToken)
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -241,8 +244,12 @@ class MemberControllerTest {
                 "19940715",
                 "im Rabbit96!!");
         Member saveMember = memberJpaRepository.save(member);
+        Long id = saveMember.getId();
+        String accessToken = jwtManager.makeAccessToken(id);
         //when
-        mockMvc.perform(get(COMMON_URL+"/{id}",saveMember.getId()))
+        mockMvc.perform(get(COMMON_URL+"/{id}",saveMember.getId())
+                        .header("Authorization",accessToken)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberEmail").value("jipdol2@gmail.com"))
                 .andExpect(jsonPath("$.password").isNotEmpty())
@@ -268,8 +275,7 @@ class MemberControllerTest {
                 .nickname(member.getNickname())
                 .build();
 
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
-        Cookie cookie = new Cookie("SESSION",accessToken);
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
 
         String originalFilename = "testImage.jpg";
         String filePath = "src/test/resources/img/" + originalFilename;
@@ -285,7 +291,7 @@ class MemberControllerTest {
 
         mockMvc.perform(multipart(COMMON_URL+"/profileImage")
                         .file(mockImage)
-                        .cookie(cookie)
+                        .header("Authorization",accessToken)
                         .param("memberId",String.valueOf(saveMember.getId()))
                 )
                 .andExpect(status().isOk())

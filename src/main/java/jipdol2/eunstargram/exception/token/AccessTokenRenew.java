@@ -2,11 +2,11 @@ package jipdol2.eunstargram.exception.token;
 
 import jipdol2.eunstargram.exception.BaseException;
 
-public class ExpiredToken extends BaseException {
+public class AccessTokenRenew extends BaseException {
 
-    private static final String MESSAGE = "토큰이 만료되었습니다.";
+    private static final String MESSAGE = "accessToken 재발급이 필요합니다";
 
-    public ExpiredToken() {
+    public AccessTokenRenew() {
         super(MESSAGE);
     }
 

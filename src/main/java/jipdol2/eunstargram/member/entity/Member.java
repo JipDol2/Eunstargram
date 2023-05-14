@@ -1,10 +1,8 @@
 package jipdol2.eunstargram.member.entity;
 
-import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
 import jipdol2.eunstargram.crypto.PasswordEncoder;
-import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.post.entity.Post;
@@ -40,14 +38,18 @@ public class Member extends BaseTimeEntity {
 
     private String deleteYn;
 
+    private String originalFileName;
+
+    private String storedFileName;
+
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member")
-    private List<Image> image = new ArrayList<>();
+//    @OneToMany(mappedBy = "member")
+//    private List<Image> image = new ArrayList<>();
 
     /**
      * cascade option
@@ -59,8 +61,8 @@ public class Member extends BaseTimeEntity {
      * session 을 persist 해주지 않았음.
      * 따라서 cascade option 을 추가해주어서 해결할 수 있음
      */
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Session> sessions = new ArrayList<>();
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Session> sessions = new ArrayList<>();
 
     @Builder
     public Member(String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro) {
@@ -71,20 +73,6 @@ public class Member extends BaseTimeEntity {
         this.birthDay = birthDay;
         this.intro = intro;
         this.deleteYn = "N";
-    }
-
-    public Session addSession() {
-        Session session = Session.builder().member(this).build();
-        this.sessions.add(session);
-        return session;
-    }
-
-    public void removeSession(String accessToken) {
-        Session session = this.sessions.stream()
-                .filter(s -> s.getAccessToken().equals(accessToken))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("일치하는 accessToken 이 존재하지 않습니다."));
-        this.sessions.remove(session);
     }
 
     public void changeDeleteYn(String deleteYn) {
@@ -113,5 +101,10 @@ public class Member extends BaseTimeEntity {
         this.birthDay = updateRequestDTO.getBirthDay();
         this.intro = updateRequestDTO.getIntro();
         this.deleteYn = updateRequestDTO.getDeleteYn();
+    }
+
+    public void updateProfileImage(String originalFileName,String storedFileName){
+        this.originalFileName = originalFileName;
+        this.storedFileName = storedFileName;
     }
 }

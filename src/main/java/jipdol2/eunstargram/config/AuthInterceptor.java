@@ -1,30 +1,61 @@
 package jipdol2.eunstargram.config;
 
+import jipdol2.eunstargram.auth.AuthService;
+import jipdol2.eunstargram.auth.entity.NoAuth;
+import jipdol2.eunstargram.exception.auth.Unauthorized;
+import jipdol2.eunstargram.exception.token.AccessTokenRenew;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Slf4j
+@RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
+
+    private final AuthService authService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //TODO: jwt token 인증을 interceptor 에서 구현
 
-        /**
-         * 1. accessToken 체크
-         * 2. jwtManger 에서 valid check 진행
-         * 3.
-         */
+        if(handler instanceof HandlerMethod){
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            NoAuth noAuth = handlerMethod.getMethodAnnotation(NoAuth.class);
+            if(noAuth!=null){
+                return true;
+            }
+            noAuth = handlerMethod.getBeanType().getAnnotation(NoAuth.class);
+            if(noAuth!=null){
+                return true;
+            }
+        }
+
+        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if(isValidAccessToken(accessToken)){
+            return true;
+        }
+
+        String refreshToken = extractRefreshToken(request);
+        authService.validateRefreshToken(refreshToken);
+        throw new AccessTokenRenew();
+    }
+
+    public boolean isValidAccessToken(String accessToken){
+        authService.validateAccessToken(accessToken);
         return true;
     }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public String extractRefreshToken(HttpServletRequest request){
+        Cookie cookie = WebUtils.getCookie(request,"REFRESH_TOKEN");
+        if(cookie == null){
+            throw new Unauthorized();
+        }
+        return cookie.getValue();
     }
 }

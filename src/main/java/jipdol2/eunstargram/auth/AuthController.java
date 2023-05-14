@@ -2,14 +2,17 @@ package jipdol2.eunstargram.auth;
 
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.dto.response.LoginCheckDTO;
+import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.auth.MissAuthorized;
 import jipdol2.eunstargram.exception.auth.Unauthorized;
-import jipdol2.eunstargram.jwt.JwtManager;
-import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
+import jipdol2.eunstargram.jwt.dto.TokenResponse;
+import jipdol2.eunstargram.member.MemberService;
+import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.Duration;
+import java.util.Date;
 
 @Slf4j
 @RestController
@@ -30,12 +34,13 @@ public class AuthController {
 
     private final AuthService authService;
 
-    private final JwtManager jwtManager;
+    private final MemberService memberService;
 
+//    private final JwtManager jwtManager;
 
+    private static final String ACCESS_TOKEN = "ACCESS";
 
-//    @Value("${jwt.secret}")
-//    private String KEY;
+    private static final String REFRESH_TOKEN = "REFRESH";
 
 //    private static final int expireTime = 60*5*1000;   //30분
 
@@ -51,13 +56,13 @@ public class AuthController {
      * @param loginRequestDTO
      * @return
      */
-    @PostMapping("/v0/login")
+/*    @PostMapping("/v0/login")
     public ResponseEntity<EmptyJSON> loginV0(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
 
         log.info(">>>login={}", loginRequestDTO.toString());
         String accessToken = authService.signInSession(loginRequestDTO);
 
-        ResponseCookie cookie = ResponseCookie.from("SESSION", accessToken)
+        ResponseCookie cookie = ResponseCookie.from("SESSION", ACCESS_TOKEN)
                 .domain("localhost")    //TODO : 서버 환경에 따른 분리 필요
                 .path("/")
                 .httpOnly(true)
@@ -72,9 +77,9 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                 .body(new EmptyJSON());
-    }
+    }*/
 
-    @PostMapping("/v0/logout")
+/*    @PostMapping("/v0/logout")
     public ResponseEntity<EmptyJSON> logoutV0(UserSession userSession, @CookieValue(value = "SESSION") Cookie cookie) {
 
         String accessToken = cookie.getValue();
@@ -83,24 +88,27 @@ public class AuthController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new EmptyJSON());
-    }
+    }*/
 
+    @NoAuth
     @PostMapping("/login")
-    public ResponseEntity<EmptyJSON> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
 
         log.info(">>>login={}", loginRequestDTO.toString());
 
         Member member = authService.signInJwt(loginRequestDTO);
+        String accessToken = authService.createAccessToken(member.getId());
+        Long id = authService.extractMemberIdFromToken(accessToken);
+        ResponseCookie cookie = createRefreshTokenCookie(id);
 
-        UserSessionDTO sessionDTO = UserSessionDTO.builder()
-                .id(member.getId())
-                .email(member.getMemberEmail())
-                .nickname(member.getNickname())
-                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(TokenResponse.of(accessToken));
+    }
 
-        String accessToken = jwtManager.makeToken(sessionDTO, "ACCESS");
-
-        ResponseCookie cookie = ResponseCookie.from("SESSION", accessToken)
+    private ResponseCookie createRefreshTokenCookie(Long id){
+        String refreshToken = authService.createRefreshToken(id);
+        return ResponseCookie.from("REFRESH_TOKEN", refreshToken)
                 .domain("localhost")    //TODO : 서버 환경에 따른 분리 필요
                 .path("/")
                 .httpOnly(true)
@@ -108,12 +116,9 @@ public class AuthController {
                 .maxAge(Duration.ofDays(30))
                 .sameSite("Strict")
                 .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(new EmptyJSON());
     }
 
+    @NoAuth
     @PostMapping("/logout")
     public ResponseEntity<EmptyJSON> logout(HttpServletRequest request) {
 
@@ -124,10 +129,20 @@ public class AuthController {
         if (cookies == null) {
             throw new Unauthorized();
         }
-        String accessToken = cookies[0].getValue();
+        String refreshToken = cookies[0].getValue();
 
+        ResponseCookie cookie = expiredRefreshToken(refreshToken);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new EmptyJSON());
+    }
+
+    public ResponseCookie expiredRefreshToken(String refreshToken){
+        //refreshToken 제거
+        authService.removeRefreshToken(refreshToken);
         //cookie 의 종료 날짜를 0으로 설정
-        ResponseCookie cookie = ResponseCookie.from("SESSION", "")
+        return ResponseCookie.from("REFRESH_TOKEN", "")
                 .domain("localhost")    //TODO : 서버 환경에 따른 분리 필요
                 .path("/")
                 .httpOnly(true)
@@ -135,41 +150,29 @@ public class AuthController {
                 .maxAge(0)
                 .sameSite("Strict")
                 .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(new EmptyJSON());
     }
 
+    @NoAuth
     @GetMapping("/loginCheck")
-    public ResponseEntity<LoginCheckDTO> loginCheck(HttpServletRequest request) {
+    public ResponseEntity<LoginCheckDTO> loginCheck(HttpServletRequest request){
 
-        if (request == null) {
-            throw new Unauthorized();
-        }
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
+        String accessToken = request.getHeader("Authorization");
+        if(accessToken.equals("null")){
             return ResponseEntity.ok()
-                    .body(LoginCheckDTO.builder()
-                            .authState(false)
-                            .build());
+                    .body(LoginCheckDTO.of(false));
         }
-
-        String accessToken = cookies[0].getValue();
-        if (jwtManager.validateToken(accessToken)) {
-            return ResponseEntity.ok()
-                    .body(LoginCheckDTO.builder()
-                            .authState(true)
-                            .build());
-        }
-        return null;
+        authService.validateAccessToken(accessToken);
+        return ResponseEntity.ok()
+                .body(LoginCheckDTO.of(true));
     }
 
+    @NoAuth
     @GetMapping("/checkAuth")
     public ResponseEntity<EmptyJSON> checkAuth(UserSession userSession,@RequestParam("nickname") String nickname){
 
-        if(!userSession.getNickname().equals(nickname)){
+        MemberFindResponseDTO member = memberService.findByMember(userSession.getId());
+
+        if(!member.getNickname().equals(nickname)){
             log.info("권한이 존재하지 않습니다.");
             throw new MissAuthorized();
         }

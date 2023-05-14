@@ -2,6 +2,7 @@ package jipdol2.eunstargram.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.token.ExpiredToken;
 import jipdol2.eunstargram.exception.token.InvalidToken;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
@@ -10,8 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -20,30 +23,45 @@ public class JwtManager {
     @Value("${jwt.secret}")
     private String KEY;
 
-    private static final int ACCESS_TOKEN = 60*20*1000;      //20분
+    private int ACCESS_TOKEN_TIME = 60*20*1000;
 
-    private static final int REFRESH_TOKEN = 60*30*1000;    //30분
+    private int REFRESH_TOKEN_TIME = 60*30*1000;
 
-    public String makeToken(UserSessionDTO sessionDTO, String type){
+    public String makeAccessToken(Long id){
+        return makeToken(id,ACCESS_TOKEN_TIME);
+    }
 
-        SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
+    public String makeRefreshToken(Long id){
+        return makeToken(id,REFRESH_TOKEN_TIME);
+    }
 
-        int expiredTime = type.equals("ACCESS") ? ACCESS_TOKEN : REFRESH_TOKEN;
-
-        Claims claims = Jwts.claims();
-        claims.put("id",sessionDTO.getId());
-        claims.put("email",sessionDTO.getEmail());
-        claims.put("nickname",sessionDTO.getNickname());
+    public String makeToken(Long id, int expiredTime){
 
         return Jwts.builder()
-                .setClaims(claims)
-                .signWith(key)
+                .claim("id",id)
+                .signWith(getSecurityKey())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+expiredTime))
                 .compact();
     }
 
-    public UserSessionDTO getMemberIdFromToken(String jws){
+    public Long getMemberIdFromToken(String token){
+        return Long.parseLong(String.valueOf(getClaims(token).get("id")));
+    }
+
+    private Claims getClaims(String token){
+        Jws<Claims> claims = Jwts.parserBuilder()
+                .setSigningKey(getSecurityKey())
+                .build()
+                .parseClaimsJws(token);
+        return claims.getBody();
+    }
+
+    private Key getSecurityKey(){
+        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(KEY));
+    }
+
+    public Long getExpirationTimeFromToken(String jws){
         byte[] decodedKey = Base64.getDecoder().decode(KEY);
 
         Jws<Claims> claims = Jwts.parserBuilder()
@@ -51,15 +69,12 @@ public class JwtManager {
                 .build()
                 .parseClaimsJws(jws);
 
-        return UserSessionDTO.builder()
-                .id(Long.parseLong(String.valueOf(claims.getBody().get("id"))))
-                .email(String.valueOf(claims.getBody().get("email")))
-                .nickname(String.valueOf(claims.getBody().get("nickname")))
-                .build();
+        return claims.getBody().getExpiration().getTime();
     }
 
     public boolean validateToken(String token){
         try{
+            Objects.requireNonNull(token);
             byte[] decodedKey = Base64.getDecoder().decode(KEY);
             Jwts.parserBuilder()
                     .setSigningKey(decodedKey)

@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.member;
 
+import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
@@ -29,14 +30,27 @@ public class MemberController {
     private final MemberService memberService;
 
     /** 2022/01/09 회원가입 API 생성 **/
+    @NoAuth
     @PostMapping("/signUp")
     public ResponseEntity<EmptyJSON> joinMember(@Valid @RequestBody MemberSaveRequestDTO memberSaveRequestDTO){
         log.info("memberSaveRequestDTO = {}", memberSaveRequestDTO.toString());
         return ResponseEntity.ok().body(memberService.join(memberSaveRequestDTO));
     }
+    /** 2023/01/19 회원 전체조회 API 생성 **/
+    @GetMapping("/")
+    public ResponseEntity<List<MemberFindResponseDTO>> findByAllMembers(){
+        return ResponseEntity.ok().body(memberService.findByAll());
+    }
+
+    /** 2023/01/19 회원 조회 API 생성 **/
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("id") Long seq){
+        log.info("id={}",seq);
+        return ResponseEntity.ok().body(memberService.findByMember(seq));
+    }
 
     /** 2023/03/05 회원정보 조회 **/
-    @GetMapping("/findByMyInfo")
+    @GetMapping("/me")
     public ResponseEntity<MemberFindResponseDTO> findByMyInfo(UserSession userSession){
         log.info("id={}",userSession.getId());
         return ResponseEntity.ok().body(memberService.findByMember(userSession.getId()));
@@ -63,18 +77,6 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.delete(seq));
     }
 
-    /** 2023/01/19 회원 전체조회 API 생성 **/
-    @GetMapping("/")
-    public ResponseEntity<List<MemberFindResponseDTO>> findByAllMembers(){
-        return ResponseEntity.ok().body(memberService.findByAll());
-    }
-
-    /** 2023/01/19 회원 조회 API 생성 **/
-    @GetMapping("/{id}")
-    public ResponseEntity<MemberFindResponseDTO> findByMember(@PathVariable("id") Long seq){
-        log.info("id={}",seq);
-        return ResponseEntity.ok().body(memberService.findByMember(seq));
-    }
     /** 2023/04/09 회원 프로필 이미지 조회 API 생성**/
     @GetMapping("/profileImage/{nickname}")
     public ResponseEntity<ImageResponseDTO> findByProfileImage(@PathVariable("nickname") String nickname){
