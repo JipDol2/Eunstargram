@@ -2,15 +2,12 @@ package jipdol2.eunstargram.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jipdol2.eunstargram.config.data.UserSession;
-import jipdol2.eunstargram.exception.token.ExpiredToken;
-import jipdol2.eunstargram.exception.token.InvalidToken;
-import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
+import jipdol2.eunstargram.exception.auth.ExpiredToken;
+import jipdol2.eunstargram.exception.auth.InvalidToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;

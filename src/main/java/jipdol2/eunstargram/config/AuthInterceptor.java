@@ -3,7 +3,7 @@ package jipdol2.eunstargram.config;
 import jipdol2.eunstargram.auth.AuthService;
 import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.exception.auth.Unauthorized;
-import jipdol2.eunstargram.exception.token.AccessTokenRenew;
+import jipdol2.eunstargram.exception.auth.AccessTokenRenew;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

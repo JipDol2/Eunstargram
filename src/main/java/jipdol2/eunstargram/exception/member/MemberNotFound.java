@@ -4,10 +4,11 @@ import jipdol2.eunstargram.exception.BaseException;
 
 public class MemberNotFound extends BaseException {
 
+    private static final String CODE = "M001";
     private static final String MESSAGE = "등록된 회원이 아닙니다";
 
     public MemberNotFound(){
-        super(MESSAGE);
+        super(CODE,MESSAGE);
     }
 
     @Override

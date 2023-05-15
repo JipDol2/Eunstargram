@@ -15,14 +15,18 @@ import java.util.Map;
 @Getter
 public abstract class BaseException extends RuntimeException{
 
+    public final String code;
+
     public final Map<String,String> validation = new HashMap<>();
 
-    public BaseException(String message){
+    public BaseException(String code, String message){
         super(message);
+        this.code = code;
     }
 
-    public BaseException(String message, Throwable cause){
+    public BaseException(String message, Throwable cause, String code){
         super(message,cause);
+        this.code = code;
     }
 
     public abstract int getStatusCode();
