@@ -1,8 +1,6 @@
 package jipdol2.eunstargram.config;
 
 import jipdol2.eunstargram.auth.AuthService;
-import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
-import jipdol2.eunstargram.jwt.JwtManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;

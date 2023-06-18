@@ -275,7 +275,6 @@ class MemberServiceTest {
         Image image = Image.builder()
                 .originalFileName(originalFileName)
                 .storedFileName(imageName)
-                .member(member)
                 .imageCode(ImageCode.PROFILE)
                 .build();
         return image;

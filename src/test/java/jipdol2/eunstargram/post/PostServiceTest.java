@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -139,7 +139,6 @@ public class PostServiceTest {
         Image image = Image.builder()
                 .originalFileName(originalFileName)
                 .storedFileName(imageName)
-                .member(member)
                 .imageCode(ImageCode.POST)
                 .build();
         return image;

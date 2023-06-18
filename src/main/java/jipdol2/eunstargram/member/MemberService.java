@@ -150,7 +150,6 @@ public class MemberService {
         Image image = Image.builder()
                 .originalFileName(imageFile.getOriginalFilename())
                 .storedFileName(imageName)
-                .member(findByMember)
                 .imageCode(ImageCode.PROFILE)
                 .build();
 

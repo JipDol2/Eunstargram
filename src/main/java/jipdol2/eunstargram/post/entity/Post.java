@@ -7,7 +7,7 @@ import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.post.dto.request.PostEditRequestDTO;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
