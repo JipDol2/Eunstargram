@@ -3,11 +3,9 @@ package jipdol2.eunstargram.auth;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.entity.RefreshToken;
 import jipdol2.eunstargram.auth.entity.RefreshTokenRepository;
-import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.config.data.UserSession;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.exception.member.InvalidSignInInformation;
-import jipdol2.eunstargram.exception.member.MemberNotFound;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
@@ -25,7 +23,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberJpaRepository memberJpaRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    private final MyPasswordEncoder myPasswordEncoder;
     private final JwtManager jwtManager;
 
 /*    public String signInSession(LoginRequestDTO login) {
@@ -56,7 +54,7 @@ public class AuthService {
         Member findByMember = memberJpaRepository.findByMemberEmail(login.getMemberEmail())
                 .orElseThrow(() -> new InvalidSignInInformation("id/password", "아이디/비밀번호가 올바르지 않습니다"));
 
-        boolean matcherPassword = passwordEncoder.matcher(login.getPassword(), findByMember.getPassword());
+        boolean matcherPassword = myPasswordEncoder.matcher(login.getPassword(), findByMember.getPassword());
 
         if (!matcherPassword) {
             throw new InvalidSignInInformation("id/password", "아이디/비밀번호가 올바르지 않습니다");

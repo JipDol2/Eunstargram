@@ -3,7 +3,7 @@ package jipdol2.eunstargram.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +38,7 @@ class AuthControllerTest {
     private SessionJpaRepository sessionJpaRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private MyPasswordEncoder myPasswordEncoder;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -56,7 +56,7 @@ class AuthControllerTest {
         //given
         memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
-                .password(passwordEncoder.encrypt("1234"))
+                .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
                 .phoneNumber("010-1111-2222")
                 .birthDay("1999-01-01")
@@ -83,7 +83,7 @@ class AuthControllerTest {
         //given
         memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
-                .password(passwordEncoder.encrypt("1234"))
+                .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
                 .phoneNumber("010-1111-2222")
                 .birthDay("1999-01-01")

@@ -2,7 +2,7 @@ package jipdol2.eunstargram.member.entity;
 
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.post.entity.Post;
@@ -80,7 +80,7 @@ public class Member extends BaseTimeEntity {
     }
 
     public void encryptPassword() {
-        PasswordEncoder encoder = new PasswordEncoder();
+        MyPasswordEncoder encoder = new MyPasswordEncoder();
         this.password = encoder.encrypt(this.password);
     }
 
