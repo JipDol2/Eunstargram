@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -26,16 +27,27 @@ public class IndexController {
     private final MemberService memberService;
     private final PostService postService;
 
-    @GetMapping
+    @GetMapping("/")
     public String index(){
         return "index";
     }
 
-    @ResponseBody
     @GetMapping("/login")
     public String login(Model model){
 //        model.addAttribute("id","1");
-        return "main Page";
+        return "/login";
+    }
+
+    @ResponseBody
+    @GetMapping("/user")
+    public String user(){
+        return "사용자 페이지 입니다.";
+    }
+
+    @ResponseBody
+    @GetMapping("/admin")
+    public String admin(){
+        return "관리자 페이지 입니다.";
     }
 
     @GetMapping("/signUp")

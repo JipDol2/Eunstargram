@@ -1,0 +1,24 @@
+### Security 회원가입
+POST http://localhost:8080/api/member/signUp
+Content-Type: application/json
+
+{
+  "memberEmail" : "jipdol2@gmail.com",
+  "password" : "1234",
+  "nickname" : "jipdol2"
+}
+
+### Security 로그인
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+memberEmail=jipdol2@gmail.com&password=12345&remember=1
+
+### 메인화면
+GET http://localhost:8080
+
+### 사용자 페이지
+GET http://localhost:8080/user
+
+### 관리자 페이지
+GET http://localhost:8080/admin

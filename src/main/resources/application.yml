@@ -42,6 +42,15 @@ spring:
   profiles:
     include: secret
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: 189505605f083d3c6449
+            client-secret: 42125c8c0e29a55f46bff3abb3f74def876705ab
+
+
 #redis
 #  redis:
 #    host: localhost

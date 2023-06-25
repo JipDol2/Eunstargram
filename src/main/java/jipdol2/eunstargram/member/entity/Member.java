@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,8 +81,7 @@ public class Member extends BaseTimeEntity {
         this.deleteYn = deleteYn;
     }
 
-    public void encryptPassword() {
-        MyPasswordEncoder encoder = new MyPasswordEncoder();
+    public void encryptPassword(MyPasswordEncoder encoder) {
         this.password = encoder.encrypt(this.password);
     }
 

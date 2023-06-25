@@ -47,7 +47,12 @@ dependencies {
     implementation 'org.springframework.security:spring-security-crypto'
     implementation "org.bouncycastle:bcprov-jdk15on:1.70"
 
+//    security-jdbc
+    implementation 'org.springframework.session:spring-session-jdbc'
+
 //    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
