@@ -43,15 +43,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-security-test'
 
+//    thymeleaf security
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+
 //    passwordEncoder
     implementation 'org.springframework.security:spring-security-crypto'
     implementation "org.bouncycastle:bcprov-jdk15on:1.70"
 
-//    security-jdbc
-    implementation 'org.springframework.session:spring-session-jdbc'
-
 //    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+//    OAuth 2.0
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 

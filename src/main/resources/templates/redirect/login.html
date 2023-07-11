@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <th:block th:replace="fragments/header.html :: header-fragment"></th:block>
+    <script type="text/javascript">
+        const Redirect = () =>{
+            const params = new URLSearchParams(location.search);
+            const accessToken = params.get("accessToken");
+            console.log(accessToken);
+            sessionStorage.setItem("Authorization",accessToken);
+
+            let item = sessionStorage.getItem("Authorization");
+            console.log(item);
+            location.href = location.origin;
+        }
+        Redirect();
+    </script>
+</head>
+<body>
+<th:block th:replace="fragments/footer.html :: footer-fragment"></th:block>
+</body>
+</html>

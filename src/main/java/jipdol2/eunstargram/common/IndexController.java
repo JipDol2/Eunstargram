@@ -9,6 +9,11 @@ import jipdol2.eunstargram.post.PostService;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -27,8 +34,14 @@ public class IndexController {
     private final MemberService memberService;
     private final PostService postService;
 
+//    @ResponseBody
     @GetMapping("/")
-    public String index(){
+    public String index(Model model, Authentication authentication, @AuthenticationPrincipal OAuth2User oAuth2User){
+        OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken)authentication;
+        if(authentication != null){
+            Map<String, Object> attributes = oAuth2User.getAttributes();
+            model.addAttribute("loginId",String.valueOf(attributes.get("login")));
+        }
         return "index";
     }
 
@@ -36,6 +49,11 @@ public class IndexController {
     public String login(Model model){
 //        model.addAttribute("id","1");
         return "/login";
+    }
+
+    @GetMapping("/redirect/login")
+    public String loginRedirect(){
+        return "/redirect/login";
     }
 
     @ResponseBody

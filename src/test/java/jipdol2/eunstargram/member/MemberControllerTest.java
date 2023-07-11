@@ -9,6 +9,7 @@ import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
+import jipdol2.eunstargram.member.entity.SocialMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -314,7 +315,7 @@ class MemberControllerTest {
             encryptPassword=password;
         }
 
-        Member member = Member.builder()
+        Member member = SocialMember.builder()
                 .memberEmail(email)
                 .password(encryptPassword)
                 .nickname(nickname)

@@ -20,6 +20,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -66,7 +67,7 @@ public class Member extends BaseTimeEntity {
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Session> sessions = new ArrayList<>();
 
-    @Builder
+//    @Builder
     public Member(String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro) {
         this.memberEmail = memberEmail;
         this.password = password;
@@ -86,14 +87,14 @@ public class Member extends BaseTimeEntity {
     }
 
     public static Member transferMember(MemberSaveRequestDTO memberSaveRequestDTO) {
-        return Member.builder()
-                .memberEmail(memberSaveRequestDTO.getMemberEmail())
-                .password(memberSaveRequestDTO.getPassword())
-                .nickname(memberSaveRequestDTO.getNickname())
-                .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
-                .birthDay(memberSaveRequestDTO.getBirthDay())
-                .intro(memberSaveRequestDTO.getIntro())
-                .build();
+        return new Member(
+                memberSaveRequestDTO.getMemberEmail(),
+                memberSaveRequestDTO.getPassword(),
+                memberSaveRequestDTO.getNickname(),
+                memberSaveRequestDTO.getPhoneNumber(),
+                memberSaveRequestDTO.getBirthDay(),
+                memberSaveRequestDTO.getIntro()
+        );
     }
 
     public void updateMember(MemberUpdateRequestDTO updateRequestDTO) {

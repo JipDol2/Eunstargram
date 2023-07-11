@@ -10,6 +10,7 @@ import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
+import jipdol2.eunstargram.member.entity.SocialMember;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.post.entity.PostRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -247,7 +248,7 @@ class CommentControllerTest {
     }
 
     private Member createMember(String email,String password,String nickname,String intro,String phoneNumber,String birthDay) {
-        Member member = Member.builder()
+        Member member = SocialMember.builder()
                 .memberEmail(email)
                 .password(password)
                 .nickname(nickname)

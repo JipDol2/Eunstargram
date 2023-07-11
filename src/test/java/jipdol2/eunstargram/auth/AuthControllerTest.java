@@ -6,6 +6,7 @@ import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
+import jipdol2.eunstargram.member.entity.SocialMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +55,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 로그인 성공")
     void loginSuccessTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
@@ -81,7 +82,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 로그인 실패")
     void loginFailTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
@@ -111,7 +112,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 이메일은 필수입니다")
     void loginEmailTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
@@ -141,7 +142,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 비밀번호는 필수입니다")
     void loginPasswordTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
@@ -172,7 +173,7 @@ class AuthControllerTest {
     @Disabled
     void loginSessionTest() throws Exception{
         //given
-        Member member = memberJpaRepository.save(Member.builder()
+        Member member = memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
