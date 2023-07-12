@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 
 @Getter
-@RequiredArgsConstructor
 public enum SocialProvider {
 
     GITHUB("GITHUB"),
@@ -17,7 +16,11 @@ public enum SocialProvider {
     NAVER("NAVER"),
     KAKAO("KAKAO");
 
-    private final String socialProviderName;
+    private String socialProviderName;
+
+    SocialProvider(String socialProviderName){
+        this.socialProviderName = socialProviderName;
+    }
 
     private final static Map<String,SocialProvider> socialMap = new HashMap<>();
 
@@ -29,4 +32,5 @@ public enum SocialProvider {
     public static SocialProvider from(String socialProviderName){
         return socialMap.get(socialProviderName.toUpperCase());
     }
+
 }

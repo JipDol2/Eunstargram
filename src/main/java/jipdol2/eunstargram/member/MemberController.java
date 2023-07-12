@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.member;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
@@ -10,6 +11,7 @@ import jipdol2.eunstargram.member.dto.request.MemberEmailRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
+import jipdol2.eunstargram.member.dto.response.MemberValidationCheckEmailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
@@ -88,9 +90,19 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.uploadProfileImage(userSession.getId(),imageRequestDTO));
     }
 
+    @NoAuth
     @PostMapping("/validation/email")
-    public ResponseEntity<Object> validationCheckEmail(@RequestBody MemberEmailRequestDTO emailRequestDTO){
+    public ResponseEntity<MemberValidationCheckEmailDTO> validationCheckEmail(@RequestBody MemberEmailRequestDTO emailRequestDTO){
         log.info("memberEmail={}",emailRequestDTO.toString());
-        return ResponseEntity.ok().body(memberService.findByMemberEmail(emailRequestDTO.getEmail()));
+        return ResponseEntity.ok().body(memberService.validationCheckEmail(emailRequestDTO.getEmail()));
+    }
+
+    @NoAuth
+    @PostMapping("/email/social")
+    public ResponseEntity<Object> emailConnectionToSocial(@RequestBody MemberEmailRequestDTO emailRequestDTO, HttpSession session){
+        memberService.connectToSocial(emailRequestDTO.getEmail(),
+                (int) session.getAttribute("socialId"),
+                (String) session.getAttribute("socialProvider"));
+        return ResponseEntity.ok().body(new EmptyJSON());
     }
 }

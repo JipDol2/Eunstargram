@@ -15,6 +15,6 @@ public interface MemberJpaRepository extends JpaRepository<Member,Long> {
 
     Optional<Member> findByNickname(@Param("nickname") String nickname);
 
-    @Query("SELECT m FROM SocialMember m WHERE m.socialId = :socialId")
-    Optional<SocialMember> findBySocialId(@Param("socialId") Long socialId);
+    @Query("SELECT m FROM Member m WHERE m.socialId = :socialId")
+    Optional<Member> findBySocialId(@Param("socialId") Long socialId);
 }

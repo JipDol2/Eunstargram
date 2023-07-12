@@ -38,11 +38,4 @@ public class MemberRepository {
         return em.createQuery("SELECT m FROM Member m",Member.class)
                 .getResultList();
     }
-
-    public List<SocialMember> findBySocialMemberEmail(String email){
-        return em.createQuery("SELECT m FROM Member m WHERE m.memberEmail = :email",SocialMember.class)
-                .setParameter("email",email)
-                .getResultList();
-    }
-
 }

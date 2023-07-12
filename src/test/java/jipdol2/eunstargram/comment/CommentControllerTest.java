@@ -1,7 +1,6 @@
 package jipdol2.eunstargram.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;
@@ -10,7 +9,6 @@ import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
-import jipdol2.eunstargram.member.entity.SocialMember;
 import jipdol2.eunstargram.post.entity.Post;
 import jipdol2.eunstargram.post.entity.PostRepository;
 import org.junit.jupiter.api.DisplayName;

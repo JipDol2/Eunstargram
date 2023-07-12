@@ -45,6 +45,11 @@ public class Member extends BaseTimeEntity {
 
     private String storedFileName;
 
+    private int socialId;
+
+    @Enumerated(EnumType.STRING)
+    private SocialProvider socialProvider;
+
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
@@ -108,5 +113,10 @@ public class Member extends BaseTimeEntity {
     public void updateProfileImage(String originalFileName,String storedFileName){
         this.originalFileName = originalFileName;
         this.storedFileName = storedFileName;
+    }
+
+    public void updateSocialInfo(int socialId,SocialProvider socialProvider){
+        this.socialId = socialId;
+        this.socialProvider = socialProvider;
     }
 }

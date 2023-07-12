@@ -8,21 +8,16 @@ import jipdol2.eunstargram.exception.member.MemberNotFound;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
-import jipdol2.eunstargram.member.entity.SocialMember;
 import jipdol2.eunstargram.member.entity.SocialProvider;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,13 +41,17 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         String registerId = authenticationToken.getAuthorizedClientRegistrationId();
 
         //이미 회원가입이 되어있는지 확인
-        Optional<SocialMember> findMember = memberJpaRepository.findBySocialId(id);
+        Optional<Member> findMember = memberJpaRepository.findBySocialId(id);
 
         //회원가입이 되어 있지 않은 상태라면 github 소셜과 연동하기 위해 이메일을 입력하는 절차가 필요하다
         //이메일을 입력한 뒤에 OAuth 정보들을 함께 알아야지만 연동이 가능한데 이를 어떻게 구현해 줄 수 있을까?
         //=>쿠키에 저장해서 전송하는 방법이 있을 수 있지 않을까?
-        if(findMember.isPresent()){
-            if(registerId.toUpperCase().equals("GITHUB")){
+        //->session 에 저장하는 방식을 사용
+        if(findMember.isEmpty()){
+            if(SocialProvider.from(registerId).equals(SocialProvider.GITHUB)){
+                HttpSession session = request.getSession();
+                session.setAttribute("socialId",attributes.get("id"));
+                session.setAttribute("socialProvider","GITHUB");
                 this.getRedirectStrategy().sendRedirect(request,response,"/signUp-social");
             }
             return;

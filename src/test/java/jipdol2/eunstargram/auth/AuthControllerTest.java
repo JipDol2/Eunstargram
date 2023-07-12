@@ -6,7 +6,6 @@ import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
-import jipdol2.eunstargram.member.entity.SocialMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
