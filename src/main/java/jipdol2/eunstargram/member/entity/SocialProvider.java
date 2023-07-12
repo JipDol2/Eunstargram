@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Getter
@@ -26,6 +27,6 @@ public enum SocialProvider {
     }
 
     public static SocialProvider from(String socialProviderName){
-        return socialMap.get(socialProviderName);
+        return socialMap.get(socialProviderName.toUpperCase());
     }
 }

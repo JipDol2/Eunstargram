@@ -15,8 +15,10 @@ import jipdol2.eunstargram.image.entity.ImageJpaRepository;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
+import jipdol2.eunstargram.member.dto.response.MemberValidationCheckEmailDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberRepository;
+import jipdol2.eunstargram.member.entity.SocialMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -173,5 +175,13 @@ public class MemberService {
         }
 
         imageJpaRepository.delete(profileImage);
+    }
+
+    public Object validationCheckEmail(String email){
+        List<SocialMember> findMember = memberRepository.findBySocialMemberEmail(email);
+        if(findMember.isEmpty()){
+            return new MemberValidationCheckEmailDTO(false);
+        }
+        return new MemberValidationCheckEmailDTO(true);
     }
 }

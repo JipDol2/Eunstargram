@@ -86,4 +86,9 @@ public class IndexController {
         model.addAttribute("posts",findByPosts);
         return "/posts";
     }
+
+    @GetMapping("/signUp-social")
+    public String signUpSocial(){
+        return "/signUp-social";
+    }
 }

@@ -1,24 +1,22 @@
 package jipdol2.eunstargram.member;
 
+import jakarta.validation.Valid;
 import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
+import jipdol2.eunstargram.member.dto.request.MemberEmailRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -90,4 +88,9 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.uploadProfileImage(userSession.getId(),imageRequestDTO));
     }
 
+    @PostMapping("/validation/email")
+    public ResponseEntity<Object> validationCheckEmail(@RequestBody MemberEmailRequestDTO emailRequestDTO){
+        log.info("memberEmail={}",emailRequestDTO.toString());
+        return ResponseEntity.ok().body(memberService.findByMemberEmail(emailRequestDTO.getEmail()));
+    }
 }
