@@ -10,6 +10,7 @@ import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.exception.auth.MissAuthorized;
 import jipdol2.eunstargram.exception.auth.Unauthorized;
+import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.TokenResponse;
 import jipdol2.eunstargram.member.MemberService;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 @Slf4j
 @RestController
@@ -126,7 +128,12 @@ public class AuthController {
         if (cookies == null) {
             throw new Unauthorized();
         }
-        String refreshToken = cookies[0].getValue();
+
+        String refreshToken = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("REFRESH_TOKEN"))
+                .findFirst()
+                .map(cookie -> cookie.getValue())
+                .orElse(null);
 
         ResponseCookie cookie = expiredRefreshToken(refreshToken);
 
