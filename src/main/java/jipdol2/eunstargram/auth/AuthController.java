@@ -23,7 +23,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Arrays;
 
@@ -58,8 +62,11 @@ public class AuthController {
 
     @NoAuth
     @PostMapping("/login/{provider}")
-    public ResponseEntity<TokenResponse> login(@PathVariable String provider,@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-
+    public ResponseEntity<TokenResponse> login(
+            @PathVariable String provider,
+            @Valid @RequestBody LoginRequestDTO loginRequestDTO
+    ) {
+        log.info(">>>provider={}",provider);
         log.info(">>>login={}", loginRequestDTO.toString());
 
         Member member = authService.signInJwt(loginRequestDTO);
@@ -82,14 +89,6 @@ public class AuthController {
                 .maxAge(Duration.ofDays(30))
                 .sameSite("Strict")
                 .build();
-    }
-
-    @GetMapping("/login/callback/{provider}")
-    public void loginCallbackSocial(
-            @RequestParam String code,
-            @PathVariable String provider,
-            HttpServletRequest request,HttpServletResponse response){
-
     }
 
     @NoAuth
@@ -159,4 +158,26 @@ public class AuthController {
                 .body(new EmptyJSON());
     }
 
+    //    RedirectAttirbutes
+    @NoAuth
+    @GetMapping("/login/callback/{provider}")
+    public void loginCallbackSocial(
+            @RequestParam String code,
+            @PathVariable String provider,
+            RedirectAttributes redirectAttributes, HttpServletResponse response){
+
+        UriComponents uri = UriComponentsBuilder.newInstance()
+                .path("/oauthCallback")
+//                .queryParam("code", code)
+                .queryParam("provider", provider)
+                .build();
+
+        redirectAttributes.addFlashAttribute("code",code);
+//        redirectAttributes.addFlashAttribute("provider",provider);
+        try{
+            response.sendRedirect(uri.toString());
+        }catch(IOException e){
+            throw new IllegalArgumentException("Redirection Error",e);
+        }
+    }
 }

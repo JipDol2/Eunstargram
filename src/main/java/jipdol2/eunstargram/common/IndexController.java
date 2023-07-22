@@ -1,5 +1,7 @@
 package jipdol2.eunstargram.common;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
@@ -20,6 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
 import java.util.List;
@@ -92,4 +97,11 @@ public class IndexController {
         return "/signUp-social";
     }
 
+    @GetMapping("/oauthCallback")
+    public String oauthCallback(HttpServletRequest request){
+        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+        String code = (String) inputFlashMap.get("code");
+        log.info(">>>code={}",code);
+        return "/oauthCallback";
+    }
 }
