@@ -2,6 +2,7 @@ package jipdol2.eunstargram.auth;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
 import jipdol2.eunstargram.auth.dto.response.LoginCheckDTO;
@@ -17,6 +18,7 @@ import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -35,68 +37,33 @@ public class AuthController {
 
     private final MemberService memberService;
 
-//    private final JwtManager jwtManager;
-
-    private static final String ACCESS_TOKEN = "ACCESS";
-
-    private static final String REFRESH_TOKEN = "REFRESH";
-
-//    private static final int expireTime = 60*5*1000;   //30분
-
     /**
-     * Q. 로그인 처리를 하고 accessToken 은 cookie 값에 담음
-     * 그 후 브라우저에서 로그인을 했다는 것을 알 수 있는 수단이 있어야 됨
-     * 그러나 HttpOnly 옵션을 준 상태로는 브라우저에서 cookie 값에 접근 할 수 없다
-     * 그러면 어떻게 브라우저는 로그인 한 상태라는걸 알 수 있을지?
-     * A. 나만의 답
-     * - 로그인 성공 후 브라우저에서 바로 로그인한 맴버의 정보를 얻는 것이 아닌
-     * 한번 더 서버로 요청을 보내서 맴버의 정보를 리턴시켜주자,,,,
-     *
-     * @param loginRequestDTO
-     * @return
+     * 1. provider 로 해당 소셜플랫폼 type 을 가져온다.
+     * 2. 해당 type 으로 OAuthManager(GithubManager,GoogleManger 등) 를 구한다.
+     * 3. OAuthManager 를 통해 code 와 함께 accessToken 을 요청하고 accessToken 을 통해 oauth user 정보를 가져온다.
+     * 4. Github 와 Google 이냐에 따라서 달리 처리되어야 한다. (Github 는 email 정보를 return 하지 않는다)
+     *      4-1. Github 일때
+     *          1) return 받은 id 로 회원여부를 체킹
+     *          2) 회원이 아니라면 이메일을 입력받아야 하고 해당 이메일로 회원가입 절차가 진행되어야 한다.
+     *              2-1) 입력한 이메일이 이미 회원가입이 완료된 이메일이라면 '이미 가입된 이메일' 이라고 알려주고,
+     *                  해당 계정으로 Github 를 연동해야된다.
+     *              2-2) 입력한 이메일로 가입된 계정이 없다면 회원가입 절차를 진행한다.
+     *          3) 회원이라면 로그인 절차를 진행한다.
+     *      4-2. Github 가 아닐때
+     *          1) return 받은 email 로 회원여부를 체킹
+     *          2) 회원이 아니라면 회원가입 동의 후 가입 진행
+     *          3) 회원이라면 로그인 절차 진행한다.
+     * 5. Client(Brower) 에게 전달할 access_token 생성 후 전송
      */
-/*    @PostMapping("/v0/login")
-    public ResponseEntity<EmptyJSON> loginV0(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-
-        log.info(">>>login={}", loginRequestDTO.toString());
-        String accessToken = authService.signInSession(loginRequestDTO);
-
-        ResponseCookie cookie = ResponseCookie.from("SESSION", ACCESS_TOKEN)
-                .domain("localhost")    //TODO : 서버 환경에 따른 분리 필요
-                .path("/")
-                .httpOnly(true)
-                .secure(false)
-                .maxAge(Duration.ofDays(30))
-                .sameSite("Strict")
-                .build();
-
-        log.info(">>>>>>>>>>cookie={}", cookie.toString());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .header(HttpHeaders.AUTHORIZATION, accessToken)
-                .body(new EmptyJSON());
-    }*/
-
-/*    @PostMapping("/v0/logout")
-    public ResponseEntity<EmptyJSON> logoutV0(UserSession userSession, @CookieValue(value = "SESSION") Cookie cookie) {
-
-        String accessToken = cookie.getValue();
-
-        authService.signOutSession(userSession.getId(), accessToken);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new EmptyJSON());
-    }*/
 
     @NoAuth
-    @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+    @PostMapping("/login/{provider}")
+    public ResponseEntity<TokenResponse> login(@PathVariable String provider,@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
 
         log.info(">>>login={}", loginRequestDTO.toString());
 
         Member member = authService.signInJwt(loginRequestDTO);
-        String accessToken = authService.createAccessToken(member.getId());
+        String accessToken = authService.createAccessToken(provider,member.getId());
         Long id = authService.extractMemberIdFromToken(accessToken);
         ResponseCookie cookie = createRefreshTokenCookie(id);
 
@@ -115,6 +82,14 @@ public class AuthController {
                 .maxAge(Duration.ofDays(30))
                 .sameSite("Strict")
                 .build();
+    }
+
+    @GetMapping("/login/callback/{provider}")
+    public void loginCallbackSocial(
+            @RequestParam String code,
+            @PathVariable String provider,
+            HttpServletRequest request,HttpServletResponse response){
+
     }
 
     @NoAuth
@@ -183,4 +158,5 @@ public class AuthController {
         return ResponseEntity.ok()
                 .body(new EmptyJSON());
     }
+
 }

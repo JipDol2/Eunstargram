@@ -63,7 +63,7 @@ public class AuthService {
         return findByMember;
     }
 
-    public String createAccessToken(Long id){
+    public String createAccessToken(String provider,Long id){
         return jwtManager.makeAccessToken(id);
     }
 

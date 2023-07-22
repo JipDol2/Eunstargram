@@ -19,9 +19,12 @@ public class LoginRequestDTO {
     @NotBlank(message = "비밀번호를 입력해주세요")
     private String password;
 
+    private String authorizationCode;
+
     @Builder
-    public LoginRequestDTO(String memberEmail, String password) {
+    public LoginRequestDTO(String memberEmail, String password,String authorizationCode) {
         this.memberEmail = memberEmail;
         this.password = password;
+        this.authorizationCode = authorizationCode;
     }
 }

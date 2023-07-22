@@ -11,15 +11,15 @@
     <div class="row align-items-center h-100">
         <div class="jumbotron align-self-center">
             <h1 class="text-center"><b><span class="highlight">Jipdol2stargram</span>!</b></h1>
-            <p class="text-center">추억을 기록하는 우리들의 기록일지.</p>
-            <div></div>
+            <p class="text-center">추억을 기록하는 우리들의 기록일지</p>
             <div class="contentContainer" id="logoutState">
                 <span th:text="${loginId}"></span>
 <!--            <div sec:authorize="isAnonymous()">-->
                 <p class="text-center"><a th:href="@{/login}" class="btn btn-primary btn-lg">로그인</a></p>
                 <p class="text-center"><a th:href="@{/signUp}" class="btn btn-primary btn-lg">회원가입</a></p>
 
-                <p class="text-center"><a th:href="@{/oauth2/authorization/github}" class="btn btn-primary btn-lg">Github 로그인</a></p>
+<!--                <p class="text-center"><a th:href="@{/oauth2/authorization/github}" class="btn btn-primary btn-lg">Github 로그인</a></p>-->
+                <p class="text-center"><a href="https://github.com/login/oauth/authorize?client_id=189505605f083d3c6449" class="btn btn-primary btn-lg">Github 로그인</a></p>
             </div>
             <div class="contentContainer d-none" id="loginState">
                 <div id="btn-create" class="mb-3 text-center">

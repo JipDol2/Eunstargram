@@ -7,19 +7,19 @@ import jipdol2.eunstargram.member.MemberService;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.post.PostService;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.annotation.AuthenticationPrincipal;
+//import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+//import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,12 +36,12 @@ public class IndexController {
 
 //    @ResponseBody
     @GetMapping("/")
-    public String index(Model model, Authentication authentication, @AuthenticationPrincipal OAuth2User oAuth2User){
-        OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken)authentication;
-        if(authentication != null){
-            Map<String, Object> attributes = oAuth2User.getAttributes();
-            model.addAttribute("loginId",String.valueOf(attributes.get("login")));
-        }
+    public String index(Model model){
+//        OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken)authentication;
+//        if(authentication != null){
+//            Map<String, Object> attributes = oAuth2User.getAttributes();
+//            model.addAttribute("loginId",String.valueOf(attributes.get("login")));
+//        }
         return "index";
     }
 
@@ -91,4 +91,5 @@ public class IndexController {
     public String signUpSocial(){
         return "/signUp-social";
     }
+
 }

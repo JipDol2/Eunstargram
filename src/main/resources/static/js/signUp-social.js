@@ -34,6 +34,6 @@ const connectEmailToSocial = async () =>{
     };
 
     const response = await fetchData("/api/member/email/social",header);
-
+    location.href = location.origin+"/login";
 }
 addSignUpSocialEvent();
