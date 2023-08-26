@@ -5,6 +5,9 @@
 완료된 프로젝트가 아닌 지속적으로 개선시키며 복잡한 로직을 구현할 예정입니다.
 
 사용 기술 및 환경
+=======
+개발하면서 마주했던 이슈들
+
 ---
 - [fetch API 로 서버와 어떻게 데이터를 송수신 할까?](https://boomrabbit.tistory.com/245)
 - [@Value 어노테이션 값이 자꾸 null 이 나와요!](https://boomrabbit.tistory.com/247)
