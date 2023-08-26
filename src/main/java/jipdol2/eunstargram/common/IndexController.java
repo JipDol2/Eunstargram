@@ -1,34 +1,21 @@
 package jipdol2.eunstargram.common;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jipdol2.eunstargram.auth.entity.NoAuth;
-import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
 import jipdol2.eunstargram.member.MemberService;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
 import jipdol2.eunstargram.post.PostService;
 import jipdol2.eunstargram.post.dto.response.PostResponseDTO;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.annotation.AuthenticationPrincipal;
-//import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-//import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Controller
@@ -39,20 +26,13 @@ public class IndexController {
     private final MemberService memberService;
     private final PostService postService;
 
-//    @ResponseBody
     @GetMapping("/")
     public String index(Model model){
-//        OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken)authentication;
-//        if(authentication != null){
-//            Map<String, Object> attributes = oAuth2User.getAttributes();
-//            model.addAttribute("loginId",String.valueOf(attributes.get("login")));
-//        }
         return "index";
     }
 
     @GetMapping("/login")
-    public String login(Model model){
-//        model.addAttribute("id","1");
+    public String login(){
         return "/login";
     }
 
@@ -98,10 +78,7 @@ public class IndexController {
     }
 
     @GetMapping("/oauthCallback")
-    public String oauthCallback(HttpServletRequest request){
-        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
-        String code = (String) inputFlashMap.get("code");
-        log.info(">>>code={}",code);
+    public String oauthCallback(){
         return "/oauthCallback";
     }
 }

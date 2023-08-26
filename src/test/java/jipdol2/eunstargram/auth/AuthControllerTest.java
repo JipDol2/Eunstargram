@@ -2,7 +2,6 @@ package jipdol2.eunstargram.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
-import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
 import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;

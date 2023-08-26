@@ -40,7 +40,11 @@ public class AuthService {
         return findByMember;
     }
 
-    public String createAccessToken(String provider,Long id){
+    public String createAccessToken(LoginRequestDTO dto){
+        Long id = null;
+        //일반 로그인
+        Member member = signInJwt(dto);
+        id = member.getId();
         return jwtManager.makeAccessToken(id);
     }
 

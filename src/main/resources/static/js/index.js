@@ -17,10 +17,10 @@ const validationLogin = async () => {
 
     try {
         //TODO: accessToken 을 session storage 에서 빼오기
-        const response = await fetchData("/api/auth/loginCheck", header);
-        // const token = sessionStorage.getItem("Authorization");
+        // const response = await fetchData("/api/auth/loginCheck", header);
+        const token = sessionStorage.getItem("Authorization");
 
-        if(response.authState){
+        if(token){
             const logoutState = document.getElementById("logoutState");
             logoutState.classList.toggle("d-none");
 

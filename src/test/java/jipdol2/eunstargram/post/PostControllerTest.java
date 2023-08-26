@@ -1,7 +1,6 @@
 package jipdol2.eunstargram.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.exception.post.PostNotFound;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
