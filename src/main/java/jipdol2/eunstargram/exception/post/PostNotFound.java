@@ -7,10 +7,11 @@ import jipdol2.eunstargram.exception.BaseException;
  */
 public class PostNotFound extends BaseException {
 
+    private static final String CODE = "P001";
     private static final String MESSAGE = "게시글이 존재하지 않습니다";
 
     public PostNotFound(){
-        super(MESSAGE);
+        super(CODE,MESSAGE);
     }
 
     @Override

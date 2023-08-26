@@ -1,6 +1,6 @@
 package jipdol2.eunstargram.member;
 
-import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.exception.member.MemberNotFound;
 import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberEmail;
 import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberNickname;
@@ -35,8 +35,9 @@ class MemberServiceTest {
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberJpaRepository memberJpaRepository;
     @Autowired private ImageJpaRepository imageJpaRepository;
-    //PasswordEncoder
-    @Autowired PasswordEncoder passwordEncoder;
+    //MyPasswordEncoder
+    @Autowired
+    MyPasswordEncoder myPasswordEncoder;
 
     @BeforeEach
     void clean() {
@@ -202,7 +203,7 @@ class MemberServiceTest {
         Member member = memberRepository.findByOne(id)
                 .orElseThrow(() -> new MemberNotFound());
 
-        boolean matcher = passwordEncoder.matcher("4321", member.getPassword());
+        boolean matcher = myPasswordEncoder.matcher("4321", member.getPassword());
         assertThat(matcher).isTrue();
     }
 
@@ -214,7 +215,7 @@ class MemberServiceTest {
             String birthDay,
             String intro
     ) {
-        PasswordEncoder encoder = new PasswordEncoder();
+        MyPasswordEncoder encoder = new MyPasswordEncoder();
         String encryptPassword = encoder.encrypt(password);
 
         Member member = Member.builder()
@@ -236,7 +237,7 @@ class MemberServiceTest {
             String birthDay,
             String intro
     ) {
-        PasswordEncoder encoder = new PasswordEncoder();
+        MyPasswordEncoder encoder = new MyPasswordEncoder();
         String encryptPassword = encoder.encrypt(password);
 
         MemberSaveRequestDTO memberSaveRequestDTO = MemberSaveRequestDTO.builder()
@@ -275,7 +276,6 @@ class MemberServiceTest {
         Image image = Image.builder()
                 .originalFileName(originalFileName)
                 .storedFileName(imageName)
-                .member(member)
                 .imageCode(ImageCode.PROFILE)
                 .build();
         return image;

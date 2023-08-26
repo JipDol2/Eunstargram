@@ -3,7 +3,7 @@ package jipdol2.eunstargram.config;
 import jipdol2.eunstargram.auth.AuthService;
 import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.exception.auth.Unauthorized;
-import jipdol2.eunstargram.exception.token.AccessTokenRenew;
+import jipdol2.eunstargram.exception.auth.AccessTokenRenew;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -11,9 +11,9 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RequiredArgsConstructor

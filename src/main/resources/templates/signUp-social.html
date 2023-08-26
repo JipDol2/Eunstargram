@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="fragments/header.html :: header-fragment"></th:block>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<div class="container h-100">
+    <div class="row align-items-center h-100">
+        <div class="jumbotron align-self-center">
+            <h1 class="text-center"><b>이메일을 입력해주세요</b></h1>
+
+                <div class="form-group row d-flex justify-content-center">
+                    <label class="col-sm-2 col-form-label" for="id">이메일</label>
+                    <div class="col-sm-3 text-center">
+                        <input type="text" class="form-control" id="id" th:value="'jipdol2@gmail.com'"/>
+                    </div>
+                </div>
+                <div class="form-group row d-flex justify-content-center">
+                    <button type="submit" id="singUp-social-form-submit" class="btn btn-primary text-center" style="width: 200px">확인</button>
+                </div>
+
+                <div class="form-group" id="validationCheckEmail" style="display: none">
+                    <span id="validationCheckText">이미 존재하는 이메일 입니다. 연동하시겠습니까?</span>
+                    <button type="submit" id="connectEmailToSocial">연동하기</button>
+                </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="fragments/footer.html :: footer-fragment"></th:block>
+<script src="/js/signUp-social.js"></script>
+</body>
+</html>

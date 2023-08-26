@@ -2,8 +2,8 @@ package jipdol2.eunstargram.member.entity;
 
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,5 +38,4 @@ public class MemberRepository {
         return em.createQuery("SELECT m FROM Member m",Member.class)
                 .getResultList();
     }
-
 }

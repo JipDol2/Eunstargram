@@ -1,24 +1,24 @@
 package jipdol2.eunstargram.member;
 
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.config.data.UserSession;
 import jipdol2.eunstargram.image.dto.request.ImageRequestDTO;
 import jipdol2.eunstargram.image.dto.response.ImageResponseDTO;
+import jipdol2.eunstargram.member.dto.request.MemberEmailRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
-import lombok.Getter;
+import jipdol2.eunstargram.member.dto.response.MemberValidationCheckEmailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -77,7 +77,7 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.delete(seq));
     }
 
-    /** 2023/04/09 회원 프로필 이미지 조회 API 생성**/
+    /** 2023/04/09 회원 프로필 이미지 조회 API 생성 **/
     @GetMapping("/profileImage/{nickname}")
     public ResponseEntity<ImageResponseDTO> findByProfileImage(@PathVariable("nickname") String nickname){
         return ResponseEntity.ok().body(memberService.findByProfileImage(nickname));
@@ -90,4 +90,21 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.uploadProfileImage(userSession.getId(),imageRequestDTO));
     }
 
+    /** 2023/07/13 소셜 로그인 이메일 중복 체크 **/
+    @NoAuth
+    @PostMapping("/validation/email")
+    public ResponseEntity<MemberValidationCheckEmailDTO> validationCheckEmail(@RequestBody MemberEmailRequestDTO emailRequestDTO){
+        log.info("memberEmail={}",emailRequestDTO.toString());
+        return ResponseEntity.ok().body(memberService.validationCheckEmail(emailRequestDTO.getEmail()));
+    }
+
+    /** 2023/07/13 소셜 계정과 기존 회원 연동하기 **/
+    @NoAuth
+    @PostMapping("/email/social")
+    public ResponseEntity<EmptyJSON> emailConnectionToSocial(@RequestBody MemberEmailRequestDTO emailRequestDTO, HttpSession session){
+        memberService.connectToSocial(emailRequestDTO.getEmail(),
+                (int) session.getAttribute("socialId"),
+                (String) session.getAttribute("socialProvider"));
+        return ResponseEntity.ok().body(new EmptyJSON());
+    }
 }

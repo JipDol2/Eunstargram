@@ -1,8 +1,9 @@
 package jipdol2.eunstargram.member;
 
 import jipdol2.eunstargram.common.dto.EmptyJSON;
-import jipdol2.eunstargram.exception.member.MemberNotFound;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.exception.image.ProfileImageNotFound;
+import jipdol2.eunstargram.exception.member.MemberNotFound;
 import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberEmail;
 import jipdol2.eunstargram.exception.member.ValidationDuplicateMemberNickname;
 import jipdol2.eunstargram.image.ImageService;
@@ -14,10 +15,10 @@ import jipdol2.eunstargram.image.entity.ImageJpaRepository;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.member.dto.response.MemberFindResponseDTO;
-import jipdol2.eunstargram.member.entity.Member;
-import jipdol2.eunstargram.member.entity.MemberJpaRepository;
-import jipdol2.eunstargram.member.entity.MemberRepository;
+import jipdol2.eunstargram.member.dto.response.MemberValidationCheckEmailDTO;
+import jipdol2.eunstargram.member.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,12 +38,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
 //    private final MemberJpaRepository memberJpaRepository;
     private final ImageJpaRepository imageJpaRepository;
+    private final MyPasswordEncoder myPasswordEncoder;
 
     public EmptyJSON join(MemberSaveRequestDTO memberSaveRequestDTO){
         validationDuplicateMember(memberSaveRequestDTO);
         Member member = Member.transferMember(memberSaveRequestDTO);
         /** password 암호화 */
-        member.encryptPassword();
+        member.encryptPassword(myPasswordEncoder);
 
         memberRepository.save(member);
         return new EmptyJSON();
@@ -95,7 +97,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFound());
 
         findMember.updateMember(memberUpdateRequestDTO);
-        findMember.encryptPassword();
+        findMember.encryptPassword(myPasswordEncoder);
         /**
          * save 를 할 필요가 없다. dirty checking 이 일어나기 때문
          */
@@ -150,7 +152,6 @@ public class MemberService {
         Image image = Image.builder()
                 .originalFileName(imageFile.getOriginalFilename())
                 .storedFileName(imageName)
-                .member(findByMember)
                 .imageCode(ImageCode.PROFILE)
                 .build();
 
@@ -172,5 +173,20 @@ public class MemberService {
         }
 
         imageJpaRepository.delete(profileImage);
+    }
+
+    @Transactional(readOnly = true)
+    public MemberValidationCheckEmailDTO validationCheckEmail(String email){
+        List<Member> findMember = memberRepository.findByMemberEmail(email);
+        if(!findMember.isEmpty()){
+            return new MemberValidationCheckEmailDTO(false);
+        }
+        return new MemberValidationCheckEmailDTO(true);
+    }
+
+    public void connectToSocial(String email,int socialId,String socialProvider){
+        List<Member> findMember = memberRepository.findByMemberEmail(email);
+        Member member = findMember.get(0);
+        member.updateSocialInfo(socialId, SocialProvider.from(socialProvider));
     }
 }

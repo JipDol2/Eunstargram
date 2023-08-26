@@ -1,7 +1,7 @@
 package jipdol2.eunstargram.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.exception.member.MemberNotFound;
 import jipdol2.eunstargram.jwt.JwtManager;
 import jipdol2.eunstargram.jwt.dto.UserSessionDTO;
@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import java.io.FileInputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,8 +42,8 @@ class MemberControllerTest {
     @Autowired private ObjectMapper objectMapper;
     //JwtManager
     @Autowired private JwtManager jwtManager;
-    //PasswordEncoder
-    @Autowired private PasswordEncoder passwordEncoder;
+    //MyPasswordEncoder
+    @Autowired private MyPasswordEncoder myPasswordEncoder;
     //URL
     private static final String COMMON_URL="/api/member";
 
@@ -187,7 +186,7 @@ class MemberControllerTest {
         //then
         Member findMember = memberJpaRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFound());
-        boolean matcher = passwordEncoder.matcher(memberB.getPassword(), findMember.getPassword());
+        boolean matcher = myPasswordEncoder.matcher(memberB.getPassword(), findMember.getPassword());
         assertThat(matcher).isTrue();
     }
 
@@ -232,7 +231,7 @@ class MemberControllerTest {
     void findByMemberTest() throws Exception {
 
         //given
-        PasswordEncoder encoder = new PasswordEncoder();
+        MyPasswordEncoder encoder = new MyPasswordEncoder();
         String encryptPassword = encoder.encrypt("1234");
 
 
@@ -306,7 +305,7 @@ class MemberControllerTest {
             String birthDay,
             String intro
     ) {
-        PasswordEncoder encoder = new PasswordEncoder();
+        MyPasswordEncoder encoder = new MyPasswordEncoder();
         String encryptPassword;
         if(!password.equals(" ")){
              encryptPassword = encoder.encrypt(password);
@@ -315,7 +314,7 @@ class MemberControllerTest {
             encryptPassword=password;
         }
 
-        Member member = Member.builder()
+        Member member = SocialMember.builder()
                 .memberEmail(email)
                 .password(encryptPassword)
                 .nickname(nickname)
@@ -334,7 +333,7 @@ class MemberControllerTest {
             String birthDay,
             String intro
     ) {
-        PasswordEncoder encoder = new PasswordEncoder();
+        MyPasswordEncoder encoder = new MyPasswordEncoder();
         String encryptPassword = encoder.encrypt(password);
 
         if(!password.equals(" ")){

@@ -93,7 +93,6 @@ public class PostService {
         Image image = Image.builder()
                 .originalFileName(imageDTO.getOriginalFilename())
                 .storedFileName(imageName)
-                .member(findByMember)
                 .imageCode(ImageCode.POST)
                 .build();
 

@@ -2,13 +2,9 @@ package jipdol2.eunstargram.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jipdol2.eunstargram.auth.dto.request.LoginRequestDTO;
-import jipdol2.eunstargram.auth.entity.Session;
-import jipdol2.eunstargram.auth.entity.SessionJpaRepository;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.member.entity.Member;
 import jipdol2.eunstargram.member.entity.MemberJpaRepository;
-import jipdol2.eunstargram.member.entity.MemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -21,10 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
-import java.util.List;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,7 +37,7 @@ class AuthControllerTest {
     private SessionJpaRepository sessionJpaRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private MyPasswordEncoder myPasswordEncoder;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -61,9 +53,9 @@ class AuthControllerTest {
     @DisplayName("로그인 : 로그인 성공")
     void loginSuccessTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
-                .password(passwordEncoder.encrypt("1234"))
+                .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
                 .phoneNumber("010-1111-2222")
                 .birthDay("1999-01-01")
@@ -88,9 +80,9 @@ class AuthControllerTest {
     @DisplayName("로그인 : 로그인 실패")
     void loginFailTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
-                .password(passwordEncoder.encrypt("1234"))
+                .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
                 .phoneNumber("010-1111-2222")
                 .birthDay("1999-01-01")
@@ -118,7 +110,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 이메일은 필수입니다")
     void loginEmailTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
@@ -148,7 +140,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 비밀번호는 필수입니다")
     void loginPasswordTest() throws Exception{
         //given
-        memberJpaRepository.save(Member.builder()
+        memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
@@ -179,7 +171,7 @@ class AuthControllerTest {
     @Disabled
     void loginSessionTest() throws Exception{
         //given
-        Member member = memberJpaRepository.save(Member.builder()
+        Member member = memberJpaRepository.save(SocialMember.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")

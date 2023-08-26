@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <th:block th:replace="fragments/header.html :: header-fragment"></th:block>
 <!--    <link rel="stylesheet" href="/css/index.css">-->
@@ -9,16 +11,14 @@
     <div class="row align-items-center h-100">
         <div class="jumbotron align-self-center">
             <h1 class="text-center"><b><span class="highlight">Jipdol2stargram</span>!</b></h1>
-            <p class="text-center">추억을 기록하는 우리들의 기록일지.</p>
+            <p class="text-center">추억을 기록하는 우리들의 기록일지</p>
             <div class="contentContainer" id="logoutState">
-                <p class="text-center"><a href="/login" class="btn btn-primary btn-lg">로그인</a></p>
-                <p class="text-center"><a href="/signUp" class="btn btn-primary btn-lg">회원가입</a></p>
+                <p class="text-center"><a th:href="@{/login}" class="btn btn-primary btn-lg">로그인</a></p>
+                <p class="text-center"><a th:href="@{/signUp}" class="btn btn-primary btn-lg">회원가입</a></p>
             </div>
             <div class="contentContainer d-none" id="loginState">
                 <div id="btn-create" class="mb-3 text-center">
                     <button type="button" id="findMemoryButton" class="btn btn-primary">추억 탐험하기</button>
-<!--                    <p class="text-center"><a th:href="@{/posts/1}" class="btn btn-primary btn-lg">추억 탐험하기</a></p>-->
-<!--                    <p class="text-center"><a th:href="@{/posts/1}" class="btn btn-primary btn-lg">추억 탐험하기</a></p>-->
                 </div>
                 <div id="btn-logout" class="mb-3 text-center">
                     <button type="submit" id="logout-button" class="btn btn-primary">로그아웃</button>

@@ -1,7 +1,6 @@
 package jipdol2.eunstargram.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.exception.post.PostNotFound;
 import jipdol2.eunstargram.image.entity.Image;
 import jipdol2.eunstargram.image.entity.ImageCode;
@@ -24,9 +23,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.Cookie;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.Cookie;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.UUID;
@@ -286,7 +285,6 @@ class PostControllerTest {
         Image image = Image.builder()
                 .originalFileName(originalFileName)
                 .storedFileName(imageName)
-                .member(member)
                 .imageCode(ImageCode.POST)
                 .build();
         return image;

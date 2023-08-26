@@ -16,14 +16,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionController {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> jipDol2Exception(BaseException e){
 
         int statusCode = e.getStatusCode();
 
         ErrorResponse response = ErrorResponse.builder()
-                .code(String.valueOf(statusCode))
+                .code(e.getCode())
                 .message(e.getMessage())
                 .validation(e.getValidation())
                 .build();
@@ -31,7 +30,6 @@ public class ExceptionController {
         return ResponseEntity.status(statusCode).body(response);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> invalidRequestHandler(MethodArgumentNotValidException e){
 

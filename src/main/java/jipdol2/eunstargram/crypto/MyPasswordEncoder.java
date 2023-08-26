@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  * https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/crypto/scrypt/SCryptPasswordEncoder.html
  */
 @Component
-public class PasswordEncoder {
+public class MyPasswordEncoder {
 
     private final SCryptPasswordEncoder encoder =
             new SCryptPasswordEncoder(32,8,1,32,64);

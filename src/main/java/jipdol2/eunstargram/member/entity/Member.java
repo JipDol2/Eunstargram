@@ -2,7 +2,7 @@ package jipdol2.eunstargram.member.entity;
 
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.common.entity.BaseTimeEntity;
-import jipdol2.eunstargram.crypto.PasswordEncoder;
+import jipdol2.eunstargram.crypto.MyPasswordEncoder;
 import jipdol2.eunstargram.member.dto.request.MemberSaveRequestDTO;
 import jipdol2.eunstargram.member.dto.request.MemberUpdateRequestDTO;
 import jipdol2.eunstargram.post.entity.Post;
@@ -11,13 +11,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -42,6 +45,11 @@ public class Member extends BaseTimeEntity {
 
     private String storedFileName;
 
+    private int socialId;
+
+    @Enumerated(EnumType.STRING)
+    private SocialProvider socialProvider;
+
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
@@ -64,7 +72,7 @@ public class Member extends BaseTimeEntity {
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Session> sessions = new ArrayList<>();
 
-    @Builder
+//    @Builder
     public Member(String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro) {
         this.memberEmail = memberEmail;
         this.password = password;
@@ -79,20 +87,19 @@ public class Member extends BaseTimeEntity {
         this.deleteYn = deleteYn;
     }
 
-    public void encryptPassword() {
-        PasswordEncoder encoder = new PasswordEncoder();
+    public void encryptPassword(MyPasswordEncoder encoder) {
         this.password = encoder.encrypt(this.password);
     }
 
     public static Member transferMember(MemberSaveRequestDTO memberSaveRequestDTO) {
-        return Member.builder()
-                .memberEmail(memberSaveRequestDTO.getMemberEmail())
-                .password(memberSaveRequestDTO.getPassword())
-                .nickname(memberSaveRequestDTO.getNickname())
-                .phoneNumber(memberSaveRequestDTO.getPhoneNumber())
-                .birthDay(memberSaveRequestDTO.getBirthDay())
-                .intro(memberSaveRequestDTO.getIntro())
-                .build();
+        return new Member(
+                memberSaveRequestDTO.getMemberEmail(),
+                memberSaveRequestDTO.getPassword(),
+                memberSaveRequestDTO.getNickname(),
+                memberSaveRequestDTO.getPhoneNumber(),
+                memberSaveRequestDTO.getBirthDay(),
+                memberSaveRequestDTO.getIntro()
+        );
     }
 
     public void updateMember(MemberUpdateRequestDTO updateRequestDTO) {
@@ -106,5 +113,10 @@ public class Member extends BaseTimeEntity {
     public void updateProfileImage(String originalFileName,String storedFileName){
         this.originalFileName = originalFileName;
         this.storedFileName = storedFileName;
+    }
+
+    public void updateSocialInfo(int socialId,SocialProvider socialProvider){
+        this.socialId = socialId;
+        this.socialProvider = socialProvider;
     }
 }

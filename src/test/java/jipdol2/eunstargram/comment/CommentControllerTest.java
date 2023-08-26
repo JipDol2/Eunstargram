@@ -1,7 +1,6 @@
 package jipdol2.eunstargram.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jipdol2.eunstargram.auth.entity.Session;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.entity.Comment;
 import jipdol2.eunstargram.comment.entity.CommentRepository;
@@ -21,7 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -247,7 +246,7 @@ class CommentControllerTest {
     }
 
     private Member createMember(String email,String password,String nickname,String intro,String phoneNumber,String birthDay) {
-        Member member = Member.builder()
+        Member member = SocialMember.builder()
                 .memberEmail(email)
                 .password(password)
                 .nickname(nickname)
