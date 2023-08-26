@@ -34,7 +34,7 @@ spring:
       max-request-size: 10MB
 
 jwt:
-  secret: ZxV0wmgRyU8ZGYBRITUGcaOi03osZK1bsy7qEUUjgBs=
+  secret: ${JWT_SECRET}
 
 #redis
 #  redis:
