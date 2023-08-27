@@ -32,9 +32,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
+#  ZxV0wmgRyU8ZGYBRITUGcaOi03osZK1bsy7qEUUjgBs=
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${secretKey}
 
 #redis
 #  redis:
