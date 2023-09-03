@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@WebMvcTest(MemberController.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-@Transactional
+//@Transactional
 class MemberControllerTest {
 
     //Repository
@@ -314,7 +314,7 @@ class MemberControllerTest {
             encryptPassword=password;
         }
 
-        Member member = SocialMember.builder()
+        Member member = Member.builder()
                 .memberEmail(email)
                 .password(encryptPassword)
                 .nickname(nickname)

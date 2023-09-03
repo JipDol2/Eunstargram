@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.comment;
 
+import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.comment.dto.request.CommentSaveRequestDTO;
 import jipdol2.eunstargram.comment.dto.response.CommentFindResponseDTO;
 import jipdol2.eunstargram.comment.dto.response.ResultComments;
@@ -31,6 +32,7 @@ public class CommentController {
     }
 
     /** 2023/03/11 댓글 전체 조회 API 생성 **/
+    @NoAuth
     @GetMapping("/{postId}")
     public ResponseEntity<ResultComments<List<CommentFindResponseDTO>>> findByComments(@PathVariable Long postId){
         log.info("postId={}",postId);

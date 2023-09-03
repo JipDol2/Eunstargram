@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.Cookie;
+
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.UUID;
@@ -67,13 +69,6 @@ class PostControllerTest {
 
     private static final String COMMON_URL = "/api/post";
 
-//    @BeforeEach
-//    void clean(){
-//        this.entityManager
-//                .createNativeQuery("ALTER TABLE MEMBER AUTO_INCREMENT = 1")
-//                .executeUpdate();
-//    }
-
     @Test
     @DisplayName("게시글 업로드 : 게시글 업로드시 200 status code 리턴")
     void uploadPostTest() throws Exception {
@@ -89,16 +84,15 @@ class PostControllerTest {
                 .nickname(member.getNickname())
                 .build();
         String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
-        Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
 
         //when
-        mockMvc.perform(multipart(COMMON_URL+ "/upload")
-                        .file((MockMultipartFile)postSaveRequestDTO.getImage())
-                        .param("content",postSaveRequestDTO.getContent())
-//                        .param("memberId",Long.toString(postSaveRequestDTO.getMemberId()))
-                        .cookie(cookie))
+        mockMvc.perform(multipart(COMMON_URL + "/upload")
+                                .file((MockMultipartFile) postSaveRequestDTO.getImage())
+                                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                                .param("content", postSaveRequestDTO.getContent())
+                )
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -114,33 +108,32 @@ class PostControllerTest {
         Member member = createMember();
         memberRepository.save(member);
 
-//        Session session = member.addSession();
         UserSessionDTO sessionDTO = UserSessionDTO.builder()
                 .id(member.getId())
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
         String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
-        Cookie cookie = new Cookie("SESSION",accessToken);
 
         PostSaveRequestDTO postSaveRequestDTO = createPostRequestDTO();
         postSaveRequestDTO.setImage(null);
 
         //when
-        mockMvc.perform(multipart(COMMON_URL+ "/upload")
-                        .file("image",null)
-                        .param("content",postSaveRequestDTO.getContent())
-                        .cookie(cookie))
+        mockMvc.perform(multipart(COMMON_URL + "/upload")
+                        .file("image", null)
+                        .header(HttpHeaders.AUTHORIZATION,accessToken)
+                        .param("content", postSaveRequestDTO.getContent())
+                )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.code").value("I001"))
+                .andExpect(jsonPath("$.message").value("이미지 파일이 존재하지 않습니다"))
                 .andExpect(jsonPath("$.validation.image").value("이미지 파일은 필수입니다."))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("게시글 전체 조회 : 게시글 전체 조회 200 status code 리턴 + 게시글 리턴")
-    void findByAllPosts() throws Exception{
+    void findByAllPosts() throws Exception {
 
         //given
         Member member = createMember();
@@ -149,11 +142,11 @@ class PostControllerTest {
         Image image = createImage(member);
         imageJpaRepository.save(image);
 
-        List<Post> postRequestListDTO = createPostRequestListDTO(member,image);
+        List<Post> postRequestListDTO = createPostRequestListDTO(member, image);
         postRequestListDTO.stream().forEach(postRepository::save);
 
         //when
-        mockMvc.perform(get(COMMON_URL+"/{nickname}",member.getNickname()))
+        mockMvc.perform(get(COMMON_URL + "/{nickname}", member.getNickname()))
                 .andExpect(jsonPath("$.data[0].likeNumber").value(0L))
                 .andExpect(jsonPath("$.data[0].content").value("Im kim da mi!!"))
                 .andExpect(jsonPath("$.data[0].memberId").value(member.getId()))
@@ -170,30 +163,35 @@ class PostControllerTest {
 
     @Test
     @DisplayName("게시글 수정 : 게시글 수정시 200 status code 리턴")
-    void editPost() throws Exception{
+    void editPost() throws Exception {
 
         //given
         Member member = createMember();
         memberRepository.save(member);
 
+        UserSessionDTO sessionDTO = UserSessionDTO.builder()
+                .id(member.getId())
+                .email(member.getMemberEmail())
+                .nickname(member.getNickname())
+                .build();
+
         Image image = createImage(member);
         imageJpaRepository.save(image);
 
-        Post post = createPost("나의 삶의 찬란한 시간만 비추길", member,image);
-//        Post post = createPost("나의 삶의 찬란한 시간만 비추길", member);
+        Post post = createPost("나의 삶의 찬란한 시간만 비추길", member, image);
         postRepository.save(post);
+
+        String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
 
         PostEditRequestDTO postEditRequestDTO = PostEditRequestDTO.builder()
                 .content("너는 나의 봄이었다")
                 .build();
 
-//        Session session = member.addSession();
-//        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
-
         String json = objectMapper.writeValueAsString(postEditRequestDTO);
 
         //when
-        mockMvc.perform(put(COMMON_URL+"/p/{postId}",post.getId())
+        mockMvc.perform(put(COMMON_URL + "/p/{postId}", post.getId())
+                        .header(HttpHeaders.AUTHORIZATION,accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -229,7 +227,7 @@ class PostControllerTest {
         Image image = createImage(member);
         imageJpaRepository.save(image);
 
-        Post post = createPost("나의 삶의 찬란한 시간만 비추길", member,image);
+        Post post = createPost("나의 삶의 찬란한 시간만 비추길", member, image);
         Long postId = postRepository.save(post);
 
 //        Session session = member.addSession();
@@ -239,11 +237,11 @@ class PostControllerTest {
                 .nickname(member.getNickname())
                 .build();
         String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
-        Cookie cookie = new Cookie("SESSION",accessToken);
 
         //when
-        mockMvc.perform(delete(COMMON_URL+"/p/delete/{postId}",postId)
-                        .cookie(cookie))
+        mockMvc.perform(delete(COMMON_URL + "/p/delete/{postId}", postId)
+                        .header(HttpHeaders.AUTHORIZATION,accessToken)
+                )
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -275,7 +273,7 @@ class PostControllerTest {
                 .build();
     }
 
-    private Image createImage(Member member){
+    private Image createImage(Member member) {
 
         String originalFileName = "testImage.jpg";
 
@@ -290,7 +288,7 @@ class PostControllerTest {
         return image;
     }
 
-    private PostSaveRequestDTO createPostRequestDTO() throws Exception{
+    private PostSaveRequestDTO createPostRequestDTO() throws Exception {
         PostSaveRequestDTO postSaveRequestDTO = PostSaveRequestDTO.builder()
                 .content("행복한 하루")
                 .image(createMultipartFile())
@@ -298,22 +296,22 @@ class PostControllerTest {
         return postSaveRequestDTO;
     }
 
-    private List<Post> createPostRequestListDTO(Member member, Image image) throws Exception{
+    private List<Post> createPostRequestListDTO(Member member, Image image) throws Exception {
         return List.of(
                 Post.builder()
-                    .likeNumber(0L)
-                    .content("Im kim da mi!!")
-                    .deleteYn("N")
-                    .member(member)
-                    .image(image)
-                    .build(),
+                        .likeNumber(0L)
+                        .content("Im kim da mi!!")
+                        .deleteYn("N")
+                        .member(member)
+                        .image(image)
+                        .build(),
                 Post.builder()
-                    .likeNumber(0L)
-                    .content("Im not puppy!!")
-                    .deleteYn("N")
-                    .member(member)
-                    .image(image)
-                    .build()
+                        .likeNumber(0L)
+                        .content("Im not puppy!!")
+                        .deleteYn("N")
+                        .member(member)
+                        .image(image)
+                        .build()
         );
     }
 
@@ -321,7 +319,7 @@ class PostControllerTest {
         String originalFileName = "testImage.jpg";
         String path = "src/test/resources/img/" + originalFileName;
 
-        return new MockMultipartFile("image", originalFileName, "image/jpg",new FileInputStream(path));
+        return new MockMultipartFile("image", originalFileName, "image/jpg", new FileInputStream(path));
     }
 
 }

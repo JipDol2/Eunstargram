@@ -37,6 +37,7 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.join(memberSaveRequestDTO));
     }
     /** 2023/01/19 회원 전체조회 API 생성 **/
+    @NoAuth
     @GetMapping("/")
     public ResponseEntity<List<MemberFindResponseDTO>> findByAllMembers(){
         return ResponseEntity.ok().body(memberService.findByAll());
@@ -90,21 +91,4 @@ public class MemberController {
         return ResponseEntity.ok().body(memberService.uploadProfileImage(userSession.getId(),imageRequestDTO));
     }
 
-    /** 2023/07/13 소셜 로그인 이메일 중복 체크 **/
-    @NoAuth
-    @PostMapping("/validation/email")
-    public ResponseEntity<MemberValidationCheckEmailDTO> validationCheckEmail(@RequestBody MemberEmailRequestDTO emailRequestDTO){
-        log.info("memberEmail={}",emailRequestDTO.toString());
-        return ResponseEntity.ok().body(memberService.validationCheckEmail(emailRequestDTO.getEmail()));
-    }
-
-    /** 2023/07/13 소셜 계정과 기존 회원 연동하기 **/
-    @NoAuth
-    @PostMapping("/email/social")
-    public ResponseEntity<EmptyJSON> emailConnectionToSocial(@RequestBody MemberEmailRequestDTO emailRequestDTO, HttpSession session){
-        memberService.connectToSocial(emailRequestDTO.getEmail(),
-                (int) session.getAttribute("socialId"),
-                (String) session.getAttribute("socialProvider"));
-        return ResponseEntity.ok().body(new EmptyJSON());
-    }
 }

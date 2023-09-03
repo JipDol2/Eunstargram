@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.post.dto.request;
 
+import jipdol2.eunstargram.exception.file.ValidFile;
 import jipdol2.eunstargram.exception.image.ImageFileArgumentNotValidation;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class PostSaveRequestDTO {
 
     private String content;
 
+    @ValidFile(message = "이미지 파일은 필수입니다.")
     private MultipartFile image;
 
     /**

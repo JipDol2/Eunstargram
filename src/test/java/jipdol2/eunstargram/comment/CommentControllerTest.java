@@ -16,11 +16,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.servlet.http.Cookie;
+
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,7 +72,7 @@ class CommentControllerTest {
 
         Long memberId = memberRepository.save(member);
 
-        Post post = createPost(member,"can i have a lunch with me?");
+        Post post = createPost(member, "can i have a lunch with me?");
 
         Long postId = postRepository.save(post);
 
@@ -79,22 +81,20 @@ class CommentControllerTest {
                 .postId(postId)
                 .build();
 
-//        Session session = member.addSession();
         UserSessionDTO sessionDTO = UserSessionDTO.builder()
                 .id(member.getId())
                 .email(member.getMemberEmail())
                 .nickname(member.getNickname())
                 .build();
         String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
-        Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
 
         //expect
-        mockMvc.perform(post(COMMON_URL+"/upload")
+        mockMvc.perform(post(COMMON_URL + "/upload")
+                        .header(HttpHeaders.AUTHORIZATION, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .cookie(cookie)
                 )
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -124,7 +124,7 @@ class CommentControllerTest {
 
         Long memberId = memberRepository.save(member);
 
-        Post post = createPost(member,"can i have a lunch with me?");
+        Post post = createPost(member, "can i have a lunch with me?");
 
         Long postId = postRepository.save(post);
 
@@ -140,15 +140,14 @@ class CommentControllerTest {
                 .nickname(member.getNickname())
                 .build();
         String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
-        Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
 
         //expect
-        mockMvc.perform(post(COMMON_URL+"/upload")
+        mockMvc.perform(post(COMMON_URL + "/upload")
+                        .header(HttpHeaders.AUTHORIZATION, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .cookie(cookie)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
@@ -173,7 +172,7 @@ class CommentControllerTest {
 
         Long memberId = memberRepository.save(member);
 
-        Post post = createPost(member,"can i have a lunch with me?");
+        Post post = createPost(member, "can i have a lunch with me?");
 
         Long postId = postRepository.save(post);
 
@@ -189,15 +188,14 @@ class CommentControllerTest {
                 .nickname(member.getNickname())
                 .build();
         String accessToken = jwtManager.makeAccessToken(sessionDTO.getId());
-        Cookie cookie = new Cookie("SESSION",accessToken);
 
         String json = objectMapper.writeValueAsString(commentDto);
 
         //expect
-        mockMvc.perform(post(COMMON_URL+"/upload")
+        mockMvc.perform(post(COMMON_URL + "/upload")
+                        .header(HttpHeaders.AUTHORIZATION,accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .cookie(cookie)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
@@ -209,7 +207,7 @@ class CommentControllerTest {
     @Test
     @DisplayName("댓글 전체 조회 : /api/comment/{postId} 요청시 200 status code 리턴 및 댓글 조회")
     @Transactional
-    void commentFindAllTest() throws Exception{
+    void commentFindAllTest() throws Exception {
         //given
         Member member = createMember(
                 "jipdol2@gmail.com",
@@ -221,12 +219,12 @@ class CommentControllerTest {
 
         Long memberId = memberRepository.save(member);
 
-        Post post = createPost(member,"No,i don't enough time sorry friend!");
+        Post post = createPost(member, "No,i don't enough time sorry friend!");
 
         Long postId = postRepository.save(post);
 
-        Comment comment1 = createComment("already i had lunch",member, post);
-        Comment comment2 = createComment("i dont have lunch",member, post);
+        Comment comment1 = createComment("already i had lunch", member, post);
+        Comment comment2 = createComment("i dont have lunch", member, post);
 
         commentRepository.save(comment1);
         commentRepository.save(comment2);
@@ -235,7 +233,7 @@ class CommentControllerTest {
 //        Cookie cookie = new Cookie("SESSION",session.getAccessToken());
 
         //when
-        mockMvc.perform(get(COMMON_URL+"/{postId}",postId))
+        mockMvc.perform(get(COMMON_URL + "/{postId}", postId))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -245,8 +243,8 @@ class CommentControllerTest {
         assertThat(findByPost.getComments().size()).isEqualTo(2);
     }
 
-    private Member createMember(String email,String password,String nickname,String intro,String phoneNumber,String birthDay) {
-        Member member = SocialMember.builder()
+    private Member createMember(String email, String password, String nickname, String intro, String phoneNumber, String birthDay) {
+        Member member = Member.builder()
                 .memberEmail(email)
                 .password(password)
                 .nickname(nickname)
@@ -257,7 +255,7 @@ class CommentControllerTest {
         return member;
     }
 
-    private Post createPost(Member member,String content) {
+    private Post createPost(Member member, String content) {
         Post post = Post.builder()
                 .content(content)
                 .deleteYn("N")
@@ -267,7 +265,7 @@ class CommentControllerTest {
         return post;
     }
 
-    private Comment createComment(String content,Member member, Post post) {
+    private Comment createComment(String content, Member member, Post post) {
         Comment comment1 = Comment.builder()
                 .content(content)
                 .likeNumber(0L)

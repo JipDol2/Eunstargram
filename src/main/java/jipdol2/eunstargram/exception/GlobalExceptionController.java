@@ -1,4 +1,4 @@
-package jipdol2.eunstargram.exception.controller;
+package jipdol2.eunstargram.exception;
 
 import jipdol2.eunstargram.exception.BaseException;
 import jipdol2.eunstargram.exception.response.ErrorResponse;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionController {
+public class GlobalExceptionController {
 
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ErrorResponse> jipDol2Exception(BaseException e){
