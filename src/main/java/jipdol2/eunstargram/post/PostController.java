@@ -1,5 +1,6 @@
 package jipdol2.eunstargram.post;
 
+import jipdol2.eunstargram.auth.entity.NoAuth;
 import jipdol2.eunstargram.common.dto.EmptyJSON;
 import jipdol2.eunstargram.post.dto.response.ResultPosts;
 import jipdol2.eunstargram.config.data.UserSession;
@@ -32,6 +33,7 @@ public class PostController {
     }
 
     /** 2023/01/12 전체 게시글 조회 **/
+    @NoAuth
     @GetMapping("/{nickname}")
     public ResponseEntity<ResultPosts<List<PostResponseDTO>>> findByAllPosts(
             @PathVariable String nickname

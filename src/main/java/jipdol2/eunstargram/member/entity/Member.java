@@ -47,9 +47,6 @@ public class Member extends BaseTimeEntity {
 
     private int socialId;
 
-    @Enumerated(EnumType.STRING)
-    private SocialProvider socialProvider;
-
     @OneToMany(mappedBy = "member")
     private List<Post> posts = new ArrayList<>();
 
@@ -72,7 +69,7 @@ public class Member extends BaseTimeEntity {
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<Session> sessions = new ArrayList<>();
 
-//    @Builder
+    @Builder
     public Member(String memberEmail, String password, String nickname, String phoneNumber, String birthDay, String intro) {
         this.memberEmail = memberEmail;
         this.password = password;
@@ -115,8 +112,4 @@ public class Member extends BaseTimeEntity {
         this.storedFileName = storedFileName;
     }
 
-    public void updateSocialInfo(int socialId,SocialProvider socialProvider){
-        this.socialId = socialId;
-        this.socialProvider = socialProvider;
-    }
 }

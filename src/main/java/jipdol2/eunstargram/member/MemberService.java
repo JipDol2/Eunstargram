@@ -184,9 +184,4 @@ public class MemberService {
         return new MemberValidationCheckEmailDTO(true);
     }
 
-    public void connectToSocial(String email,int socialId,String socialProvider){
-        List<Member> findMember = memberRepository.findByMemberEmail(email);
-        Member member = findMember.get(0);
-        member.updateSocialInfo(socialId, SocialProvider.from(socialProvider));
-    }
 }

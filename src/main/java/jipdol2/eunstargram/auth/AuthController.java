@@ -44,7 +44,6 @@ public class AuthController {
     @NoAuth
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(
-//            @PathVariable String provider,
             @Valid @RequestBody LoginRequestDTO loginRequestDTO
     ) {
 //        log.info(">>>provider={}",provider);

@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
-@Transactional
+//@Transactional
 class AuthControllerTest {
 
     @Autowired
@@ -32,9 +32,6 @@ class AuthControllerTest {
 
     @Autowired
     private MemberJpaRepository memberJpaRepository;
-
-    @Autowired
-    private SessionJpaRepository sessionJpaRepository;
 
     @Autowired
     private MyPasswordEncoder myPasswordEncoder;
@@ -53,7 +50,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 로그인 성공")
     void loginSuccessTest() throws Exception{
         //given
-        memberJpaRepository.save(SocialMember.builder()
+        memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
@@ -80,7 +77,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 로그인 실패")
     void loginFailTest() throws Exception{
         //given
-        memberJpaRepository.save(SocialMember.builder()
+        memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password(myPasswordEncoder.encrypt("1234"))
                 .nickname("jipdol2")
@@ -100,8 +97,8 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("Bad Request"))
+                .andExpect(jsonPath("$.code").value("M004"))
+                .andExpect(jsonPath("$.message").value("아이디/비밀번호가 올바르지 않습니다"))
                 .andExpect(jsonPath("$.validation['id/password']").value("아이디/비밀번호가 올바르지 않습니다"))
                 .andDo(print());
     }
@@ -110,7 +107,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 이메일은 필수입니다")
     void loginEmailTest() throws Exception{
         //given
-        memberJpaRepository.save(SocialMember.builder()
+        memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
@@ -140,7 +137,7 @@ class AuthControllerTest {
     @DisplayName("로그인 : 비밀번호는 필수입니다")
     void loginPasswordTest() throws Exception{
         //given
-        memberJpaRepository.save(SocialMember.builder()
+        memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
@@ -171,7 +168,7 @@ class AuthControllerTest {
     @Disabled
     void loginSessionTest() throws Exception{
         //given
-        Member member = memberJpaRepository.save(SocialMember.builder()
+        Member member = memberJpaRepository.save(Member.builder()
                 .memberEmail("jipdol2@gmail.com")
                 .password("1234")
                 .nickname("jipdol2")
