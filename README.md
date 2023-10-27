@@ -81,6 +81,7 @@
 ![image](https://github.com/JipDol2/Jipdolstargram/assets/55746374/e825d4ad-4f04-4d6e-90fd-a885ea94bab6)
 
 ## Package 구조
+```
 📦src
  ┣ 📂main
  ┃ ┣ 📂generated
@@ -264,3 +265,4 @@
  ┃ ┃ ┃ ┗ 📜testImage.jpg
  ┃ ┃ ┗ 📜application-test.yml
  ┗ 📜Eunstargram.txt
+```
